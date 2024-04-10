@@ -1,0 +1,40 @@
+/**
+ * @license
+ * Copyright 2024 Come Home AI, Inc.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+import { LitElement } from 'lit';
+/**
+ * The quoting form element that initiates the flow for the user.
+ *
+ * @fires count-changed - Indicates when the count changes
+ * @slot - This element has a slot
+ * @csspart button - The button
+ */
+export declare class ChaiForm extends LitElement {
+    visitorId: string;
+    name: string;
+    phone: string;
+    email: string;
+    date: string;
+    constructor();
+    static styles: import("lit").CSSResult;
+    /**
+     * The ComeHome.ai flow type is the ID that has been configured for the location/context of
+     * this form (e.g., the mover's website).
+     */
+    flowType: string;
+    /**
+     * The text to display on the button; defaults to "Get Quote".
+     */
+    buttonText: string;
+    render(): import("lit-html").TemplateResult<1>;
+    updateField(fieldName: 'name' | 'phone' | 'email' | 'date'): (e: Event) => void;
+    openFlowInstance(e: Event): void;
+}
+declare global {
+    interface HTMLElementTagNameMap {
+        'chai-form': ChaiForm;
+    }
+}
+//# sourceMappingURL=chai-form.d.ts.map
