@@ -9,10 +9,41 @@
   <script src="../node_modules/lit/polyfill-support.js"></script>
   <script type="module" src="../chai-form.js"></script>
   <style>
+    body {
+      font-family: 'Times New Roman';
+    }
+
+    chai-form {
+      /* --chai-form-font-family: 'Roboto', sans-serif; */
+      --chai-form-font-size: 16px;
+      --chai-form-border: 2px solid #ddd;
+      --chai-form-corner-radius: 10px;
+      --chai-form-padding: 16px;
+
+      /* --chai-form-background-color-primary: #EF3E33;
+      --chai-form-background-color-secondary: #EF3E33;
+      --chai-form-hover-background-color-primary: #034694;
+      --chai-form-hover-background-color-secondary: #034694;
+      --chai-form-border-radius: 6px;
+      --chai-form-font-size: 20px;
+      --chai-form-font-weight: 500; */
+      /* --chai-button-line-height: 1em;
+      --chai-button-text-transform: capitalize;
+      --chai-button-color: blue; */
+      /* --chai-offer-font-family: 'Arial', sans-serif;
+      --chai-offer-font-size: 20px;
+      --chai-offer-color: red; */
+    }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
+  <h1>Form Demo</h1>
   <chai-form button-text="Get Quote!" flow-type="comehome.xyz" />
 </body>
 

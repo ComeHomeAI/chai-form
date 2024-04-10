@@ -82,32 +82,86 @@ let ChaiForm = class ChaiForm extends LitElement {
 };
 ChaiForm.styles = css `
     :host {
-      display: block;
+      /**
+       */
+      --chai-color-primary: red;
+      --chai-color-secondary: blue;
+      /**
+       * This font family is applied to all of the form elements.
+       * TODO: Automatically set this to inherit from the parent element!
+       */
+      --chai-form-font-family: inherit;
+      /**
+       * This font size is applied to all of the form elements.
+       */
+      --chai-form-font-size: 16px;
+      /**
+       * This border is applied to the form element only.
+       * Inputs and the button have their own border styles.
+       */
+      --chai-form-border: 1px solid gray;
+      /**
+       * This corner radius is applied to the form border, input field borders, and the button.
+       */
+      --chai-form-corner-radius: 8px;
+      /**
+       * This padding is applied to form edges as well as the vertical gap between separate form elements.
+       * The gap between labels and their paired inputs is one-fourth of this value.
+       */
+      --chai-form-padding: 16px;
+
+      /****/
+      /* --chai-button-color: #fff;
+      --chai-button-background-color-primary: #2abd27;
+      --chai-button-background-color-secondary: #11a40e;
+      --chai-button-hover-background-color-primary: var(--chai-button-background-color-secondary);
+      --chai-button-hover-background-color-secondary: var(--chai-button-background-color-primary);
+      --chai-button-font-family: 'Oswald', sans-serif;
+      --chai-button-font-size: 17px;
+      --chai-button-border-radius: 10px;
+      --chai-button-text-transform: uppercase;
+      --chai-button-font-weight: 400;
+      --chai-button-line-height: 1.5em;
+      --chai-offer-font-family: var(--chai-button-font-family);
+      --chai-offer-font-size: 16px;
+      --chai-offer-color: #4A2684; */
+      /* For now, we don't need to style the host element, just the form. */
+      /* display: block;
       max-width: 400px;
       font-family: sans-serif;
       border: solid 1px gray;
-      padding: 16px;
+      padding: var(--chai-form-padding); */
     }
     form {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      max-width: 400px;
+      gap: calc(var(--chai-form-padding) / 2);
+      font-family: var(--chai-form-font-family);
+      font-size: var(--chai-form-font-size);
+      border: var(--chai-form-border);
+      border-radius: var(--chai-form-corner-radius);
+      padding: var(--chai-form-padding);
     }
     label {
-      margin-bottom: -4px;
+      margin-bottom: calc(-1 * var(--chai-form-padding) / 4);
     }
     input {
-      padding: 8px;
-      font-size: 16px;
-      margin-bottom: 8px;
+      /* font-family: var(--chai-form-font-family); */
+      font-size: var(--chai-form-font-size);
+      border-radius: var(--chai-form-corner-radius);
+      padding: calc(var(--chai-form-padding) / 2);
+      margin-bottom: calc(var(--chai-form-padding) / 2);
     }
     a {
       cursor: pointer;
       background-color: blue;
       color: white;
-      padding: 8px;
       text-align: center;
       text-decoration: none;
+      border-radius: var(--chai-form-corner-radius);
+      margin-top: calc(var(--chai-form-padding) / 2);
+      padding: calc(var(--chai-form-padding) / 1.5);
     }
   `;
 __decorate([
