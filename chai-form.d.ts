@@ -6,31 +6,34 @@
 import { LitElement } from 'lit';
 /**
  * The quoting form element that initiates the flow for the user.
- *
- * @fires count-changed - Indicates when the count changes
- * @slot - This element has a slot
- * @csspart button - The button
  */
 export declare class ChaiForm extends LitElement {
-    visitorId: string;
-    name: string;
-    phone: string;
-    email: string;
-    date: string;
+    private visitorId;
+    private name;
+    private phone;
+    private email;
+    private date;
+    private nameChanged;
+    private phoneChanged;
+    private emailChanged;
     constructor();
     static styles: import("lit").CSSResult;
     /**
      * The ComeHome.ai flow type is the ID that has been configured for the location/context of
      * this form (e.g., the mover's website).
      */
-    flowType: string;
+    accessor flowType: string;
     /**
      * The text to display on the button; defaults to "Get Quote".
      */
-    buttonText: string;
+    accessor buttonText: string;
+    private isNameInvalid;
+    private isPhoneInvalid;
+    private isEmailInvalid;
     render(): import("lit-html").TemplateResult<1>;
     updateField(fieldName: 'name' | 'phone' | 'email' | 'date'): (e: Event) => void;
-    openFlowInstance(e: Event): void;
+    blurField(fieldName: 'name' | 'phone' | 'email'): () => void;
+    submit(e: Event): void;
 }
 declare global {
     interface HTMLElementTagNameMap {

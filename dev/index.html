@@ -10,29 +10,32 @@
   <script type="module" src="../chai-form.js"></script>
   <style>
     body {
-      font-family: 'Times New Roman';
+      font-family: 'Roboto';
     }
 
     chai-form {
-      /* --chai-form-font-family: 'Roboto', sans-serif; */
-      --chai-form-font-size: 16px;
-      --chai-form-border: 2px solid #ddd;
-      --chai-form-corner-radius: 10px;
-      --chai-form-padding: 16px;
-
-      /* --chai-form-background-color-primary: #EF3E33;
-      --chai-form-background-color-secondary: #EF3E33;
-      --chai-form-hover-background-color-primary: #034694;
-      --chai-form-hover-background-color-secondary: #034694;
-      --chai-form-border-radius: 6px;
-      --chai-form-font-size: 20px;
-      --chai-form-font-weight: 500; */
-      /* --chai-button-line-height: 1em;
-      --chai-button-text-transform: capitalize;
-      --chai-button-color: blue; */
-      /* --chai-offer-font-family: 'Arial', sans-serif;
-      --chai-offer-font-size: 20px;
-      --chai-offer-color: red; */
+      --chai-form-max-width: 350px;
+      --chai-form-color-brand: rgb(74, 38, 132);
+      /* --chai-form-color-alert: #fa2829; */
+      --chai-form-background: rgba(247, 243, 67, 0.85);
+      --chai-form-font-family: 'Oswald';
+      /* --chai-form-font-size: 16px; */
+      /* --chai-form-font-weight: 400; */
+      --chai-form-border: none;
+      --chai-form-corner-radius: 0px;
+      --chai-form-spacing: 12px;
+      /* --chai-input-border: 0.8px solid rgb(233,228,224);*/
+      /* --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px; */
+      --chai-input-color: #000;
+      /* --chai-button-color: #fff; */
+      --chai-button-font-size: 20px;
+      /* --chai-button-text-transform: uppercase; */
+      --chai-button-background: linear-gradient(180deg, #2abd27 0%, #11a40e 100%);
+      --chai-button-background-hover: linear-gradient(0deg, #2abd27 0%, #11a40e 100%);
+      /* --chai-button-background-active: var(--chai-form-color-brand); */
+      --chai-button-corner-radius: 10px;
+      --chai-button-filter-hover: none;
+      /* --chai-button-filter-active: none; */
     }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,7 +47,7 @@
 
 <body>
   <h1>Form Demo</h1>
-  <chai-form button-text="Get Quote!" flow-type="comehome.xyz" />
+  <chai-form buttontext="Get a Quote!" flowtype="comehome.xyz" />
 </body>
 
 </html>
