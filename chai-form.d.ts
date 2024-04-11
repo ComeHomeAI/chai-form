@@ -27,6 +27,10 @@ export declare class ChaiForm extends LitElement {
      * The text to display on the button; defaults to "Get Quote".
      */
     accessor buttonText: string;
+    /**
+     * The text to display in the header; defaults to "Get your moving quote now!".
+     */
+    accessor headerText: string;
     private isNameInvalid;
     private isPhoneInvalid;
     private isEmailInvalid;

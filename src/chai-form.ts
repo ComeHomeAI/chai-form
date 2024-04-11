@@ -58,6 +58,11 @@ export class ChaiForm extends LitElement {
        */
       --chai-form-color-alert: #fa2829;
       /**
+       * The text color is used as the initial setting for all text elements, and
+       * defaults to the brand color.
+       */
+      --chai-form-color-text: var(--chai-form-color-brand);
+      /**
        * The background is used for the overall form background. Note this does not
        * have to be only a color.
        */
@@ -97,7 +102,11 @@ export class ChaiForm extends LitElement {
        * These should only be changed after ensuring that the form-level properties
        * are insufficient for the desired look-and-feel.
        */
-      --chai-input-color: var(--chai-form-color-brand);
+      --chai-header-font-size: calc(var(--chai-form-font-size) * 1.5);
+      --chai-header-color: var(--chai-form-color-text);
+      --chai-label-color: var(--chai-form-color-text);
+      --chai-input-color: #000; //var(--chai-form-color-text);
+      --chai-input-corner-radius: calc(var(--chai-form-corner-radius) / 4);
       --chai-input-border: 0.8px solid rgb(233,228,224);
       --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
       --chai-button-color: #fff;
@@ -116,22 +125,42 @@ export class ChaiForm extends LitElement {
       --chai-button-filter-hover: brightness(1.2);
       --chai-button-filter-active: brightness(0.8);
       --chai-button-corner-radius: var(--chai-form-corner-radius);
-    }
-    form {
+
+      /**
+       * The rest of this section defines the styles that are actually applied
+       * to the custom element itself.
+       */
       display: flex;
       flex-direction: column;
+      align-items: center;
       max-width: var(--chai-form-max-width);
-      gap: calc(var(--chai-form-spacing) / 2);
       font-family: var(--chai-form-font-family);
       font-size: var(--chai-form-font-size);
       font-weight: var(--chai-form-font-weight);
+      text-shadow: none;
+      text-align: left;
       border: var(--chai-form-border);
       border-radius: var(--chai-form-corner-radius);
       padding: var(--chai-form-spacing);
       background: var(--chai-form-background);
       color: var(--chai-form-color-brand);
     }
+    h2 {
+      color: var(--chai-header-color);
+      font-size: var(--chai-header-font-size);
+      margin-top: calc(var(--chai-form-spacing) / 4);
+      margin-bottom: var(--chai-form-spacing);
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: calc(var(--chai-form-spacing) / 2);
+    }
     label {
+      font-size: calc(var(--chai-form-font-size) * 1.05);
+      padding-left: 1px;
+      color: var(--chai-label-color);
       margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
 
       span {
@@ -155,7 +184,7 @@ export class ChaiForm extends LitElement {
       font-size: var(--chai-form-font-size);
       color: var(--chai-input-color);
       border: var(--chai-input-border);
-      border-radius: var(--chai-form-corner-radius);
+      border-radius: var(--chai-input-corner-radius);
       box-shadow: var(--chai-input-shadow);
       padding: calc(var(--chai-form-spacing) / 2);
       margin-bottom: calc(var(--chai-form-spacing) / 2);
@@ -190,6 +219,62 @@ export class ChaiForm extends LitElement {
         filter: var(--chai-button-filter-active);
       }
     }
+    ol {
+      display: flex;
+      flex-direction: row;
+      list-style: none;
+      margin-top: calc(var(--chai-form-spacing) * 1.5);
+      padding: 0;
+      color: var(--chai-form-color-text);
+
+      li {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+
+        &:not(:first-child)::before {
+          content: '';
+          position: absolute;
+          display: block;
+          width: 100%;
+          height: 4px;
+          left: calc(-50%);
+          right: calc(-50%);
+          top: calc((var(--chai-form-spacing) + 24px) / 2 - 2px);
+          background-color: var(--chai-form-color-brand);
+          filter: saturate(0.1) brightness(1.9);
+          z-index: 1;
+        }
+
+        svg {
+          background-color: var(--chai-form-color-brand);
+          filter: saturate(0.5) brightness(1.5);
+          fill: #fff;
+          padding: calc(var(--chai-form-spacing) / 2);
+          border-radius: 50%; // Make the background circular
+          height: 24px;
+          width: 24px;
+          margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
+          z-index: 2;
+        }
+
+        &:first-child svg {
+          filter: none;
+          padding: var(--chai-form-spacing);
+          position: relative;
+          top: calc(-1 * var(--chai-form-spacing) / 2);
+          margin-bottom: calc(-1.25 * var(--chai-form-spacing));
+        }
+      }
+    }
+    #offer {
+      display: block;
+      margin-top: calc(-2 * var(--chai-form-spacing));
+      color: var(--chai-form-color-text);
+    }
   `;
 
   /**
@@ -203,7 +288,13 @@ export class ChaiForm extends LitElement {
    * The text to display on the button; defaults to "Get Quote".
    */
   @property()
-  accessor buttonText = "Get Quote";
+  accessor buttonText = "Get a Quote!";
+
+  /**
+   * The text to display in the header; defaults to "Get your moving quote now!".
+   */
+  @property()
+  accessor headerText = "Get your moving quote now!";
 
   private isNameInvalid() {
     return this.nameChanged && this.name.length < 2;
@@ -224,6 +315,7 @@ export class ChaiForm extends LitElement {
 
     //TODO: Replace '*' spans with CSS pseudo-elements once fully supported
     return html`
+      <h2>${this.headerText}</h2>
       <form id="chai-quote-form">
 
         <label for="name">Name <span>*</span></label>
@@ -252,8 +344,25 @@ export class ChaiForm extends LitElement {
           autocomplete="off" min="${new Date().toISOString().split('T')[0]}"
           .value="${this.date}" @input="${this.updateField('date')}">
         
-          <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
+        <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
       </form>
+      <ol>
+        <li>
+          <svg focusable="false" viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.89-2-2-2m0 16H5V7h14zm-2-7H7v-2h10zm-4 4H7v-2h6z"></path></svg>
+          <p>Fill out this form <b>(required)</b></p>
+        </li>
+        <li>
+          <div class="connector"></div>
+          <svg focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5"></path></svg>
+          <p>Take pictures of your items <i>(optional)</i></p>
+        </li>
+        <li>
+          <div class="connector"></div>
+          <svg focusable="false" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm1 10h-4v1h3c.55 0 1 .45 1 1v3c0 .55-.45 1-1 1h-1v1h-2v-1H9v-2h4v-1h-3c-.55 0-1-.45-1-1v-3c0-.55.45-1 1-1h1V9h2v1h2zm-2-4V3.5L17.5 8z"></path></svg>
+          <p>Get your quote!</p>
+        </li>
+      </ol>
+      <slot id="offer"></slot>
     `;
   }
 
