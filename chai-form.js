@@ -74,7 +74,6 @@ let ChaiForm = class ChaiForm extends LitElement {
         const nameInvalid = this.isNameInvalid();
         const phoneInvalid = this.isPhoneInvalid();
         const emailInvalid = this.isEmailInvalid();
-        //TODO: Replace '*' spans with CSS pseudo-elements once fully supported
         return html `
       <h2>${this.headerText}</h2>
       <form id="chai-quote-form">
@@ -139,10 +138,6 @@ let ChaiForm = class ChaiForm extends LitElement {
                 },
                 body: JSON.stringify({ fieldName: newValue }),
             });
-            //TODO: Decide what to do about server errors. E.g.:
-            //      - open the flow URL immediately to try to capture the lead?
-            //      - show a 'please call us' fallback message to the user?
-            //TODO: Google Tag Manager integration!
         };
     }
     blurField(fieldName) {
@@ -154,15 +149,13 @@ let ChaiForm = class ChaiForm extends LitElement {
         e.preventDefault();
         // At this point, we know the user has interacted with the form
         // and we can enforce display of any validation errors.
-        //TODO: Use :user-invalid when it is better supported.
         this.nameChanged = true;
         this.phoneChanged = true;
         this.emailChanged = true;
         if (this.isNameInvalid() || this.isPhoneInvalid() || this.isEmailInvalid()) {
             return;
         }
-        //TODO: Google Tag Manager integration!
-        window.open(`https://example.com/flows/${this.flowType}`, '_blank');
+        window.open(`https://example.local:3000/flows/${this.flowType}`, '_blank');
     }
 };
 _ChaiForm_flowType_accessor_storage = new WeakMap();
@@ -237,7 +230,7 @@ ChaiForm.styles = css `
       --chai-header-font-size: calc(var(--chai-form-font-size) * 1.5);
       --chai-header-color: var(--chai-form-color-text);
       --chai-label-color: var(--chai-form-color-text);
-      --chai-input-color: #000; //var(--chai-form-color-text);
+      --chai-input-color: #000;
       --chai-input-corner-radius: calc(var(--chai-form-corner-radius) / 4);
       --chai-input-border: 0.8px solid rgb(233,228,224);
       --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
@@ -253,7 +246,6 @@ ChaiForm.styles = css `
        * When specifying a background color for the hover and/or active states, it's
        * recommended to set the filter for the corresponding state to none.
        */
-      //TODO: Use CSS relative colors when fully supported
       --chai-button-filter-hover: brightness(1.2);
       --chai-button-filter-active: brightness(0.8);
       --chai-button-corner-radius: var(--chai-form-corner-radius);
@@ -299,13 +291,6 @@ ChaiForm.styles = css `
         color: var(--chai-form-color-alert);
         font-weight: bold;
       }
-      //TODO: Use CSS pseudo-elements when :has is better supported
-      /* &:has(+ input[required])::after {
-        content: '*';
-        margin-left: 0.25em;
-        color: var(--chai-form-color-alert);
-        font-weight: bold;
-      } */
     }
     span.error {
       color: var(--chai-form-color-alert);
