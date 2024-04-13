@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "publish": "npm run build && rollup -c rollup.cdn.config.js",
     "clean": "rimraf chai-form.{d.ts,d.ts.map,js,js.map} test/chai-form.{d.ts,d.ts.map,js,js.map} test/chai-form_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
@@ -63,6 +64,7 @@
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.79.1",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-summary": "^1.4.3",
     "typescript": "~5.3.3"
   },
