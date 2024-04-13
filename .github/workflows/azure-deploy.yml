@@ -3,6 +3,7 @@ name: Build and Deploy to Azure Blob Storage
 on:
   push:
     branches:
+      - main
       - develop
 
 permissions:
@@ -64,6 +65,7 @@ jobs:
   deploy-prd:
     name: CD prd
     environment: prd
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
 
