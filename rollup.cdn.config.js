@@ -6,13 +6,14 @@
 
 import summary from 'rollup-plugin-summary';
 import terser from '@rollup/plugin-terser';
+//import minifyHTML from 'rollup-plugin-minify-html-literals';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
   input: 'chai-form.js',
   output: {
-    file: 'chai-form.bundled.js',
+    file: 'dist/chai-form.bundled.min.js',
     format: 'esm',
   },
   onwarn(warning) {
@@ -24,9 +25,10 @@ export default {
     replace({'Reflect.decorate': 'undefined'}),
     resolve(),
     /**
-     * This minification setup serves the static site generation.
-     * For bundling and minification, check the README.md file.
+     * This minification setup is optimized for a standalone
+     * production output (e.g., for CDN hosting).
      */
+    //minifyHTML(),
     terser({
       ecma: 2021,
       module: true,
