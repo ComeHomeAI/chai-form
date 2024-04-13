@@ -13,7 +13,7 @@ import replace from '@rollup/plugin-replace';
 export default {
   input: 'chai-form.js',
   output: {
-    file: 'dist/chai-form.bundled.min.js',
+    file: 'dist/chai-form.v1.js',
     format: 'esm',
   },
   onwarn(warning) {
