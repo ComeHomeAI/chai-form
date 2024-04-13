@@ -49,7 +49,7 @@ jobs:
           name: dist
 
       - name: Login to Azure via CLI
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload to Azure Blob Storage
         run: |
-          az storage blob upload-batch -d $container_name -s ./ --account-name $storage_account_name
+          az storage blob upload-batch -d $container_name -s ./ --account-name $storage_account_name --auth-mode login
         env:
           container_name: cdn
           storage_account_name: ${{ vars.CDN_STORAGE_ACCOUNT_NAME }}
@@ -84,7 +84,7 @@ jobs:
 
       - name: Upload to Azure Blob Storage
         run: |
-          az storage blob upload-batch -d $container_name -s ./ --account-name $storage_account_name
+          az storage blob upload-batch -d $container_name -s ./ --account-name $storage_account_name --auth-mode login
         env:
           container_name: cdn
           storage_account_name: ${{ vars.CDN_STORAGE_ACCOUNT_NAME }}
