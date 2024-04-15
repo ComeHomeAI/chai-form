@@ -3,10 +3,14 @@
 /test/
 custom-elements.json
 # top level source
-chai-form.js
-chai-form.js.map
-chai-form.d.ts
-chai-form.d.ts.map
+chai-*.js
+chai-*.js.map
+chai-*.d.ts
+chai-*.d.ts.map
+Chai*.js
+Chai*.js.map
+Chai*.d.ts
+Chai*.d.ts.map
 # only generated for size check
 chai-form.bundled.js
 # only generated for publishing

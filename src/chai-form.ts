@@ -7,6 +7,7 @@
 import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
+import "./chai-name";
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -15,12 +16,10 @@ import { customElement, property, state } from 'lit/decorators.js';
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
-  @state() private name: string;
   @state() private phone: string;
   @state() private email: string;
   @state() private address: string;
 
-  @state() private nameChanged = false;
   @state() private phoneChanged = false;
   @state() private emailChanged = false;
   @state() private addressChanged = false;
@@ -31,7 +30,6 @@ export class ChaiForm extends LitElement {
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
 
-    this.name = localStorage.getItem('chai-name') || '';
     this.phone = localStorage.getItem('chai-phone') || '';
     this.email = localStorage.getItem('chai-email') || '';
     this.address = localStorage.getItem('chai-address') || '';
@@ -289,9 +287,6 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  private isNameInvalid() {
-    return this.nameChanged && this.name.length < 2;
-  }
   private isPhoneInvalid() {
     return this.phoneChanged &&
       !/^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?(?!555)\d{3}[-.\s]?\d{4}$/.test(this.phone);
@@ -306,7 +301,6 @@ export class ChaiForm extends LitElement {
   }
 
   override render() {
-    const nameInvalid = this.isNameInvalid();
     const phoneInvalid = this.isPhoneInvalid();
     const emailInvalid = this.isEmailInvalid();
     const addressInvalid = this.isAddressInvalid();
@@ -314,13 +308,8 @@ export class ChaiForm extends LitElement {
     return html`
       <h2>${this.headerText}</h2>
       <form id="chai-quote-form">
-
-        <label for="name">Name <span title="Name is required">*</span></label>
-        <input id="name" type="text" placeholder="First & Last Name"
-          class=${classMap({ invalid: nameInvalid })} @blur="${this.blurField('name')}"
-          autocomplete="name" required
-          .value="${this.name}" @input="${this.updateField('name')}">
-        ${nameInvalid ? html`<span class="error">Please enter your name.</span>` : ''}
+        <!-- TODO: Figure out CSS styling for child fields! -->
+        <chai-name></chai-name>
         
         <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
         <input id="phoneNumber" type="tel" placeholder="###-###-####"
@@ -365,7 +354,7 @@ export class ChaiForm extends LitElement {
     `;
   }
 
-  updateField(fieldName: 'name' | 'phone' | 'email' | 'address') {
+  updateField(fieldName: 'phone' | 'email' | 'address') {
     return (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
 
@@ -373,6 +362,7 @@ export class ChaiForm extends LitElement {
 
       localStorage.setItem(`chai-${fieldName}`, newValue);
 
+      //TODO: Implement updates of child field values!
       fetch(`https://example.local:3000/form/update/${fieldName}`, {
         method: 'POST',
         headers: {
@@ -384,7 +374,7 @@ export class ChaiForm extends LitElement {
     };
   }
 
-  blurField(fieldName: 'name' | 'phone' | 'email' | 'address') {
+  blurField(fieldName: 'phone' | 'email' | 'address') {
     return () => {
       this[`${fieldName}Changed`] = true;
     };
@@ -395,12 +385,13 @@ export class ChaiForm extends LitElement {
 
     // At this point, we know the user has interacted with the form
     // and we can enforce display of any validation errors.
-    this.nameChanged = true;
+    //TODO: Trigger isChanged on any child fields!
     this.phoneChanged = true;
     this.emailChanged = true;
     this.addressChanged = true;
 
-    if (this.isNameInvalid() || this.isPhoneInvalid() || this.isEmailInvalid() || this.isAddressInvalid()) {
+    //TODO: Check for validity of any child fields that are marked 'required'!
+    if (this.isPhoneInvalid() || this.isEmailInvalid() || this.isAddressInvalid()) {
       return;
     }
 
