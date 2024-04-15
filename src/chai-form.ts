@@ -18,11 +18,12 @@ export class ChaiForm extends LitElement {
   @state() private name: string;
   @state() private phone: string;
   @state() private email: string;
-  @state() private date: string;
+  @state() private address: string;
 
   @state() private nameChanged = false;
   @state() private phoneChanged = false;
   @state() private emailChanged = false;
+  @state() private addressChanged = false;
 
   constructor() {
     super();
@@ -33,7 +34,7 @@ export class ChaiForm extends LitElement {
     this.name = localStorage.getItem('chai-name') || '';
     this.phone = localStorage.getItem('chai-phone') || '';
     this.email = localStorage.getItem('chai-email') || '';
-    this.date = localStorage.getItem('chai-date') || '';
+    this.address = localStorage.getItem('chai-address') || '';
   }
 
   static override styles = css`
@@ -299,11 +300,16 @@ export class ChaiForm extends LitElement {
     return this.emailChanged &&
       !/^[^\s@]+@(?!.*(\w+\.)?example\.com)[^\s@]+\.[^\s@]+$/.test(this.email);
   }
+  private isAddressInvalid() {
+    return this.addressChanged &&
+      !/\w+/.test(this.address);
+  }
 
   override render() {
     const nameInvalid = this.isNameInvalid();
     const phoneInvalid = this.isPhoneInvalid();
     const emailInvalid = this.isEmailInvalid();
+    const addressInvalid = this.isAddressInvalid();
 
     return html`
       <h2>${this.headerText}</h2>
@@ -330,10 +336,12 @@ export class ChaiForm extends LitElement {
           .value="${this.email}" @input="${this.updateField('email')}">
         ${emailInvalid ? html`<span class="error">Please enter a valid email address.</span>` : ''}
         
-        <label for="date">Estimated Move Date</label>
-        <input id="date" type="date" placeholder="Estimated Move Date"
-          autocomplete="off" min="${new Date().toISOString().split('T')[0]}"
-          .value="${this.date}" @input="${this.updateField('date')}">
+        <label for="address">Address <span>*</span></label>
+        <input id="address" type="text" placeholder="Your Current Address"
+          class=${classMap({ invalid: addressInvalid })} @blur="${this.blurField('address')}"
+          autocomplete="off" required
+          .value="${this.address}" @input="${this.updateField('address')}">
+        ${addressInvalid ? html`<span class="error">Please enter a valid address.</span>` : ''}
         
         <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
       </form>
@@ -357,7 +365,7 @@ export class ChaiForm extends LitElement {
     `;
   }
 
-  updateField(fieldName: 'name' | 'phone' | 'email' | 'date') {
+  updateField(fieldName: 'name' | 'phone' | 'email' | 'address') {
     return (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
 
@@ -365,18 +373,18 @@ export class ChaiForm extends LitElement {
 
       localStorage.setItem(`chai-${fieldName}`, newValue);
 
-      fetch(`https://example.local:3000/`, {
+      fetch(`https://example.local:3000/form/update/${fieldName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CHAI-VisitorID': this.visitorId,
         },
-        body: JSON.stringify({ fieldName: newValue }),
+        body: JSON.stringify(newValue),
       });
     };
   }
 
-  blurField(fieldName: 'name' | 'phone' | 'email') {
+  blurField(fieldName: 'name' | 'phone' | 'email' | 'address') {
     return () => {
       this[`${fieldName}Changed`] = true;
     };
@@ -390,8 +398,9 @@ export class ChaiForm extends LitElement {
     this.nameChanged = true;
     this.phoneChanged = true;
     this.emailChanged = true;
+    this.addressChanged = true;
 
-    if (this.isNameInvalid() || this.isPhoneInvalid() || this.isEmailInvalid()) {
+    if (this.isNameInvalid() || this.isPhoneInvalid() || this.isEmailInvalid() || this.isAddressInvalid()) {
       return;
     }
 
