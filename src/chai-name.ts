@@ -121,7 +121,7 @@ export class ChaiName extends LitElement { //TODO: Make a reusable ChaiField (mi
 
     return html`
       <label for="name">${this.label} <span title="Required">*</span></label>
-      <input id="name" type="text" placeholder="First & Last Name"
+      <input id="name" type="text" placeholder="${this.placeholder}"
         class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
         autocomplete="name" required
         .value="${this.value}" @input="${this.updateField()}">
