@@ -8,6 +8,7 @@ import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import "./chai-name";
+import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -29,6 +30,8 @@ export class ChaiForm extends LitElement {
 
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
+
+    this.addEventListener('chai-fieldchanged', this.handleFieldChange);
 
     this.phone = localStorage.getItem('chai-phone') || '';
     this.email = localStorage.getItem('chai-email') || '';
@@ -308,7 +311,6 @@ export class ChaiForm extends LitElement {
     return html`
       <h2>${this.headerText}</h2>
       <form id="chai-quote-form">
-        <!-- TODO: Figure out CSS styling for child fields! -->
         <chai-name></chai-name>
         
         <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
@@ -354,6 +356,19 @@ export class ChaiForm extends LitElement {
     `;
   }
 
+  handleFieldChange(event: ChaiFieldChangedEvent<unknown>) {
+    const { field, value } = event;
+
+    fetch(`https://example.local:3000/form/update/${field}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CHAI-VisitorID': this.visitorId,
+      },
+      body: JSON.stringify(value),
+    });
+  }
+
   updateField(fieldName: 'phone' | 'email' | 'address') {
     return (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
@@ -362,7 +377,6 @@ export class ChaiForm extends LitElement {
 
       localStorage.setItem(`chai-${fieldName}`, newValue);
 
-      //TODO: Implement updates of child field values!
       fetch(`https://example.local:3000/form/update/${fieldName}`, {
         method: 'POST',
         headers: {
