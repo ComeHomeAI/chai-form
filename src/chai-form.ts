@@ -315,28 +315,28 @@ export class ChaiForm extends LitElement {
       <h2>${this.headerText}</h2>
       <form id="chai-quote-form">
 
-        <label for="name">Name <span>*</span></label>
+        <label for="name">Name <span title="Name is required">*</span></label>
         <input id="name" type="text" placeholder="First & Last Name"
           class=${classMap({ invalid: nameInvalid })} @blur="${this.blurField('name')}"
           autocomplete="name" required
           .value="${this.name}" @input="${this.updateField('name')}">
         ${nameInvalid ? html`<span class="error">Please enter your name.</span>` : ''}
         
-        <label for="phoneNumber">Phone Number <span>*</span></label>
+        <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
         <input id="phoneNumber" type="tel" placeholder="###-###-####"
           class=${classMap({ invalid: phoneInvalid })} @blur="${this.blurField('phone')}"
           autocomplete="tel" required
           .value="${this.phone}" @input="${this.updateField('phone')}">
         ${phoneInvalid ? html`<span class="error">Please enter a valid phone number.</span>` : ''}
         
-        <label for="email">Email <span>*</span></label>
+        <label for="email">Email <span title="Email is required">*</span></label>
         <input id="email" type="email" placeholder="Email"
           class=${classMap({ invalid: emailInvalid })} @blur="${this.blurField('email')}"
           autocomplete="email" required
           .value="${this.email}" @input="${this.updateField('email')}">
         ${emailInvalid ? html`<span class="error">Please enter a valid email address.</span>` : ''}
         
-        <label for="address">Address <span>*</span></label>
+        <label for="address">Address <span title="Address is required">*</span></label>
         <input id="address" type="text" placeholder="Your Current Address"
           class=${classMap({ invalid: addressInvalid })} @blur="${this.blurField('address')}"
           autocomplete="off" required
