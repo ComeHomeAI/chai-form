@@ -9,6 +9,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import "./chai-name";
 import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
+import "./chai-phone";
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -17,11 +18,9 @@ import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
-  @state() private phone: string;
   @state() private email: string;
   @state() private address: string;
 
-  @state() private phoneChanged = false;
   @state() private emailChanged = false;
   @state() private addressChanged = false;
 
@@ -35,7 +34,6 @@ export class ChaiForm extends LitElement {
     //@ts-ignore //TODO: Fix type checking here!
     this.addEventListener('chai-fieldchanged', this.handleFieldChange);
 
-    this.phone = localStorage.getItem('chai-phone') || '';
     this.email = localStorage.getItem('chai-email') || '';
     this.address = localStorage.getItem('chai-address') || '';
   }
@@ -292,10 +290,6 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  private isPhoneInvalid() {
-    return this.phoneChanged &&
-      !/^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?(?!555)\d{3}[-.\s]?\d{4}$/.test(this.phone);
-  }
   private isEmailInvalid() {
     return this.emailChanged &&
       !/^[^\s@]+@(?!.*(\w+\.)?example\.com)[^\s@]+\.[^\s@]+$/.test(this.email);
@@ -306,7 +300,6 @@ export class ChaiForm extends LitElement {
   }
 
   override render() {
-    const phoneInvalid = this.isPhoneInvalid();
     const emailInvalid = this.isEmailInvalid();
     const addressInvalid = this.isAddressInvalid();
 
@@ -316,14 +309,8 @@ export class ChaiForm extends LitElement {
       <form id="chai-quote-form">
         <slot>
           <chai-name></chai-name>
+          <chai-phone></chai-phone>
         </slot>
-        
-        <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
-        <input id="phoneNumber" type="tel" placeholder="###-###-####"
-          class=${classMap({ invalid: phoneInvalid })} @blur="${this.blurField('phone')}"
-          autocomplete="tel" required
-          .value="${this.phone}" @input="${this.updateField('phone')}">
-        ${phoneInvalid ? html`<span class="error">Please enter a valid phone number.</span>` : ''}
         
         <label for="email">Email <span title="Email is required">*</span></label>
         <input id="email" type="email" placeholder="Email"
@@ -374,7 +361,7 @@ export class ChaiForm extends LitElement {
     });
   }
 
-  updateField(fieldName: 'phone' | 'email' | 'address') {
+  updateField(fieldName: 'email' | 'address') {
     return (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
 
@@ -393,7 +380,7 @@ export class ChaiForm extends LitElement {
     };
   }
 
-  blurField(fieldName: 'phone' | 'email' | 'address') {
+  blurField(fieldName: 'email' | 'address') {
     return () => {
       this[`${fieldName}Changed`] = true;
     };
@@ -405,12 +392,11 @@ export class ChaiForm extends LitElement {
     // At this point, we know the user has interacted with the form
     // and we can enforce display of any validation errors.
     //TODO: Trigger isChanged on any child fields!
-    this.phoneChanged = true;
     this.emailChanged = true;
     this.addressChanged = true;
 
     //TODO: Check for validity of any child fields that are marked 'required'!
-    if (this.isPhoneInvalid() || this.isEmailInvalid() || this.isAddressInvalid()) {
+    if (this.isEmailInvalid() || this.isAddressInvalid()) {
       return;
     }
 
