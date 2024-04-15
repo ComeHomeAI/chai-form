@@ -314,7 +314,9 @@ export class ChaiForm extends LitElement {
       <h2>${this.headerText}</h2>
       <slot name="before"></slot>
       <form id="chai-quote-form">
-        <slot></slot>
+        <slot>
+          <chai-name></chai-name>
+        </slot>
         
         <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
         <input id="phoneNumber" type="tel" placeholder="###-###-####"
