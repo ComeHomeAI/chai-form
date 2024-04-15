@@ -102,11 +102,16 @@
 <body>
   <h1>Form Demo</h1>
   <div id="demos">
-    <chai-form class="mover-default" flowtype="comehome.xyz"></chai-form>
-    <chai-form class="mover-2cb" buttontext="Get Quote" headertext="Start your move off right!" flowtype="comehome.xyz">
-      <p>Optional: <b>Get $25 off</b> and a faster, more accurate quote if you complete our photo survey.</p>
+    <chai-form class="mover-default" flowtype="comehome.xyz">
+      <chai-name></chai-name>
     </chai-form>
-    <chai-form class="mover-wirks" buttontext="Start Quote" flowtype="comehome.xyz"></chai-form>
+    <chai-form class="mover-2cb" buttontext="Get Quote" headertext="Start your move off right!" flowtype="comehome.xyz">
+      <p slot="after">Optional: <b>Get $25 off</b> and a faster, more accurate quote if you complete our photo survey.
+      </p>
+    </chai-form>
+    <chai-form class="mover-wirks" buttontext="Start Quote" flowtype="comehome.xyz">
+      <p slot="before">All fields are required.</p>
+    </chai-form>
   </div>
 </body>
 

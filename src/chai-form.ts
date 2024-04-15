@@ -220,6 +220,7 @@ export class ChaiForm extends LitElement {
       flex-direction: row;
       list-style: none;
       margin-top: calc(var(--chai-form-spacing) * 1.5);
+      margin-bottom: calc(-1 * var(--chai-form-spacing));
       padding: 0;
       color: var(--chai-form-color-text);
 
@@ -266,9 +267,8 @@ export class ChaiForm extends LitElement {
         }
       }
     }
-    #offer {
+    slot[name="before"], slot[name="after"] {
       display: block;
-      margin-top: calc(-2 * var(--chai-form-spacing));
       color: var(--chai-form-color-text);
     }
   `;
@@ -312,8 +312,9 @@ export class ChaiForm extends LitElement {
 
     return html`
       <h2>${this.headerText}</h2>
+      <slot name="before"></slot>
       <form id="chai-quote-form">
-        <chai-name></chai-name>
+        <slot></slot>
         
         <label for="phoneNumber">Phone Number <span title="Phone number is required">*</span></label>
         <input id="phoneNumber" type="tel" placeholder="###-###-####"
@@ -354,7 +355,7 @@ export class ChaiForm extends LitElement {
           <p>Get your quote!</p>
         </li>
       </ol>
-      <slot id="offer"></slot>
+      <slot name="after"></slot>
     `;
   }
 
