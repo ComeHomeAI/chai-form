@@ -352,8 +352,6 @@ export class ChaiForm extends LitElement {
   submit(e: Event) {
     e.preventDefault();
 
-    console.log(this.fieldStates);
-
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
     const fieldElements = this._defaultSlotElements.filter(element => element.tagName.startsWith("CHAI-"));

@@ -14,11 +14,16 @@ import { ChaiField } from './ChaiField';
 export class ChaiDate extends ChaiField {
   constructor() {
     super("date", "date", "Date", undefined, "Please enter a valid future date.", "off");
-    //TODO: Ability to set the min date! (via a protected 'query' on the input?)
+  }
+
+  protected override firstUpdated() {
+    // Set the minimum date to today's date (or tomorrow's date, depending on timezone offset).
+    //TODO: Make the minimum date calculation behave more consistently!
+    this.input.min = new Date().toISOString().substring(0, 10);
   }
 
   protected override isValueValid() {
-    return /\d\d\d\d-\d\d-\d\d/.test(this.value);
+    return /\d\d\d\d-\d\d-\d\d/.test(this.value) && new Date(this.value) > new Date();
   }
 }
 

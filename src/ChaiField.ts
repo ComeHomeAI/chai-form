@@ -6,7 +6,7 @@
 
 import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { property, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 
 export interface ChaiFieldChangedDetails<T> {
   field: string;
@@ -113,6 +113,9 @@ export abstract class ChaiField extends LitElement {
 
   @state() protected isChanged = false;
 
+  @query('input')
+  protected input!: HTMLInputElement;
+
 
   constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email" | "date", //TODO: Clean up the input type signature!
     protected _defaultLabel: string, protected _defaultPlaceholder?: string,
@@ -125,7 +128,7 @@ export abstract class ChaiField extends LitElement {
 
 
   protected isFieldInvalid() {
-    return (this.isChanged || this.forceValidation) && !this.isValueValid();
+    return (this.isChanged || this.forceValidation || this.value.length > 0) && !this.isValueValid();
   }
 
   protected abstract isValueValid(): boolean;
