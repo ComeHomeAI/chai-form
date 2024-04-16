@@ -7,7 +7,12 @@
 import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { property, state } from 'lit/decorators.js';
-import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
+
+export interface ChaiFieldChangedDetails<T> {
+  field: string;
+  value: T;
+  valid: boolean;
+}
 
 /**
  * Reusable form element base class.
@@ -101,6 +106,9 @@ export abstract class ChaiField extends LitElement {
   @property()
   accessor invalidMessage = this._invalidMessage;
 
+  @property({ type: Boolean })
+  accessor forceValidation = false;
+
   @state() protected value: string;
 
   @state() protected isChanged = false;
@@ -117,11 +125,19 @@ export abstract class ChaiField extends LitElement {
 
 
   protected isFieldInvalid() {
-    return this.isChanged && !this.isValueValid();
+    return (this.isChanged || this.forceValidation) && !this.isValueValid();
   }
 
   protected abstract isValueValid(): boolean;
 
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+
+    // When connected, bubble up an event to notify the parent form of the field's existence
+    // and its initial state.
+    this.notifyParentForm();
+  }
 
   override render() {
     const invalid = this.isFieldInvalid();
@@ -137,16 +153,15 @@ export abstract class ChaiField extends LitElement {
   }
 
   updateField() {
-    return (e: Event) => {
+    return async (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
 
       this.value = newValue;
 
       localStorage.setItem(`chai-${this._fieldId}`, newValue);
 
-      // Bubble up an event to notify the parent form of the update.
-      const fieldChangedEvent = new ChaiFieldChangedEvent(this._fieldId, newValue);
-      this.dispatchEvent(fieldChangedEvent);
+      // After rendering, bubble up an event to notify the parent form of the update.
+      this.notifyParentForm();
     };
   }
 
@@ -154,5 +169,20 @@ export abstract class ChaiField extends LitElement {
     return () => {
       this.isChanged = true;
     };
+  }
+
+  notifyParentForm() {
+    const fieldChangedEvent = new CustomEvent<ChaiFieldChangedDetails<string>>('chai-fieldchanged', {
+      detail: {
+        field: this._fieldId,
+        value: this.value,
+        valid: this.isValueValid()
+      },
+      bubbles: false,
+      cancelable: false,
+      composed: true
+    });
+
+    this.dispatchEvent(fieldChangedEvent);
   }
 }

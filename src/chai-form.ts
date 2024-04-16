@@ -5,13 +5,18 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
+import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js';
 import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date"; //TODO: Fix bundling to include *all* fields, not just the default ones!
+import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
+
+type FieldState = {
+  value: unknown,
+  valid: boolean
+}
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -20,11 +25,15 @@ import "./chai-date"; //TODO: Fix bundling to include *all* fields, not just the
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
+  @state() private fieldStates: Map<string, FieldState>;
+
   constructor() {
     super();
 
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
+
+    this.fieldStates = new Map<string, FieldState>();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore //TODO: Fix type checking here!
@@ -284,6 +293,10 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
+  @queryAssignedElements({ slot: undefined, flatten: true/*, selector: 'chai-*' TODO: Filter to only known CHAI fields!*/ })
+  _defaultSlotElements!: Array<HTMLElement>;
+
+
   override render() {
     return html`
       <h2>${this.headerText}</h2>
@@ -318,30 +331,40 @@ export class ChaiForm extends LitElement {
     `;
   }
 
-  handleFieldChange(event: ChaiFieldChangedEvent<unknown>) {
-    const { field, value } = event;
+  handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
+    const { field, value, valid } = event.detail;
 
-    fetch(`https://example.local:3000/form/update/${field}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CHAI-VisitorID': this.visitorId,
-      },
-      body: JSON.stringify(value),
-    });
+    this.fieldStates.set(field, { value, valid });
+
+    if (valid) {
+      void fetch(`https://example.local:3000/form/update/${field}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CHAI-VisitorID': this.visitorId,
+        },
+        body: JSON.stringify(value),
+      });
+    }
   }
+
 
   submit(e: Event) {
     e.preventDefault();
 
+    console.log(this.fieldStates);
+
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
-    //TODO: Trigger isChanged on any child fields!
+    const fieldElements = this._defaultSlotElements.filter(element => element.tagName.startsWith("CHAI-"));
+    fieldElements.forEach(element => {
+      (element as ChaiField).forceValidation = true;
+    });
 
-    //TODO: Check for validity of any child fields that are marked 'required'!
-    if (!e) {
-      return;
-    }
+    // Every field must have a valid value.
+    //TODO: Support configuring optional/required fields
+    for (const { valid } of this.fieldStates.values())
+      if (!valid) { return; }
 
     window.open(`https://example.local:3000/flows/${this.flowType}`, '_blank');
   }
