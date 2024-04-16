@@ -11,6 +11,7 @@ import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
+import "./chai-date"; //TODO: Fix bundling to include *all* fields, not just the default ones!
 
 /**
  * The quoting form element that initiates the flow for the user.

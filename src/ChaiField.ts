@@ -106,10 +106,10 @@ export abstract class ChaiField extends LitElement {
   @state() protected isChanged = false;
 
 
-  constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email", //TODO: Clean up the input type signature!
-    protected _defaultLabel: string, protected _defaultPlaceholder: string,
-    protected _invalidMessage: string,
-    protected _autocomplete: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") { //TODO: Clean up the autofill type signature!
+  constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email" | "date", //TODO: Clean up the input type signature!
+    protected _defaultLabel: string, protected _defaultPlaceholder?: string,
+    protected _invalidMessage?: string,
+    protected _autocomplete?: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") { //TODO: Clean up the autofill type signature!
     super();
 
     this.value = localStorage.getItem(`chai-${this._fieldId}`) || '';
@@ -128,9 +128,9 @@ export abstract class ChaiField extends LitElement {
 
     return html`
       <label for=${this._fieldId}>${this.label} <span title="Required">*</span></label>
-      <input id=${this._fieldId} type="${this._inputType}" placeholder="${this.placeholder}"
+      <input id=${this._fieldId} type="${this._inputType}" placeholder="${this.placeholder || '' /*TODO: ifDefined!*/}"
         class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
-        autocomplete=${this._autocomplete} required
+        autocomplete=${this._autocomplete || "off" /*TODO: ifDefined!*/} required
         .value="${this.value}" @input="${this.updateField()}">
       ${invalid && this.invalidMessage ? html`<span class="error">${this.invalidMessage}</span>` : ''}
     `;
