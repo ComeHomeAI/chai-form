@@ -7,6 +7,7 @@
 import { LitElement, html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { property, query, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export interface ChaiFieldChangedDetails<T> {
   field: string;
@@ -147,9 +148,9 @@ export abstract class ChaiField extends LitElement {
 
     return html`
       <label for=${this._fieldId}>${this.label} <span title="Required">*</span></label>
-      <input id=${this._fieldId} type="${this._inputType}" placeholder="${this.placeholder || '' /*TODO: ifDefined!*/}"
+      <input id=${this._fieldId} type="${this._inputType}" placeholder="${ifDefined(this.placeholder)}"
         class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
-        autocomplete=${this._autocomplete || "off" /*TODO: ifDefined!*/} required
+        autocomplete=${ifDefined(this._autocomplete)} required
         .value="${this.value}" @input="${this.updateField()}">
       ${invalid && this.invalidMessage ? html`<span class="error">${this.invalidMessage}</span>` : ''}
     `;
