@@ -18,7 +18,7 @@ export class ChaiDate extends ChaiField {
   }
 
   protected override isValueValid() {
-    return /\d\d+/.test(this.value); //TODO: This is a placeholder - add real validation!
+    return /\d\d\d\d-\d\d-\d\d/.test(this.value);
   }
 }
 
