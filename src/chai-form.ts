@@ -12,6 +12,7 @@ import "./chai-email";
 import "./chai-address";
 import "./chai-date";
 import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
+import { api } from './ChaiApi';
 
 type FieldState = {
   value: unknown,
@@ -25,6 +26,8 @@ type FieldState = {
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
+  @state() private flowId: string | null = null;
+
   @state() private fieldStates: Map<string, FieldState>;
 
   constructor() {
@@ -32,6 +35,12 @@ export class ChaiForm extends LitElement {
 
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
+    console.info("Visitor ID set", this.visitorId);
+
+    api.init(this.visitorId, this.flowType).then(formInit => {
+      this.flowId = formInit.flowId;
+      console.info("Flow initialized", formInit);
+    });
 
     this.fieldStates = new Map<string, FieldState>();
 
@@ -332,22 +341,19 @@ export class ChaiForm extends LitElement {
   }
 
   handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
+    console.log("Field changed", event.detail);
+
     const { field, value, valid } = event.detail;
 
     this.fieldStates.set(field, { value, valid });
 
     if (valid) {
-      void fetch(`https://example.local:3000/form/update/${field}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CHAI-VisitorID': this.visitorId,
-        },
-        body: JSON.stringify(value),
-      });
+      // If for some reason the flow initialization hasn't happened yet,
+      // we still want to submit the field update to the API. Let the
+      // API sort it out based on the visitor ID.
+      api.update(this.visitorId, this.flowId || "", field, value);
     }
   }
-
 
   submit(e: Event) {
     e.preventDefault();
@@ -363,7 +369,14 @@ export class ChaiForm extends LitElement {
     for (const { valid } of this.fieldStates.values())
       if (!valid) { return; }
 
-    window.open(`https://example.local:3000/flows/${this.flowType}`, '_blank');
+    // If for some reason the flow initialization hasn't happened yet,
+    // we still want to submit the form fields to the API. Let the
+    // API sort it out based on the visitor ID.
+    //TODO: Should we just get rid of the client's awareness of the flowId?
+    //      It feels redundant...
+    const submitUrl = api.getSubmitUrl(
+      this.visitorId, this.flowId || "", this.fieldStates.entries())
+    window.open(submitUrl, '_blank');
   }
 }
 
