@@ -5,12 +5,12 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
-import "./chai-name";
 import { ChaiFieldChangedEvent } from './ChaiFieldChangedEvent';
+import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
+import "./chai-address";
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -18,10 +18,6 @@ import "./chai-email";
 @customElement('chai-form')
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
-
-  @state() private address: string;
-
-  @state() private addressChanged = false;
 
   constructor() {
     super();
@@ -32,8 +28,6 @@ export class ChaiForm extends LitElement {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore //TODO: Fix type checking here!
     this.addEventListener('chai-fieldchanged', this.handleFieldChange);
-
-    this.address = localStorage.getItem('chai-address') || '';
   }
 
   static override styles = css`
@@ -288,14 +282,7 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  private isAddressInvalid() {
-    return this.addressChanged &&
-      !/\w+/.test(this.address);
-  }
-
   override render() {
-    const addressInvalid = this.isAddressInvalid();
-
     return html`
       <h2>${this.headerText}</h2>
       <slot name="before"></slot>
@@ -304,14 +291,8 @@ export class ChaiForm extends LitElement {
           <chai-name></chai-name>
           <chai-phone></chai-phone>
           <chai-email></chai-email>
+          <chai-address></chai-address>
         </slot>
-        
-        <label for="address">Address <span title="Address is required">*</span></label>
-        <input id="address" type="text" placeholder="Your Current Address"
-          class=${classMap({ invalid: addressInvalid })} @blur="${this.blurField('address')}"
-          autocomplete="off" required
-          .value="${this.address}" @input="${this.updateField('address')}">
-        ${addressInvalid ? html`<span class="error">Please enter a valid address.</span>` : ''}
         
         <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
       </form>
@@ -348,41 +329,15 @@ export class ChaiForm extends LitElement {
     });
   }
 
-  updateField(fieldName: 'address') {
-    return (e: Event) => {
-      const newValue = (e.target as HTMLInputElement).value;
-
-      this[fieldName] = newValue;
-
-      localStorage.setItem(`chai-${fieldName}`, newValue);
-
-      fetch(`https://example.local:3000/form/update/${fieldName}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CHAI-VisitorID': this.visitorId,
-        },
-        body: JSON.stringify(newValue),
-      });
-    };
-  }
-
-  blurField(fieldName: 'address') {
-    return () => {
-      this[`${fieldName}Changed`] = true;
-    };
-  }
-
   submit(e: Event) {
     e.preventDefault();
 
     // At this point, we know the user has interacted with the form
-    // and we can enforce display of any validation errors.
+    // so we can enforce display of any validation errors.
     //TODO: Trigger isChanged on any child fields!
-    this.addressChanged = true;
 
     //TODO: Check for validity of any child fields that are marked 'required'!
-    if (this.isAddressInvalid()) {
+    if (!e) {
       return;
     }
 
