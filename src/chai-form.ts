@@ -190,7 +190,8 @@ export class ChaiForm extends LitElement {
       text-align: center;
       text-decoration: none;
       border-radius: var(--chai-button-corner-radius);
-      margin-top: calc(var(--chai-form-spacing) / 2);
+      margin-top: calc(var(--chai-form-spacing) * 1.5);
+      margin-bottom: var(--chai-form-spacing);
       padding: calc(var(--chai-form-spacing) / 1.5);
 
       &:hover {
