@@ -10,7 +10,7 @@ import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
-import "./chai-date"; //TODO: Fix bundling to include *all* fields, not just the default ones!
+import "./chai-date";
 import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
 
 type FieldState = {
@@ -36,7 +36,7 @@ export class ChaiForm extends LitElement {
     this.fieldStates = new Map<string, FieldState>();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore //TODO: Fix type checking here!
+    //@ts-ignore
     this.addEventListener('chai-fieldchanged', this.handleFieldChange);
   }
 
@@ -293,7 +293,7 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  @queryAssignedElements({ slot: undefined, flatten: true/*, selector: 'chai-*' TODO: Filter to only known CHAI fields!*/ })
+  @queryAssignedElements({ slot: undefined, flatten: true })
   _defaultSlotElements!: Array<HTMLElement>;
 
 
@@ -360,7 +360,6 @@ export class ChaiForm extends LitElement {
     });
 
     // Every field must have a valid value.
-    //TODO: Support configuring optional/required fields
     for (const { valid } of this.fieldStates.values())
       if (!valid) { return; }
 

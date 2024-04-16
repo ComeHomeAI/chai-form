@@ -118,10 +118,10 @@ export abstract class ChaiField extends LitElement {
   protected input!: HTMLInputElement;
 
 
-  constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email" | "date", //TODO: Clean up the input type signature!
+  constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email" | "date",
     protected _defaultLabel: string, protected _defaultPlaceholder?: string,
     protected _invalidMessage?: string,
-    protected _autocomplete?: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") { //TODO: Clean up the autofill type signature!
+    protected _autocomplete?: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") {
     super();
 
     this.value = localStorage.getItem(`chai-${this._fieldId}`) || '';
