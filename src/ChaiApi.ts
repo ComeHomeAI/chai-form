@@ -19,8 +19,8 @@ export const api = {
     return formInit;
   },
 
-  update: async (visitorId: string, flowId: string, field: string, value: unknown) => {
-    await fetch(`${API_ORIGIN}/form/update/${flowId}/${field}`, {
+  update: async (visitorId: string, field: string, value: unknown) => {
+    await fetch(`${API_ORIGIN}/form/update/${field}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,10 +30,9 @@ export const api = {
     });
   },
 
-  getSubmitUrl: (visitorId: string, flowId: string, fieldValues: string[][]) => {
-    const submitUrl = `${API_ORIGIN}/form/submit/${flowId}`;
+  buildSubmitUrl: (visitorId: string, fieldValues: string[][]) => {
+    const submitUrl = `${API_ORIGIN}/form/submit/${visitorId}`;
     const queryParams = new URLSearchParams(fieldValues);
-    queryParams.append('visitorId', visitorId);
     const submitUrlWithParams = `${submitUrl}&${queryParams.toString()}`;
     return submitUrlWithParams;
   }

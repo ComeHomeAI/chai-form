@@ -26,8 +26,6 @@ type FieldState = {
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
-  @state() private flowId: string | null = null;
-
   @state() private fieldStates: Map<string, FieldState>;
 
   constructor() {
@@ -38,7 +36,6 @@ export class ChaiForm extends LitElement {
     console.info("Visitor ID set", this.visitorId);
 
     api.init(this.visitorId, this.flowType).then(formInit => {
-      this.flowId = formInit.flowId;
       console.info("Flow initialized", formInit);
     });
 
@@ -349,11 +346,7 @@ export class ChaiForm extends LitElement {
 
     if (valid) {
       console.info("Sending field update to API", field, value);
-
-      // If for some reason the flow initialization hasn't happened yet,
-      // we still want to submit the field update to the API. Let the
-      // API sort it out based on the visitor ID.
-      api.update(this.visitorId, this.flowId || "", field, value);
+      api.update(this.visitorId, field, value);
     }
   }
 
@@ -374,13 +367,9 @@ export class ChaiForm extends LitElement {
 
     console.info("Preparing submit");
 
-    // If for some reason the flow initialization hasn't happened yet,
-    // we still want to submit the form fields to the API. Let the
-    // API sort it out based on the visitor ID.
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const submitUrl = api.getSubmitUrl(
-      this.visitorId, this.flowId || "", fieldValues);
+    const submitUrl = api.buildSubmitUrl(this.visitorId, fieldValues);
 
     console.info("Initiating submit via navigation", submitUrl);
 
