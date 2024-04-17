@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload to Azure Blob Storage
         run: |
-          az storage blob upload-batch -d $container_name -s ./ --account-name $storage_account_name --auth-mode login
+          az storage blob upload-batch --overwrite -d $container_name -s ./ --account-name $storage_account_name --auth-mode login
         env:
           container_name: cdn
           storage_account_name: ${{ vars.CDN_STORAGE_ACCOUNT_NAME }}
