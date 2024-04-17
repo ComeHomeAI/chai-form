@@ -125,6 +125,7 @@ export abstract class ChaiField extends LitElement {
     super();
 
     this.value = localStorage.getItem(`chai-${this._fieldId}`) || '';
+    console.info("Field initialized", this._fieldId, this.value);
   }
 
 
@@ -159,6 +160,7 @@ export abstract class ChaiField extends LitElement {
   updateField() {
     return async (e: Event) => {
       const newValue = (e.target as HTMLInputElement).value;
+      console.info("Field updated", this._fieldId, newValue);
 
       this.value = newValue;
 
@@ -171,6 +173,7 @@ export abstract class ChaiField extends LitElement {
 
   blurField() {
     return () => {
+      console.info("Field blurred", this._fieldId, this.value);
       this.isChanged = true;
     };
   }

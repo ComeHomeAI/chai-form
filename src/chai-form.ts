@@ -341,13 +341,15 @@ export class ChaiForm extends LitElement {
   }
 
   handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
-    console.log("Field changed", event.detail);
+    console.info("Field changed", event.detail);
 
     const { field, value, valid } = event.detail;
 
     this.fieldStates.set(field, { value, valid });
 
     if (valid) {
+      console.info("Sending field update to API", field, value);
+
       // If for some reason the flow initialization hasn't happened yet,
       // we still want to submit the field update to the API. Let the
       // API sort it out based on the visitor ID.
@@ -357,6 +359,7 @@ export class ChaiForm extends LitElement {
 
   submit(e: Event) {
     e.preventDefault();
+    console.info("Submit requested");
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
@@ -369,6 +372,8 @@ export class ChaiForm extends LitElement {
     for (const { valid } of this.fieldStates.values())
       if (!valid) { return; }
 
+    console.info("Preparing submit");
+
     // If for some reason the flow initialization hasn't happened yet,
     // we still want to submit the form fields to the API. Let the
     // API sort it out based on the visitor ID.
@@ -376,6 +381,9 @@ export class ChaiForm extends LitElement {
       [key, value.value as string]);
     const submitUrl = api.getSubmitUrl(
       this.visitorId, this.flowId || "", fieldValues);
+
+    console.info("Initiating submit via navigation", submitUrl);
+
     window.open(submitUrl, '_blank');
   }
 }
