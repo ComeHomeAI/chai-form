@@ -26,6 +26,8 @@ type FieldState = {
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
+  @state() private flowInstanceId: string | null = null;
+
   @state() private fieldStates: Map<string, FieldState>;
 
   constructor() {
@@ -35,9 +37,14 @@ export class ChaiForm extends LitElement {
     localStorage.setItem('chai-visitorId', this.visitorId);
     console.info("Visitor ID set", this.visitorId);
 
-    api.init(this.visitorId, this.flowType).then(formInit => {
-      console.info("Flow initialized", formInit);
-    });
+    this.flowInstanceId = localStorage.getItem('chai-flowInstanceId');
+    if (this.flowInstanceId == null) {
+      api.init(this.visitorId, this.flowType).then(formInit => {
+        console.info("Flow initialized", formInit);
+        this.flowInstanceId = formInit.flowInstanceId;
+        localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
+      });
+    }
 
     this.fieldStates = new Map<string, FieldState>();
 
@@ -344,9 +351,12 @@ export class ChaiForm extends LitElement {
 
     this.fieldStates.set(field, { value, valid });
 
-    if (valid) {
+    //HACK: This works for an MSP, but returning visitors may end up with
+    //      some data not directly associated with the current flow instance.
+    //      That will primarily be an issue for the address, which is flow-specific.
+    if (valid && this.flowInstanceId != null) {
       console.info("Sending field update to API", field, value);
-      api.update(this.visitorId, field, value);
+      api.update(this.visitorId, this.flowInstanceId, field, value);
     }
   }
 
@@ -369,7 +379,7 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const submitUrl = api.buildSubmitUrl(this.visitorId, fieldValues);
+    const submitUrl = api.buildSubmitUrl(this.visitorId, this.flowInstanceId || "", fieldValues); //TODO: Fix null flowInstanceId!
 
     console.info("Initiating submit via navigation", submitUrl);
 
