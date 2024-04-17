@@ -5,8 +5,19 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { classMap } from 'lit/directives/class-map.js';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js';
+import "./chai-name";
+import "./chai-phone";
+import "./chai-email";
+import "./chai-address";
+import "./chai-date";
+import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
+import { api } from './ChaiApi';
+
+type FieldState = {
+  value: unknown,
+  valid: boolean
+}
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -15,25 +26,24 @@ import { customElement, property, state } from 'lit/decorators.js';
 export class ChaiForm extends LitElement {
   @state() private visitorId: string;
 
-  @state() private name: string;
-  @state() private phone: string;
-  @state() private email: string;
-  @state() private date: string;
-
-  @state() private nameChanged = false;
-  @state() private phoneChanged = false;
-  @state() private emailChanged = false;
+  @state() private fieldStates: Map<string, FieldState>;
 
   constructor() {
     super();
 
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
+    console.info("Visitor ID set", this.visitorId);
 
-    this.name = localStorage.getItem('chai-name') || '';
-    this.phone = localStorage.getItem('chai-phone') || '';
-    this.email = localStorage.getItem('chai-email') || '';
-    this.date = localStorage.getItem('chai-date') || '';
+    api.init(this.visitorId, this.flowType).then(formInit => {
+      console.info("Flow initialized", formInit);
+    });
+
+    this.fieldStates = new Map<string, FieldState>();
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    this.addEventListener('chai-fieldchanged', this.handleFieldChange);
   }
 
   static override styles = css`
@@ -195,7 +205,8 @@ export class ChaiForm extends LitElement {
       text-align: center;
       text-decoration: none;
       border-radius: var(--chai-button-corner-radius);
-      margin-top: calc(var(--chai-form-spacing) / 2);
+      margin-top: calc(var(--chai-form-spacing) * 1.5);
+      margin-bottom: var(--chai-form-spacing);
       padding: calc(var(--chai-form-spacing) / 1.5);
 
       &:hover {
@@ -216,6 +227,7 @@ export class ChaiForm extends LitElement {
       flex-direction: row;
       list-style: none;
       margin-top: calc(var(--chai-form-spacing) * 1.5);
+      margin-bottom: calc(-1 * var(--chai-form-spacing));
       padding: 0;
       color: var(--chai-form-color-text);
 
@@ -262,9 +274,8 @@ export class ChaiForm extends LitElement {
         }
       }
     }
-    #offer {
+    slot[name="before"], slot[name="after"] {
       display: block;
-      margin-top: calc(-2 * var(--chai-form-spacing));
       color: var(--chai-form-color-text);
     }
   `;
@@ -288,52 +299,21 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  private isNameInvalid() {
-    return this.nameChanged && this.name.length < 2;
-  }
-  private isPhoneInvalid() {
-    return this.phoneChanged &&
-      !/^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?(?!555)\d{3}[-.\s]?\d{4}$/.test(this.phone);
-  }
-  private isEmailInvalid() {
-    return this.emailChanged &&
-      !/^[^\s@]+@(?!.*(\w+\.)?example\.com)[^\s@]+\.[^\s@]+$/.test(this.email);
-  }
+  @queryAssignedElements({ slot: undefined, flatten: true })
+  _defaultSlotElements!: Array<HTMLElement>;
+
 
   override render() {
-    const nameInvalid = this.isNameInvalid();
-    const phoneInvalid = this.isPhoneInvalid();
-    const emailInvalid = this.isEmailInvalid();
-
     return html`
       <h2>${this.headerText}</h2>
+      <slot name="before"></slot>
       <form id="chai-quote-form">
-
-        <label for="name">Name <span>*</span></label>
-        <input id="name" type="text" placeholder="First & Last Name"
-          class=${classMap({ invalid: nameInvalid })} @blur="${this.blurField('name')}"
-          autocomplete="name" required
-          .value="${this.name}" @input="${this.updateField('name')}">
-        ${nameInvalid ? html`<span class="error">Please enter your name.</span>` : ''}
-        
-        <label for="phoneNumber">Phone Number <span>*</span></label>
-        <input id="phoneNumber" type="tel" placeholder="###-###-####"
-          class=${classMap({ invalid: phoneInvalid })} @blur="${this.blurField('phone')}"
-          autocomplete="tel" required
-          .value="${this.phone}" @input="${this.updateField('phone')}">
-        ${phoneInvalid ? html`<span class="error">Please enter a valid phone number.</span>` : ''}
-        
-        <label for="email">Email <span>*</span></label>
-        <input id="email" type="email" placeholder="Email"
-          class=${classMap({ invalid: emailInvalid })} @blur="${this.blurField('email')}"
-          autocomplete="email" required
-          .value="${this.email}" @input="${this.updateField('email')}">
-        ${emailInvalid ? html`<span class="error">Please enter a valid email address.</span>` : ''}
-        
-        <label for="date">Estimated Move Date</label>
-        <input id="date" type="date" placeholder="Estimated Move Date"
-          autocomplete="off" min="${new Date().toISOString().split('T')[0]}"
-          .value="${this.date}" @input="${this.updateField('date')}">
+        <slot>
+          <chai-name></chai-name>
+          <chai-phone></chai-phone>
+          <chai-email></chai-email>
+          <chai-address></chai-address>
+        </slot>
         
         <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
       </form>
@@ -353,49 +333,47 @@ export class ChaiForm extends LitElement {
           <p>Get your quote!</p>
         </li>
       </ol>
-      <slot id="offer"></slot>
+      <slot name="after"></slot>
     `;
   }
 
-  updateField(fieldName: 'name' | 'phone' | 'email' | 'date') {
-    return (e: Event) => {
-      const newValue = (e.target as HTMLInputElement).value;
+  handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
+    console.info("Field changed", event.detail);
 
-      this[fieldName] = newValue;
+    const { field, value, valid } = event.detail;
 
-      localStorage.setItem(`chai-${fieldName}`, newValue);
+    this.fieldStates.set(field, { value, valid });
 
-      fetch(`https://example.local:3000/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CHAI-VisitorID': this.visitorId,
-        },
-        body: JSON.stringify({ fieldName: newValue }),
-      });
-    };
-  }
-
-  blurField(fieldName: 'name' | 'phone' | 'email') {
-    return () => {
-      this[`${fieldName}Changed`] = true;
-    };
+    if (valid) {
+      console.info("Sending field update to API", field, value);
+      api.update(this.visitorId, field, value);
+    }
   }
 
   submit(e: Event) {
     e.preventDefault();
+    console.info("Submit requested");
 
     // At this point, we know the user has interacted with the form
-    // and we can enforce display of any validation errors.
-    this.nameChanged = true;
-    this.phoneChanged = true;
-    this.emailChanged = true;
+    // so we can enforce display of any validation errors.
+    const fieldElements = this._defaultSlotElements.filter(element => element.tagName.startsWith("CHAI-"));
+    fieldElements.forEach(element => {
+      (element as ChaiField).forceValidation = true;
+    });
 
-    if (this.isNameInvalid() || this.isPhoneInvalid() || this.isEmailInvalid()) {
-      return;
-    }
+    // Every field must have a valid value.
+    for (const { valid } of this.fieldStates.values())
+      if (!valid) { return; }
 
-    window.open(`https://example.local:3000/flows/${this.flowType}`, '_blank');
+    console.info("Preparing submit");
+
+    const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
+      [key, value.value as string]);
+    const submitUrl = api.buildSubmitUrl(this.visitorId, fieldValues);
+
+    console.info("Initiating submit via navigation", submitUrl);
+
+    window.open(submitUrl, '_blank');
   }
 }
 

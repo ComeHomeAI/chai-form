@@ -22,7 +22,10 @@ export default {
     }
   },
   plugins: [
-    replace({'Reflect.decorate': 'undefined'}),
+    replace({
+      'Reflect.decorate': 'undefined',
+      'https://example.local:3000': 'https://form.app.comehome.ai',
+    }),
     resolve(),
     /**
      * This minification setup is optimized for a standalone

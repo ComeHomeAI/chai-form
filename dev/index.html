@@ -104,9 +104,20 @@
   <div id="demos">
     <chai-form class="mover-default" flowtype="comehome.xyz"></chai-form>
     <chai-form class="mover-2cb" buttontext="Get Quote" headertext="Start your move off right!" flowtype="comehome.xyz">
-      <p>Optional: <b>Get $25 off</b> and a faster, more accurate quote if you complete our photo survey.</p>
+      <p slot="before">All fields are required.</p>
+      <chai-name></chai-name>
+      <chai-phone></chai-phone>
+      <chai-email></chai-email>
+      <chai-address></chai-address>
+      <p slot="after">Optional: <b>Get $25 off</b> and a faster, more accurate quote if you complete our photo survey.
+      </p>
     </chai-form>
-    <chai-form class="mover-wirks" buttontext="Start Quote" flowtype="comehome.xyz"></chai-form>
+    <chai-form class="mover-wirks" buttontext="Start Quote" flowtype="comehome.xyz">
+      <chai-name label="Your Name" placeholder="Full Name"></chai-name>
+      <chai-phone label="Cell Phone #" placeholder="Enter your mobile #"></chai-phone>
+      <chai-email label="Email Address" placeholder="Email"></chai-email>
+      <chai-date label="Requested Move Date"></chai-date>
+    </chai-form>
   </div>
 </body>
 

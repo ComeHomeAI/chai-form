@@ -1,0 +1,28 @@
+/**
+ * @license
+ * Copyright 2024 Come Home AI, Inc.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+import { customElement } from 'lit/decorators.js';
+import { ChaiField } from './ChaiField';
+
+/**
+ * The standard form element for the resident's full name.
+ */
+@customElement('chai-name')
+export class ChaiName extends ChaiField {
+  constructor() {
+    super("name", "text", "Name", "First & Last Name", "Please enter your name.", "name");
+  }
+
+  protected override isValueValid() {
+    return this.value.length >= 2;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'chai-name': ChaiName;
+  }
+}
