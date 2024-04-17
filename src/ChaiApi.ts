@@ -20,7 +20,7 @@ export const api = {
   },
 
   update: async (visitorId: string, flowId: string, field: string, value: unknown) => {
-    await fetch(`${API_ORIGIN}/form/${flowId}/update/${field}`, {
+    await fetch(`${API_ORIGIN}/form/update/${flowId}/${field}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,8 +30,11 @@ export const api = {
     });
   },
 
-  getSubmitUrl: (visitorId: string, flowId: string, fields: object) => {
-    return `${API_ORIGIN}/form/${flowId}/submit?visitorId=${visitorId}`;
-    //TODO: Include the fields! (Use a Map<string, string>? query params builder?)
+  getSubmitUrl: (visitorId: string, flowId: string, fieldValues: string[][]) => {
+    const submitUrl = `${API_ORIGIN}/form/submit/${flowId}`;
+    const queryParams = new URLSearchParams(fieldValues);
+    queryParams.append('visitorId', visitorId);
+    const submitUrlWithParams = `${submitUrl}&${queryParams.toString()}`;
+    return submitUrlWithParams;
   }
 };

@@ -372,10 +372,10 @@ export class ChaiForm extends LitElement {
     // If for some reason the flow initialization hasn't happened yet,
     // we still want to submit the form fields to the API. Let the
     // API sort it out based on the visitor ID.
-    //TODO: Should we just get rid of the client's awareness of the flowId?
-    //      It feels redundant...
+    const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
+      [key, value.value as string]);
     const submitUrl = api.getSubmitUrl(
-      this.visitorId, this.flowId || "", this.fieldStates.entries())
+      this.visitorId, this.flowId || "", fieldValues);
     window.open(submitUrl, '_blank');
   }
 }
