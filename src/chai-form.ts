@@ -11,7 +11,7 @@ import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date";
-import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
+import { ChaiFieldBase, ChaiFieldChangedDetails } from './ChaiFieldBase';
 import { ApiEnvironment, api } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
@@ -387,7 +387,7 @@ export class ChaiForm extends LitElement {
     const defaultSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
     const fieldElements = defaultSlot!.assignedElements({ flatten: true }).filter(element => element.tagName.startsWith("CHAI-"));
     fieldElements.forEach(element => {
-      (element as ChaiField).forceValidation = true;
+      (element as ChaiFieldBase<unknown>).forceValidation = true;
     });
 
     // Every field must have a valid value.

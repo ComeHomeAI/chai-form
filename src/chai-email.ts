@@ -5,13 +5,13 @@
  */
 
 import { customElement } from 'lit/decorators.js';
-import { ChaiField } from './ChaiField';
+import { ChaiTextFieldBase } from './ChaiTextFieldBase';
 
 /**
  * The standard form element for the resident's email address.
  */
 @customElement('chai-email')
-export class ChaiEmail extends ChaiField {
+export class ChaiEmail extends ChaiTextFieldBase {
   constructor() {
     super("email", "email", "Email", "Email", "Please enter a valid email address.", "email");
   }

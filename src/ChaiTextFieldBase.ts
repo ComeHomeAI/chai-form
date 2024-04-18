@@ -4,21 +4,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { LitElement, html, css } from 'lit';
+import { html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { property, query, state } from 'lit/decorators.js';
+import { query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-
-export interface ChaiFieldChangedDetails<T> {
-  field: string;
-  value: T;
-  valid: boolean;
-}
+import { ChaiFieldBase } from './ChaiFieldBase';
 
 /**
- * Reusable form element base class.
+ * Reusable form element base class that provides a configurable text input,
+ * with additional logic to handle the general needs of text/input-type fields.
  */
-export abstract class ChaiField extends LitElement {
+export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
   static override styles = css`
     :host {
       /**
@@ -91,113 +87,39 @@ export abstract class ChaiField extends LitElement {
     }
   `;
 
-
-  /**
-   * The label for this field.
-   */
-  @property()
-  accessor label = this._defaultLabel;
-
-  /**
-   * A placeholder value to show for this field.
-   */
-  @property()
-  accessor placeholder = this._defaultPlaceholder;
-
-  @property()
-  accessor invalidMessage = this._invalidMessage;
-
-  @property({ type: Boolean })
-  accessor forceValidation = false;
-
-  @state() protected value: string;
-
-  @state() protected isChanged = false;
-
   @query('input')
   protected input!: HTMLInputElement;
 
 
-  constructor(protected _fieldId: string, protected _inputType: "text" | "tel" | "email" | "date",
-    protected _defaultLabel: string, protected _defaultPlaceholder?: string,
-    protected _invalidMessage?: string,
+  constructor(_fieldId: string, protected _inputType: "text" | "tel" | "email" | "date",
+    _defaultLabel: string, _defaultPlaceholder?: string,
+    _invalidMessage?: string,
     protected _autocomplete?: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") {
-    super();
-
-    this.value = localStorage.getItem(`chai-${this._fieldId}`) || '';
-    console.info("Field initialized", this._fieldId, this.value);
+    super(_fieldId, _defaultLabel, _defaultPlaceholder, _invalidMessage);
   }
 
 
-  protected isFieldInvalid() {
-    return (this.isChanged || this.forceValidation || this.value.length > 0) && !this.isValueValid();
+  protected override deserializeValue(storedValue: string | null) {
+    return storedValue ?? "";
   }
 
-  protected abstract isValueValid(): boolean;
-
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-
-    // When connected, bubble up an event to notify the parent form of the field's existence
-    // and its initial state.
-    this.notifyParentForm();
+  protected override serializeValue(value: string) {
+    return value;
   }
 
-  override render() {
+  protected override isValueSet() {
+    return this.value.length > 0;
+  }
+
+  protected override renderInput() {
     const invalid = this.isFieldInvalid();
 
     return html`
-      <label for=${this._fieldId}>${this.label} <span title="Required">*</span></label>
       <input id=${this._fieldId} type="${this._inputType}" placeholder="${ifDefined(this.placeholder)}"
         class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
         autocomplete=${ifDefined(this._autocomplete)} required
-        .value="${this.value}" @input="${this.updateField()}">
-      ${invalid && this.invalidMessage ? html`<span class="error">${this.invalidMessage}</span>` : ''}
+        .value="${this.value}"
+        @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">
     `;
-  }
-
-  updateField() {
-    return async (e: Event) => {
-      const newValue = (e.target as HTMLInputElement).value;
-      console.info("Field updated", this._fieldId, newValue);
-
-      this.value = newValue;
-
-      localStorage.setItem(`chai-${this._fieldId}`, newValue);
-
-      // After rendering, bubble up an event to notify the parent form of the update.
-      this.notifyParentForm();
-    };
-  }
-
-  blurField() {
-    return () => {
-      console.info("Field blurred", this._fieldId, this.value);
-      this.isChanged = true;
-    };
-  }
-
-  notifyParentForm() {
-    let valid;
-    try {
-      valid = this.isValueValid();
-    } catch (e) {
-      console.warn("Error validating field", this._fieldId, e);
-      valid = false;
-    }
-
-    const fieldChangedEvent = new CustomEvent<ChaiFieldChangedDetails<string>>('chai-fieldchanged', {
-      detail: {
-        field: this._fieldId,
-        value: this.value,
-        valid: valid
-      },
-      bubbles: true,
-      cancelable: false,
-      composed: true
-    });
-
-    this.dispatchEvent(fieldChangedEvent);
   }
 }

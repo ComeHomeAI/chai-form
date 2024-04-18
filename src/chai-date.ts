@@ -5,13 +5,13 @@
  */
 
 import { customElement } from 'lit/decorators.js';
-import { ChaiField } from './ChaiField';
+import { ChaiTextFieldBase } from './ChaiTextFieldBase';
 
 /**
  * The standard form element for the requested service date.
  */
 @customElement('chai-date')
-export class ChaiDate extends ChaiField {
+export class ChaiDate extends ChaiTextFieldBase {
   constructor() {
     super("date", "date", "Date", undefined, "Please enter a valid future date.", "off");
   }

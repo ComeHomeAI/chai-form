@@ -5,13 +5,13 @@
  */
 
 import { customElement } from 'lit/decorators.js';
-import { ChaiField } from './ChaiField';
+import { ChaiTextFieldBase } from './ChaiTextFieldBase';
 
 /**
  * The standard form element for the resident's mobile phone number.
  */
 @customElement('chai-phone')
-export class ChaiPhone extends ChaiField {
+export class ChaiPhone extends ChaiTextFieldBase {
   constructor() {
     super("phone", "tel", "Phone Number", "###-###-####", "Please enter a valid phone number.", "tel");
   }

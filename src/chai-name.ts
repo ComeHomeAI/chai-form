@@ -5,13 +5,13 @@
  */
 
 import { customElement } from 'lit/decorators.js';
-import { ChaiField } from './ChaiField';
+import { ChaiTextFieldBase } from './ChaiTextFieldBase';
 
 /**
  * The standard form element for the resident's full name.
  */
 @customElement('chai-name')
-export class ChaiName extends ChaiField {
+export class ChaiName extends ChaiTextFieldBase {
   constructor() {
     super("name", "text", "Name", "First & Last Name", "Please enter your name.", "name");
   }
