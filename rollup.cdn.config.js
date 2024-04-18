@@ -24,7 +24,7 @@ export default {
   plugins: [
     replace({
       'Reflect.decorate': 'undefined',
-      'https://example.local:3000': 'https://form.app.comehome.ai',
+      // 'https://example.local:3000': 'https://form.app.comehome.ai',
     }),
     resolve(),
     /**

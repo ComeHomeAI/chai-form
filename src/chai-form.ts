@@ -12,7 +12,7 @@ import "./chai-email";
 import "./chai-address";
 import "./chai-date";
 import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
-import { api } from './ChaiApi';
+import { ApiEnvironment, api } from './ChaiApi';
 
 type FieldState = {
   value: unknown,
@@ -39,7 +39,7 @@ export class ChaiForm extends LitElement {
 
     this.flowInstanceId = localStorage.getItem('chai-flowInstanceId');
     if (this.flowInstanceId == null) {
-      api.init(this.visitorId, this.flowType).then(formInit => {
+      api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
         console.info("Flow initialized", formInit);
         this.flowInstanceId = formInit.flowInstanceId;
         localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
@@ -288,6 +288,13 @@ export class ChaiForm extends LitElement {
   `;
 
   /**
+   * The environment to use for the API (defaults to production; only change this for
+   * development purposes).
+   */
+  @property()
+  accessor environment = ApiEnvironment.Production;
+
+  /**
    * The ComeHome.ai flow type is the ID that has been configured for the location/context of
    * this form (e.g., the mover's website).
    */
@@ -354,7 +361,7 @@ export class ChaiForm extends LitElement {
     //      Our solution for this is to include all field values in the submit request.
     if (valid && this.flowInstanceId != null) {
       console.info("Sending field update to API", field, value);
-      api.update(this.visitorId, this.flowInstanceId, field, value);
+      api(this.environment).update(this.visitorId, this.flowInstanceId, field, value);
     }
   }
 
@@ -378,7 +385,7 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const submitUrl = api.buildSubmitUrl(this.visitorId, this.flowInstanceId || "", fieldValues); //TODO: Fix null flowInstanceId!
+    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowInstanceId || "", fieldValues); //TODO: Fix null flowInstanceId!
 
     console.info("Initiating submit via navigation", submitUrl);
 
