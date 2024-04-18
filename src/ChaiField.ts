@@ -179,13 +179,21 @@ export abstract class ChaiField extends LitElement {
   }
 
   notifyParentForm() {
+    let valid;
+    try {
+      valid = this.isValueValid();
+    } catch (e) {
+      console.warn("Error validating field", this._fieldId, e);
+      valid = false;
+    }
+
     const fieldChangedEvent = new CustomEvent<ChaiFieldChangedDetails<string>>('chai-fieldchanged', {
       detail: {
         field: this._fieldId,
         value: this.value,
-        valid: this.isValueValid()
+        valid: valid
       },
-      bubbles: false,
+      bubbles: true,
       cancelable: false,
       composed: true
     });

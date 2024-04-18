@@ -5,7 +5,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
@@ -306,9 +306,6 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  @queryAssignedElements({ slot: undefined, flatten: true })
-  _defaultSlotElements!: Array<HTMLElement>;
-
 
   override render() {
     return html`
@@ -354,6 +351,7 @@ export class ChaiForm extends LitElement {
     //HACK: This works for an MSP, but returning visitors may end up with
     //      some data not directly associated with the current flow instance.
     //      That will primarily be an issue for the address, which is flow-specific.
+    //      Our solution for this is to include all field values in the submit request.
     if (valid && this.flowInstanceId != null) {
       console.info("Sending field update to API", field, value);
       api.update(this.visitorId, this.flowInstanceId, field, value);
@@ -366,7 +364,8 @@ export class ChaiForm extends LitElement {
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
-    const fieldElements = this._defaultSlotElements.filter(element => element.tagName.startsWith("CHAI-"));
+    const defaultSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
+    const fieldElements = defaultSlot!.assignedElements({ flatten: true }).filter(element => element.tagName.startsWith("CHAI-"));
     fieldElements.forEach(element => {
       (element as ChaiField).forceValidation = true;
     });
