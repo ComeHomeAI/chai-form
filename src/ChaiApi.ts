@@ -8,11 +8,34 @@ export enum ApiEnvironment {
   Production = 'https://form.app.comehome.ai'
 }
 
+// Extract UTM parameters from the current URL
+function getUtmQueryParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const utmParams = new URLSearchParams();
+  if (urlParams.has('utm_source')) {
+    utmParams.append('utm_source', urlParams.get('utm_source')!);
+  }
+  if (urlParams.has('utm_medium')) {
+    utmParams.append('utm_medium', urlParams.get('utm_medium')!);
+  }
+  if (urlParams.has('utm_campaign')) {
+    utmParams.append('utm_campaign', urlParams.get('utm_campaign')!);
+  }
+  if (urlParams.has('utm_term')) {
+    utmParams.append('utm_term', urlParams.get('utm_term')!);
+  }
+  if (urlParams.has('utm_content')) {
+    utmParams.append('utm_content', urlParams.get('utm_content')!);
+  }
+  return utmParams;
+}
+
 export const api = (environment: ApiEnvironment) => {
   return {
     init: async (visitorId: string, flowType: string) => {
       const response = await fetch(
-        `${environment}/formBff/init/${flowType}`, {
+        `${environment}/formBff/init/${flowType}?${getUtmQueryParams()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,9 +59,10 @@ export const api = (environment: ApiEnvironment) => {
 
     buildSubmitUrl: (visitorId: string, flowType: string, flowInstanceId: string, fieldValues: string[][]) => {
       const submitUrl = `${environment}/formBff/submit/${flowType}/${flowInstanceId}`;
-      const queryParams = new URLSearchParams(fieldValues);
+      const utmParams = Array.from(getUtmQueryParams().entries());
+      const queryParams = new URLSearchParams(fieldValues.concat(utmParams));
       queryParams.append('visitorId', visitorId);
-      const submitUrlWithParams = `${submitUrl}?${queryParams.toString()}`;
+      const submitUrlWithParams = `${submitUrl}?${queryParams}`;
       return submitUrlWithParams;
     }
   };
