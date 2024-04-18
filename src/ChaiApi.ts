@@ -34,8 +34,8 @@ export const api = (environment: ApiEnvironment) => {
       });
     },
 
-    buildSubmitUrl: (visitorId: string, flowInstanceId: string, fieldValues: string[][]) => {
-      const submitUrl = `${environment}/formBff/submit/${flowInstanceId}`;
+    buildSubmitUrl: (visitorId: string, flowType: string, flowInstanceId: string, fieldValues: string[][]) => {
+      const submitUrl = `${environment}/formBff/submit/${flowType}/${flowInstanceId}`;
       const queryParams = new URLSearchParams(fieldValues);
       queryParams.append('visitorId', visitorId);
       const submitUrlWithParams = `${submitUrl}?${queryParams.toString()}`;

@@ -395,7 +395,7 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowInstanceId || "", fieldValues); //TODO: Fix null flowInstanceId!
+    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowType, this.flowInstanceId || "", fieldValues);
 
     console.info("Initiating submit via navigation", submitUrl);
 
