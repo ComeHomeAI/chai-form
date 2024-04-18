@@ -37,14 +37,9 @@ export class ChaiForm extends LitElement {
     localStorage.setItem('chai-visitorId', this.visitorId);
     console.info("Visitor ID set", this.visitorId);
 
+    // Load the saved flow instance ID, if any. The flow instance will be
+    // initialized when the element is connected, if needed.
     this.flowInstanceId = localStorage.getItem('chai-flowInstanceId');
-    if (this.flowInstanceId == null) {
-      api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
-        console.info("Flow initialized", formInit);
-        this.flowInstanceId = formInit.flowInstanceId;
-        localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
-      });
-    }
 
     this.fieldStates = new Map<string, FieldState>();
 
@@ -313,6 +308,21 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
+
+  override connectedCallback() {
+    super.connectedCallback();
+
+    // Initialize the flow instance if it hasn't been done yet.
+    // We need to wait until this point in order to read the environment property.
+    if (this.flowInstanceId == null) {
+      api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
+        console.info("Flow initialized", formInit);
+        this.flowInstanceId = formInit.flowInstanceId;
+        localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
+      });
+    }
+
+  }
 
   override render() {
     return html`
