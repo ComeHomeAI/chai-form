@@ -14,6 +14,7 @@ import "./chai-date";
 import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
 import { ApiEnvironment, api } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
+import posthog from 'posthog-js';
 
 type FieldState = {
   value: unknown,
@@ -37,6 +38,7 @@ export class ChaiForm extends LitElement {
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
     console.info("Visitor ID set", this.visitorId);
+    posthog.identify(this.visitorId);
 
     // Load the saved flow instance ID, if any. The flow instance will be
     // initialized when the element is connected, if needed.
@@ -399,6 +401,7 @@ export class ChaiForm extends LitElement {
     const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowType, this.flowInstanceId || "", fieldValues);
 
     publishGtmEvent("chai_form_submit", { flowType: this.flowType });
+    posthog.capture("form_submitted", { flow_type: this.flowType });
 
     console.info("Initiating submit via navigation", submitUrl);
 

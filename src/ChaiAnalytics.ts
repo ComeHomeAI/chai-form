@@ -1,8 +1,13 @@
+import posthog from "posthog-js";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataLayer: any;
 }
+
+posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM', {
+  api_host: "https://us.posthog.com"
+});
 
 /**
  * Publish an event to the Google Tag Manager dataLayer, if present.
