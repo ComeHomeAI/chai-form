@@ -13,6 +13,7 @@ import "./chai-address";
 import "./chai-date";
 import { ChaiField, ChaiFieldChangedDetails } from './ChaiField';
 import { ApiEnvironment, api } from './ChaiApi';
+import { publishGtmEvent } from './ChaiAnalytics';
 
 type FieldState = {
   value: unknown,
@@ -396,6 +397,8 @@ export class ChaiForm extends LitElement {
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
     const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowType, this.flowInstanceId || "", fieldValues);
+
+    publishGtmEvent("chai_form_submit", { flowType: this.flowType });
 
     console.info("Initiating submit via navigation", submitUrl);
 
