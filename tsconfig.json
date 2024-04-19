@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
@@ -33,7 +33,8 @@
       }
     ],
     "types": [
-      "mocha"
+      "mocha",
+      "google.maps"
     ]
   },
   "include": [
