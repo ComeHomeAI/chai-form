@@ -9,7 +9,9 @@ import { ChaiFieldBase } from './ChaiFieldBase';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
+import '@googlemaps/extended-component-library/api_loader.js';
 import '@googlemaps/extended-component-library/place_picker.js';
+import { PlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
 
 /**
  * The standard form element for the resident's address.
@@ -60,7 +62,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       font-size: calc(var(--chai-form-font-size) * 1.05);
       padding-left: 1px;
       color: var(--chai-label-color);
-      margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
+      margin-bottom: calc(-1 * var(--chai-form-spacing) / 1.5);
 
       span {
         color: var(--chai-form-color-alert);
@@ -72,18 +74,23 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       font-size: calc(0.9 * var(--chai-form-font-size));
       margin-top: calc(-1 * var(--chai-form-spacing) / 4 * 3);
     }
-    input {
-      font-size: var(--chai-form-font-size);
-      color: var(--chai-input-color);
-      border: var(--chai-input-border);
-      border-radius: var(--chai-input-corner-radius);
+    gmpx-place-picker {
+      --gmpx-color-surface: #fff;
+      --gmpx-color-on-surface: var(--chai-input-color);
+      /* --gmpx-color-on-surface-variant: #757575; */
+      --gmpx-color-primary: var(--chai-form-color-brand);
+      /* --gmpx-color-on-primary: #fff; */
+      --gmpx-font-family-base: var(--chai-form-font-family); //TODO: ???
+      /* --gmpx-font-family-headings: var(--chai-form-font-family); //TODO: ??? */
+      --gmpx-font-size-base: var(--chai-form-font-size);//0.875rem;
       box-shadow: var(--chai-input-shadow);
-      padding: calc(var(--chai-form-spacing) / 2);
       margin-bottom: calc(var(--chai-form-spacing) / 2);
 
       &.invalid {
-        border-color: var(--chai-form-color-alert);
-        border-width: 2px;
+        /* --gmpx-color-primary: var(--chai-form-color-alert); */
+        border: 2px solid var(--chai-form-color-alert);
+        border-radius: 6px;//(--chai-input-corner-radius);
+        //border-width: 2px;
       }
     }
   `;
@@ -98,6 +105,17 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
 
   constructor() {
     super("address", "Address", "Please enter a valid address.");
+  }
+
+
+  protected override firstUpdated() {
+    //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
+    const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
+    picker.addEventListener('gmpx-placechange', () => {
+      this.updateField(picker.value?.id ? `places/${picker.value.id}` : "");
+      console.log(picker.value?.id);
+      console.log(picker.value?.formattedAddress);
+    });
   }
 
 
@@ -121,13 +139,10 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     const invalid = this.isFieldInvalid();
 
     return html`
-      <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM" solution-channel="GMP_DOCS_placepicker_v1"></gmpx-api-loader>
-      <gmpx-place-picker placeholder="${this.placeholder}" id="${this._fieldId}" style="width: 100%"></gmpx-place-picker>
-      <!-- <input id=${this._fieldId} type="text" placeholder="${ifDefined(this.placeholder)}"
-        class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
-        autocomplete="off" required
-        .value="${this.value}"
-        @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}"> -->
+      <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
+      <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
+        type="address" placeholder="${ifDefined(this.placeholder)}"
+        @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
 }
