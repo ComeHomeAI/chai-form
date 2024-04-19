@@ -24,12 +24,6 @@ export abstract class ChaiFieldBase<T> extends LitElement {
   @property()
   accessor label = this._defaultLabel;
 
-  /**
-   * A placeholder value to show for this field.
-   */
-  @property()
-  accessor placeholder = this._defaultPlaceholder;
-
   @property()
   accessor invalidMessage = this._invalidMessage;
 
@@ -42,8 +36,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
 
   constructor(protected _fieldId: string,
-    protected _defaultLabel: string, protected _defaultPlaceholder?: string,
-    protected _invalidMessage?: string) {
+    protected _defaultLabel: string, protected _invalidMessage?: string) {
     super();
 
     const storedValue = localStorage.getItem(`chai-${this._fieldId}`);
