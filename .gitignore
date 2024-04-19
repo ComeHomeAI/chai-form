@@ -3,9 +3,15 @@
 /test/
 custom-elements.json
 # top level source
-my-element.js
-my-element.js.map
-my-element.d.ts
-my-element.d.ts.map
+chai-*.js
+chai-*.js.map
+chai-*.d.ts
+chai-*.d.ts.map
+Chai*.js
+Chai*.js.map
+Chai*.d.ts
+Chai*.d.ts.map
 # only generated for size check
-my-element.bundled.js
+chai-form.bundled.js
+# only generated for publishing
+/dist/

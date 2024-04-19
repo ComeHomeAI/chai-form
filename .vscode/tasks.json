@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "test:watch",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: test:watch",
+      "detail": "wtr --watch",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build:watch",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build:watch",
+      "detail": "tsc --watch",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "docs:serve",
+      "problemMatcher": [],
+      "label": "npm: docs:serve",
+      "detail": "wds --root-dir=docs --node-resolve --watch",
+      "runOptions": {
+        // "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "serve",
+      "problemMatcher": [],
+      "label": "npm: serve",
+      "detail": "wds --watch",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
