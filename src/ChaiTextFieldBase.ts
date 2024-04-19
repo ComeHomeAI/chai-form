@@ -6,7 +6,7 @@
 
 import { html, css } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { query } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { ChaiFieldBase } from './ChaiFieldBase';
 
@@ -87,15 +87,22 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
     }
   `;
 
+
+  /**
+   * A placeholder value to show for this field.
+   */
+  @property()
+  accessor placeholder = this._defaultPlaceholder;
+
   @query('input')
   protected input!: HTMLInputElement;
 
 
   constructor(_fieldId: string, protected _inputType: "text" | "tel" | "email" | "date",
-    _defaultLabel: string, _defaultPlaceholder?: string,
+    _defaultLabel: string, protected _defaultPlaceholder?: string,
     _invalidMessage?: string,
     protected _autocomplete?: Exclude<AutoFillBase, ""> | "name" | "tel" | "email") {
-    super(_fieldId, _defaultLabel, _defaultPlaceholder, _invalidMessage);
+    super(_fieldId, _defaultLabel, _invalidMessage);
   }
 
 
