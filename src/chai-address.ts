@@ -9,6 +9,7 @@ import { ChaiFieldBase } from './ChaiFieldBase';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
+import '@googlemaps/extended-component-library/place_picker.js';
 
 /**
  * The standard form element for the resident's address.
@@ -120,11 +121,13 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     const invalid = this.isFieldInvalid();
 
     return html`
-      <input id=${this._fieldId} type="text" placeholder="${ifDefined(this.placeholder)}"
+      <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM" solution-channel="GMP_DOCS_placepicker_v1"></gmpx-api-loader>
+      <gmpx-place-picker placeholder="${this.placeholder}" id="${this._fieldId}" style="width: 100%"></gmpx-place-picker>
+      <!-- <input id=${this._fieldId} type="text" placeholder="${ifDefined(this.placeholder)}"
         class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
         autocomplete="off" required
         .value="${this.value}"
-        @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">
+        @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}"> -->
     `;
   }
 }
