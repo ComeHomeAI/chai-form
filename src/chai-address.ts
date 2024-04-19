@@ -11,7 +11,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
 import '@googlemaps/extended-component-library/api_loader.js';
 import '@googlemaps/extended-component-library/place_picker.js';
-import { PlacePicker } from '@googlemaps/extended-component-library/place_picker.js';
+import { PlacePicker } from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
 
 /**
  * The standard form element for the resident's address.
