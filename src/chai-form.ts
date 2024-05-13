@@ -15,6 +15,7 @@ import { ChaiFieldBase, ChaiFieldChangedDetails } from './ChaiFieldBase';
 import { ApiEnvironment, api } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
+import "./chai-stepper";
 
 type FieldState = {
   value: unknown,
@@ -231,58 +232,6 @@ export class ChaiForm extends LitElement {
         filter: var(--chai-button-filter-active);
       }
     }
-    ol {
-      display: flex;
-      flex-direction: row;
-      list-style: none;
-      margin-top: calc(var(--chai-form-spacing) * 1.5);
-      margin-bottom: calc(-1 * var(--chai-form-spacing));
-      padding: 0;
-      color: var(--chai-form-color-text);
-
-      li {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        position: relative;
-
-        &:not(:first-child)::before {
-          content: '';
-          position: absolute;
-          display: block;
-          width: 100%;
-          height: 4px;
-          left: calc(-50%);
-          right: calc(-50%);
-          top: calc((var(--chai-form-spacing) + 24px) / 2 - 2px);
-          background-color: var(--chai-form-color-brand);
-          filter: saturate(0.1) brightness(1.9);
-          z-index: 1;
-        }
-
-        svg {
-          background-color: var(--chai-form-color-brand);
-          filter: saturate(0.5) brightness(1.5);
-          fill: #fff;
-          padding: calc(var(--chai-form-spacing) / 2);
-          border-radius: 50%; // Make the background circular
-          height: 24px;
-          width: 24px;
-          margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
-          z-index: 2;
-        }
-
-        &:first-child svg {
-          filter: none;
-          padding: var(--chai-form-spacing);
-          position: relative;
-          top: calc(-1 * var(--chai-form-spacing) / 2);
-          margin-bottom: calc(-1.25 * var(--chai-form-spacing));
-        }
-      }
-    }
     slot[name="before"], slot[name="after"] {
       display: block;
       color: var(--chai-form-color-text);
@@ -342,26 +291,11 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        
         <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
       </form>
-      <ol>
-        <li>
-          <svg focusable="false" viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.89-2-2-2m0 16H5V7h14zm-2-7H7v-2h10zm-4 4H7v-2h6z"></path></svg>
-          <p>Fill out this form <b>(required)</b></p>
-        </li>
-        <li>
-          <div class="connector"></div>
-          <svg focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5"></path></svg>
-          <p>Take pictures of your items <i>(optional)</i></p>
-        </li>
-        <li>
-          <div class="connector"></div>
-          <svg focusable="false" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm1 10h-4v1h3c.55 0 1 .45 1 1v3c0 .55-.45 1-1 1h-1v1h-2v-1H9v-2h4v-1h-3c-.55 0-1-.45-1-1v-3c0-.55.45-1 1-1h1V9h2v1h2zm-2-4V3.5L17.5 8z"></path></svg>
-          <p>Get your quote!</p>
-        </li>
-      </ol>
-      <slot name="after"></slot>
+      <slot name="after">
+        <chai-stepper></chai-stepper>
+      </slot>
     `;
   }
 
