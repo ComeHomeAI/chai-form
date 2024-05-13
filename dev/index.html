@@ -34,6 +34,11 @@
       text-shadow: #000 2px 2px 2px;
     }
 
+    chai-form.mover-nolabels {
+      --chai-label-visibility: collapse;
+      --chai-label-height: 0;
+    }
+
     /* chai-form.mover-default {
       --chai-form-max-width: 400px;
       --chai-form-color-brand: #01919b;
@@ -108,6 +113,14 @@
   <div id="demos">
 
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-default" flowtype="comehome.xyz"></chai-form>
+
+    <chai-form environment="https://192.168.2.169:7034/form" class="mover-default mover-nolabels"
+      flowtype="comehome.xyz">
+      <chai-name placeholder="Full Name"></chai-name>
+      <chai-phone placeholder="Cell Phone #"></chai-phone>
+      <chai-email placeholder="Email"></chai-email>
+      <chai-address placeholder="Moving From"></chai-address>
+    </chai-form>
 
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-2cb" buttontext="Get Quote"
       headertext="Start your move off right!" flowtype="comehome.xyz">

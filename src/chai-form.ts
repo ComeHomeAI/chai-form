@@ -120,6 +120,8 @@ export class ChaiForm extends LitElement {
       --chai-header-font-size: calc(var(--chai-form-font-size) * 1.5);
       --chai-header-color: var(--chai-form-color-text);
       --chai-label-color: var(--chai-form-color-text);
+      --chai-label-visibility: visible;
+      --chai-label-height: auto;
       --chai-input-color: #000;
       --chai-input-corner-radius: calc(var(--chai-form-corner-radius) / 4);
       --chai-input-border: 0.8px solid rgb(233,228,224);
@@ -176,6 +178,8 @@ export class ChaiForm extends LitElement {
       padding-left: 1px;
       color: var(--chai-label-color);
       margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
+      visibility: var(--chai-label-visibility);
+      height: var(--chai-label-height);
 
       span {
         color: var(--chai-form-color-alert);
