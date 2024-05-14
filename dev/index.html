@@ -64,6 +64,21 @@
       --chai-button-corner-radius: var(--chai-form-corner-radius);
     } */
 
+    chai-form.mover-preferred {
+      --chai-label-visibility: collapse;
+      --chai-label-height: 18;
+      --chai-form-flex-direction: row;
+      --chai-form-max-width: auto;
+      --chai-form-background: #18242be6;
+      --chai-form-font-family: 'Dosis';
+      --chai-form-font-weight: 700;
+      --chai-header-color: #fff;
+      --chai-input-corner-radius: 6px;
+      --chai-button-color: rgb(248, 230, 186);
+      --chai-button-background: #790205;
+      --chai-button-text-transform: none;
+    }
+
     chai-form.mover-2cb {
       --chai-form-max-width: 350px;
       --chai-form-color-brand: rgb(74, 38, 132);
@@ -101,12 +116,25 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <h1>Form Demo</h1>
   <div id="demos">
+
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-default" flowtype="comehome.xyz"></chai-form>
+
+    <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
+      headertext="Get a Free Moving Estimate" buttontext="Continue">
+      <chai-address placeholder="Pickup"></chai-address>
+      <chai-name placeholder="Full Name"></chai-name>
+      <chai-phone placeholder="Cell Phone #"></chai-phone>
+      <!-- <chai-email placeholder="Email"></chai-email> -->
+      <chai-date label="Moving Date"></chai-date>
+      <span slot="after"></span>
+    </chai-form>
+
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-2cb" buttontext="Get Quote"
       headertext="Start your move off right!" flowtype="comehome.xyz">
       <p slot="before">All fields are required.</p>
@@ -114,9 +142,13 @@
       <chai-phone></chai-phone>
       <chai-email></chai-email>
       <chai-address></chai-address>
-      <p slot="after">Optional: <b>Get $25 off</b> and a faster, more accurate quote if you complete our photo survey.
+      <chai-stepper slot="after"></chai-stepper>
+      <p slot="after">
+        Optional: <b>Get $25 off</b> and a faster, more accurate quote
+        if you complete our photo survey.
       </p>
     </chai-form>
+
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-wirks" buttontext="Start Quote"
       flowtype="comehome.xyz">
       <chai-name label="Your Name" placeholder="Full Name"></chai-name>
@@ -124,6 +156,7 @@
       <chai-email label="Email Address" placeholder="Email"></chai-email>
       <chai-date label="Requested Move Date"></chai-date>
     </chai-form>
+
   </div>
 </body>
 

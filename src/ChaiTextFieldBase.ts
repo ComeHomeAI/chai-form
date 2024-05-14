@@ -41,6 +41,8 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
        * are insufficient for the desired look-and-feel.
        */
       --chai-label-color: inherit;
+      --chai-label-visibility: inherit;
+      --chai-label-height: inherit;
       --chai-input-color: inherit;
       --chai-input-corner-radius: inherit;
       --chai-input-border: inherit;
@@ -60,6 +62,8 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
       padding-left: 1px;
       color: var(--chai-label-color);
       margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
+      visibility: var(--chai-label-visibility);
+      height: var(--chai-label-height);
 
       span {
         color: var(--chai-form-color-alert);
