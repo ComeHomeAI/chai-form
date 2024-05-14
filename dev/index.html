@@ -34,11 +34,6 @@
       text-shadow: #000 2px 2px 2px;
     }
 
-    chai-form.mover-nolabels {
-      --chai-label-visibility: collapse;
-      --chai-label-height: 0;
-    }
-
     /* chai-form.mover-default {
       --chai-form-max-width: 400px;
       --chai-form-color-brand: #01919b;
@@ -68,6 +63,21 @@
       --chai-button-filter-active: brightness(0.8);
       --chai-button-corner-radius: var(--chai-form-corner-radius);
     } */
+
+    chai-form.mover-preferred {
+      --chai-label-visibility: collapse;
+      --chai-label-height: 18;
+      --chai-form-flex-direction: row;
+      --chai-form-max-width: auto;
+      --chai-form-background: #18242be6;
+      --chai-form-font-family: 'Dosis';
+      --chai-form-font-weight: 700;
+      --chai-header-color: #fff;
+      --chai-input-corner-radius: 6px;
+      --chai-button-color: rgb(248, 230, 186);
+      --chai-button-background: #790205;
+      --chai-button-text-transform: none;
+    }
 
     chai-form.mover-2cb {
       --chai-form-max-width: 350px;
@@ -106,6 +116,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -114,12 +125,13 @@
 
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-default" flowtype="comehome.xyz"></chai-form>
 
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-default mover-nolabels"
-      flowtype="comehome.xyz">
+    <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
+      headertext="Get a Free Moving Estimate" buttontext="Continue">
+      <chai-address placeholder="Pickup"></chai-address>
       <chai-name placeholder="Full Name"></chai-name>
       <chai-phone placeholder="Cell Phone #"></chai-phone>
-      <chai-email placeholder="Email"></chai-email>
-      <chai-address placeholder="Moving From"></chai-address>
+      <!-- <chai-email placeholder="Email"></chai-email> -->
+      <chai-date label="Moving Date"></chai-date>
       <span slot="after"></span>
     </chai-form>
 

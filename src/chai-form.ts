@@ -60,6 +60,11 @@ export class ChaiForm extends LitElement {
        * be sufficient for most use cases.
        */
       /**
+       * The flex direction is set to column to stack the form fields vertically.
+       * This can be changed to row to stack the form fields horizontally.
+       */
+      --chai-form-flex-direction: column;
+      /**
        * The max width limits the width of the form component.
        * The layout is responsive and will adjust to the available space.
        */
@@ -170,7 +175,7 @@ export class ChaiForm extends LitElement {
     }
     form {
       display: flex;
-      flex-direction: column;
+      flex-direction: var(--chai-form-flex-direction);
       width: 100%;
       gap: calc(var(--chai-form-spacing) / 2);
     }
