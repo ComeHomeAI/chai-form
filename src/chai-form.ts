@@ -45,6 +45,17 @@ export class ChaiForm extends LitElement {
     // initialized when the element is connected, if needed.
     this.flowInstanceId = localStorage.getItem('chai-flowInstanceId');
 
+    const hostName = window.location.hostname.split('.');
+    const tldOrLocalHost = hostName.pop();
+    const domainOrUndefined = hostName.pop();
+    let flowTypeLocalHostResilient;
+    if (domainOrUndefined == null) {
+      flowTypeLocalHostResilient = tldOrLocalHost ?? 'localhost';
+    } else {
+      flowTypeLocalHostResilient = domainOrUndefined + '.' + tldOrLocalHost;
+    }
+    this.flowType = flowTypeLocalHostResilient;
+
     this.fieldStates = new Map<string, FieldState>();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -252,7 +263,7 @@ export class ChaiForm extends LitElement {
 
   /**
    * The ComeHome.ai flow type is the ID that has been configured for the location/context of
-   * this form (e.g., the mover's website).
+   * this form (e.g., the mover's website). If it is not provided we will attempt to infer it from the hostname.
    */
   @property()
   accessor flowType = "comehome.ai";
