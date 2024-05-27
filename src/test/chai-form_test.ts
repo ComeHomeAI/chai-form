@@ -117,6 +117,7 @@ suite('chai-form', () => {
     );
   });
 
+
   test('styling applied', async () => {
     const el = (await fixture(html`<chai-form></chai-form>`)) as ChaiForm;
     await el.updateComplete;

@@ -8,6 +8,16 @@ export enum ApiEnvironment {
   Production = 'https://form.app.comehome.ai'
 }
 
+export function extractFlowTypeFromHostname(hostname: string) {
+  const hostName = hostname.split('.');
+  const tldOrLocalHost = hostName.pop();
+  const domainOrUndefined = hostName.pop();
+  if (domainOrUndefined == null) {
+    return tldOrLocalHost ?? 'localhost';
+  } else {
+    return domainOrUndefined + '.' + tldOrLocalHost;
+  }
+}
 // Extract UTM parameters from the current URL
 function getUtmQueryParams() {
   const urlParams = new URLSearchParams(window.location.search);
