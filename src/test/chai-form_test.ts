@@ -20,9 +20,30 @@ suite('chai-form', () => {
     assert.shadowDom.equal(
       el,
       `
-      <h1>Hello, World!</h1>
-      <button part="button">Click Count: 0</button>
-      <slot></slot>
+      <h2>
+        Get your moving quote now!
+      </h2>
+      <slot name="before">
+      </slot>
+      <form id="chai-quote-form">
+        <slot>
+          <chai-name>
+          </chai-name>
+          <chai-phone>
+          </chai-phone>
+          <chai-email>
+          </chai-email>
+          <chai-address>
+          </chai-address>
+        </slot>
+        <a href="https://www.comehome.ai">
+          Get a Quote!
+        </a>
+      </form>
+      <slot name="after">
+        <chai-stepper>
+        </chai-stepper>
+      </slot>
     `
     );
   });
@@ -32,24 +53,66 @@ suite('chai-form', () => {
     assert.shadowDom.equal(
       el,
       `
-      <h1>Hello, Test!</h1>
-      <button part="button">Click Count: 0</button>
-      <slot></slot>
+      <h2>
+        Get your moving quote now!
+      </h2>
+      <slot name="before">
+      </slot>
+      <form id="chai-quote-form">
+        <slot>
+          <chai-name>
+          </chai-name>
+          <chai-phone>
+          </chai-phone>
+          <chai-email>
+          </chai-email>
+          <chai-address>
+          </chai-address>
+        </slot>
+        <a href="https://www.comehome.ai">
+          Get a Quote!
+        </a>
+      </form>
+      <slot name="after">
+        <chai-stepper>
+        </chai-stepper>
+      </slot>
     `
     );
   });
 
   test('handles a click', async () => {
     const el = (await fixture(html`<chai-form></chai-form>`)) as ChaiForm;
-    const button = el.shadowRoot!.querySelector('button')!;
+    const button = el.shadowRoot!.querySelector('a')!;
     button.click();
     await el.updateComplete;
     assert.shadowDom.equal(
       el,
       `
-      <h1>Hello, World!</h1>
-      <button part="button">Click Count: 1</button>
-      <slot></slot>
+      <h2>
+        Get your moving quote now!
+      </h2>
+      <slot name="before">
+      </slot>
+      <form id="chai-quote-form">
+        <slot>
+          <chai-name>
+          </chai-name>
+          <chai-phone>
+          </chai-phone>
+          <chai-email>
+          </chai-email>
+          <chai-address>
+          </chai-address>
+        </slot>
+        <a href="https://www.comehome.ai">
+          Get a Quote!
+        </a>
+      </form>
+      <slot name="after">
+        <chai-stepper>
+        </chai-stepper>
+      </slot>
     `
     );
   });
