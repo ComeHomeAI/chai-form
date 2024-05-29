@@ -1,27 +1,27 @@
-# LitElement TypeScript starter
+# ComeHome.ai Form Usage
 
-This project includes a sample component using LitElement with TypeScript.
+This project contains the necessary source code to integrate a ComeHome.ai form into your website.
 
-This template is generated from the `lit-starter-ts` package in [the main Lit
-repo](https://github.com/lit/lit). Issues and PRs for this template should be
-filed in that repo.
+You can run the website through the following command and access it at http://localhost:8000/dev/index.html:
 
-## About this release
+```bash
+npm run servee
+```
+after installing and building the project.
+```bash
+npm i
+npm run build
+```
 
-This is a pre-release of Lit 3.0, the next major version of Lit.
+## Pitfalls
 
-Lit 3.0 has very few breaking changes from Lit 2.0:
+The form requires a [secureContext](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts), so should you decide to run it on an http site that is not accessed via "localhost" the form might not render correctly. You can either configure https for your domain or you can extend you browser for testing purposes to add the used domain/ip-address to the secure context websites. 
 
-- Drops support for IE11
-- Published as ES2021
-- Removes a couple of deprecated Lit 1.x APIs
+## Issues
 
-Lit 3.0 should require no changes to upgrade from Lit 2.0 for the vast majority of users. Once the full release is published, most apps and libraries will be able to extend their npm version ranges to include both 2.x and 3.x, like `"^2.7.0 || ^3.0.0"`.
+Please file any issues you find on our [issue tracker](https://github.com/ComeHomeAI/chai-form/issues).
 
-Lit 2.x and 3.0 are _interoperable_: templates, base classes, directives, decorators, etc., from one version of Lit will work with those from another.
-
-Please file any issues you find on our [issue tracker](https://github.com/lit/lit/issues).
-
+# Project development
 ## Setup
 
 Install dependencies:

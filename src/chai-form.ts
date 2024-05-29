@@ -5,15 +5,15 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date";
-import { ChaiFieldBase, ChaiFieldChangedDetails } from './ChaiFieldBase';
-import { ApiEnvironment, api } from './ChaiApi';
-import { publishGtmEvent } from './ChaiAnalytics';
+import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
+import {ApiEnvironment, api, extractFlowTypeFromHostname} from './ChaiApi';
+import {publishGtmEvent} from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import "./chai-stepper";
 
@@ -252,10 +252,10 @@ export class ChaiForm extends LitElement {
 
   /**
    * The ComeHome.ai flow type is the ID that has been configured for the location/context of
-   * this form (e.g., the mover's website).
+   * this form (e.g., the mover's website). If it is not provided we will attempt to infer it from the hostname.
    */
   @property()
-  accessor flowType = "comehome.ai";
+  accessor flowType = extractFlowTypeFromHostname(window.location.hostname);
 
   /**
    * The text to display on the button; defaults to "Get Quote".
@@ -350,6 +350,8 @@ export class ChaiForm extends LitElement {
 
     window.open(submitUrl, '_blank');
   }
+
+
 }
 
 declare global {
