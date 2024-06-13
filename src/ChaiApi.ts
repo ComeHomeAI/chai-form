@@ -1,6 +1,6 @@
 export interface FormInitResponse {
   flowInstanceId: string;
-  gaMeasurementId: string|undefined;
+  gaMeasurementId: string;
 }
 
 export enum ApiEnvironment {
@@ -86,7 +86,7 @@ export const api = (environment: ApiEnvironment) => {
       return formInit;
     },
 
-    update: async (visitorId: string, flowInstanceId: string, gaMeasurementId: string | undefined, field: string, value: unknown) => {
+    update: async (visitorId: string, flowInstanceId: string, gaMeasurementId: string|null, field: string, value: unknown) => {
 
       let headers: Headers = new Headers();
       headers.set('Content-Type', 'application/json');

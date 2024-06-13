@@ -31,7 +31,7 @@ export class ChaiForm extends LitElement {
 
   @state() private flowInstanceId: string | null = null;
 
-  @state() private gaMeasurementId: string | undefined;
+  @state() private gaMeasurementId: string | null = null;
 
   @state() private fieldStates: Map<string, FieldState>;
 
@@ -46,6 +46,8 @@ export class ChaiForm extends LitElement {
     // Load the saved flow instance ID, if any. The flow instance will be
     // initialized when the element is connected, if needed.
     this.flowInstanceId = localStorage.getItem('chai-flowInstanceId');
+
+    this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
     this.fieldStates = new Map<string, FieldState>();
 
@@ -277,12 +279,13 @@ export class ChaiForm extends LitElement {
 
     // Initialize the flow instance if it hasn't been done yet.
     // We need to wait until this point in order to read the environment property.
-    if (this.flowInstanceId == null) {
+    if (this.flowInstanceId == null || this.gaMeasurementId == null) {
       api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
         console.info("Flow initialized", formInit);
         this.flowInstanceId = formInit.flowInstanceId;
-        this.gaMeasurementId = formInit.gaMeasurementId;
         localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
+        this.gaMeasurementId = formInit.gaMeasurementId;
+        localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
       });
     }
 
