@@ -1,5 +1,6 @@
 export interface FormInitResponse {
   flowInstanceId: string;
+  gaMeasurementId: string|undefined;
 }
 
 export enum ApiEnvironment {
@@ -41,6 +42,35 @@ function getUtmQueryParams() {
   return utmParams;
 }
 
+type SessionData = {
+  ga_session_id: string | undefined,
+  ga_session_number: string | undefined,
+  ga_cid: string | undefined
+};
+
+function getSessionData(measurementId: string, callback: (data: SessionData) => void) {
+  const sessionNumberPattern = new RegExp(String.raw`_ga_${measurementId}=GS\d\.\d\.(.+?)(?:;|$)`);
+  const sessionNumberMatch = document.cookie.match(sessionNumberPattern);
+  const parts = sessionNumberMatch?.[1].split('.');
+
+  if (!parts) {
+    // Cookie not yet available; wait a bit and try again.
+    window.setTimeout(() => getSessionData(measurementId, callback), 500);
+    return;
+  }
+
+  const sessionCidPattern = new RegExp(String.raw`_ga=GA\d\.\d\.(\d+\.\d+)(?:;|$)`);
+  const sessionCidMatch = document.cookie.match(sessionCidPattern);
+  const cidContent = sessionCidMatch?.[1];
+
+  callback({
+    ga_session_id: parts.shift(),
+    ga_session_number: parts.shift(),
+    ga_cid: cidContent,
+  });
+}
+
+
 export const api = (environment: ApiEnvironment) => {
   return {
     init: async (visitorId: string, flowType: string) => {
@@ -56,13 +86,24 @@ export const api = (environment: ApiEnvironment) => {
       return formInit;
     },
 
-    update: async (visitorId: string, flowInstanceId: string, field: string, value: unknown) => {
+    update: async (visitorId: string, flowInstanceId: string, gaMeasurementId: string | undefined, field: string, value: unknown) => {
+
+      let headers: Headers = new Headers();
+      headers.set('Content-Type', 'application/json');
+      headers.set('X-CHAI-VisitorID', visitorId);
+      if (gaMeasurementId) {
+        getSessionData(gaMeasurementId, (sessionHeaders: any) => {
+          if (sessionHeaders.ga_session_number && sessionHeaders.ga_session_id && sessionHeaders.ga_cid) {
+            headers.set('X-CHAI-gaSessionId', sessionHeaders.ga_session_id);
+            headers.set('X-CHAI-gaSessionNumber', sessionHeaders.ga_session_number);
+            headers.set('X-CHAI-gaClientId', sessionHeaders.ga_cid);
+          }
+        });
+
+      }
       await fetch(`${environment}/formBff/update/${flowInstanceId}/${field}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CHAI-VisitorID': visitorId,
-        },
+        headers: headers,
         body: JSON.stringify(value),
       });
     },
@@ -74,6 +115,6 @@ export const api = (environment: ApiEnvironment) => {
       queryParams.append('visitorId', visitorId);
       const submitUrlWithParams = `${submitUrl}?${queryParams}`;
       return submitUrlWithParams;
-    }
+    },
   };
 };

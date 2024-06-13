@@ -31,6 +31,8 @@ export class ChaiForm extends LitElement {
 
   @state() private flowInstanceId: string | null = null;
 
+  @state() private gaMeasurementId: string | undefined;
+
   @state() private fieldStates: Map<string, FieldState>;
 
   constructor() {
@@ -279,6 +281,7 @@ export class ChaiForm extends LitElement {
       api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
         console.info("Flow initialized", formInit);
         this.flowInstanceId = formInit.flowInstanceId;
+        this.gaMeasurementId = formInit.gaMeasurementId;
         localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
       });
     }
@@ -317,7 +320,7 @@ export class ChaiForm extends LitElement {
     //      Our solution for this is to include all field values in the submit request.
     if (valid && this.flowInstanceId != null) {
       console.info("Sending field update to API", field, value);
-      api(this.environment).update(this.visitorId, this.flowInstanceId, field, value);
+      api(this.environment).update(this.visitorId, this.flowInstanceId, this.gaMeasurementId, field, value);
     }
   }
 
