@@ -54,6 +54,10 @@ export class ChaiForm extends LitElement {
     this.fieldStates = new Map<string, FieldState>();
     if (window.location.hostname.includes('correirabros.com')) {
       this.overwrittenFlowType = 'correirabros.com';
+      if (localStorage.getItem("chai-hotfix-version") === null) {
+        localStorage.removeItem('chai-flowInstanceId');
+        localStorage.setItem('chai-hotfix-version', '1');
+      }
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -345,8 +349,17 @@ export class ChaiForm extends LitElement {
     });
 
     // Every field must have a valid value.
-    for (const { valid } of this.fieldStates.values())
-      if (!valid) { return; }
+    for (const [fieldOfState, {valid}] of this.fieldStates.entries()) {
+      const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == 'CHAI-' + fieldOfState.toUpperCase());
+      if (correspondingFieldInSlot.length === 0) {
+        console.trace("Ignoring validation of field not in slot", fieldOfState);
+        continue;
+      }
+      if (!valid) {
+        console.log('Invalid field', fieldOfState);
+        return;
+      }
+    }
 
     console.info("Preparing submit");
 
