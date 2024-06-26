@@ -31,6 +31,8 @@ export class ChaiForm extends LitElement {
 
   @state() private flowInstanceId: string | null = null;
 
+  @state() private overwrittenFlowType: string | null = null;
+
   @state() private gaMeasurementId: string | null = null;
 
   @state() private fieldStates: Map<string, FieldState>;
@@ -50,6 +52,9 @@ export class ChaiForm extends LitElement {
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
     this.fieldStates = new Map<string, FieldState>();
+    if (window.location.hostname.includes('correirabros.com')) {
+      this.overwrittenFlowType = 'correirabros.com';
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -280,8 +285,8 @@ export class ChaiForm extends LitElement {
     // Initialize the flow instance if it hasn't been done yet.
     // We need to wait until this point in order to read the environment property.
     if (this.flowInstanceId == null || this.gaMeasurementId == null) {
-      api(this.environment).init(this.visitorId, this.flowType).then(formInit => {
-        console.info("Flow initialized", formInit);
+      api(this.environment).init(this.visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
+        console.info('Flow initialized', formInit);
         this.flowInstanceId = formInit.flowInstanceId;
         localStorage.setItem('chai-flowInstanceId', this.flowInstanceId);
         this.gaMeasurementId = formInit.gaMeasurementId;
@@ -347,10 +352,10 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.flowType, this.flowInstanceId || "", fieldValues);
+    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.overwrittenFlowType ?? this.flowType, this.flowInstanceId || "", fieldValues);
 
-    publishGtmEvent("chai_form_submit", { flowType: this.flowType });
-    posthog.capture("form_submitted", { flow_type: this.flowType });
+    publishGtmEvent("chai_form_submit", { flowType: this.overwrittenFlowType ?? this.flowType });
+    posthog.capture("form_submitted", { flow_type: this.overwrittenFlowType ?? this.flowType });
 
     console.info("Initiating submit via navigation", submitUrl);
 
