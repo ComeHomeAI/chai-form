@@ -39,9 +39,9 @@ export class ChaiForm extends LitElement {
 
   constructor() {
     super();
-    
+
     console.log("chai.js commit hash", GITHUB_SHA, this.formInstanceId);
-    
+
     const visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', visitorId);
     console.info("Visitor ID set", visitorId, this.formInstanceId);
@@ -349,21 +349,31 @@ export class ChaiForm extends LitElement {
     // so we can enforce display of any validation errors.
     const defaultSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
     const fieldElements = defaultSlot!.assignedElements({ flatten: true }).filter(element => element.tagName.startsWith("CHAI-"));
+    const tagNamesToValidate: string[] = [];
     fieldElements.forEach(element => {
       (element as ChaiFieldBase<unknown>).forceValidation = true;
+      tagNamesToValidate.push((element as ChaiFieldBase<unknown>).tagName);
     });
 
+    const validatedTagNames: string[] = [];
     // Every field must have a valid value.
     for (const [fieldOfState, {valid}] of this.fieldStates.entries()) {
-      const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == 'CHAI-' + fieldOfState.toUpperCase());
+      const tagNameForFieldState = 'CHAI-' + fieldOfState.toUpperCase();
+      const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == tagNameForFieldState);
       if (correspondingFieldInSlot.length === 0) {
-        console.trace("Ignoring validation of field not in slot", fieldOfState, visitorId, this.formInstanceId);
+        console.trace('Ignoring validation of field not in slot', fieldOfState, visitorId, this.formInstanceId);
         continue;
       }
+      validatedTagNames.push(tagNameForFieldState);
       if (!valid) {
         console.log('Invalid field', fieldOfState, this.formInstanceId);
         return;
       }
+    }
+
+    if (!tagNamesToValidate.every(tagName => validatedTagNames.includes(tagName))) {
+      console.log('Not all fields validated', visitorId, this.formInstanceId);
+      return;
     }
 
     console.info("Preparing submit", visitorId, this.formInstanceId);
