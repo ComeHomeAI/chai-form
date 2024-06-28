@@ -22,11 +22,15 @@ type FieldState = {
   valid: boolean
 }
 
+const GITHUB_SHA = '{{GITHUB_SHA}}';
+
 /**
  * The quoting form element that initiates the flow for the user.
  */
 @customElement('chai-form')
 export class ChaiForm extends LitElement {
+  @state() private formInstanceId = `FORM-${crypto.randomUUID()}`;
+
   @state() private visitorId: string;
 
   @state() private overwrittenFlowType: string | null = null;
@@ -37,10 +41,11 @@ export class ChaiForm extends LitElement {
 
   constructor() {
     super();
-
+    
+    console.log("chai.js commit hash", GITHUB_SHA, this.formInstanceId);
     this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', this.visitorId);
-    console.info("Visitor ID set", this.visitorId);
+    console.info("Visitor ID set", this.visitorId, this.formInstanceId);
     posthog.identify(this.visitorId);
 
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
@@ -284,7 +289,7 @@ export class ChaiForm extends LitElement {
     // We need to wait until this point in order to read the environment property.
     if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
       api(this.environment).init(this.visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
-        console.info('Flow initialized', formInit);
+        console.info('Flow initialized', formInit, this.formInstanceId);
         localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
         this.gaMeasurementId = formInit.gaMeasurementId;
         localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
@@ -313,7 +318,7 @@ export class ChaiForm extends LitElement {
   }
 
   handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
-    console.info("Field changed", event.detail);
+    console.info("Field changed", event.detail, this.formInstanceId);
 
     const { field, value, valid } = event.detail;
 
@@ -326,17 +331,17 @@ export class ChaiForm extends LitElement {
     if (valid) {
       const storageFlowInstanceId = localStorage.getItem('chai-flowInstanceId');
       if (storageFlowInstanceId != null) {
-        console.info('Sending field update to API', field, value);
+        console.info('Sending field update to API', field, value, this.formInstanceId);
         api(this.environment).update(this.visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
       } else {
-        console.warn('Not sending field update to API; flow instance not initialized', field, value);
+        console.warn('Not sending field update to API; flow instance not initialized', field, value, this.formInstanceId);
       }
     }
   }
 
   submit(e: Event) {
     e.preventDefault();
-    console.info("Submit requested");
+    console.info("Submit requested", this.formInstanceId);
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
@@ -350,11 +355,11 @@ export class ChaiForm extends LitElement {
     for (const [fieldOfState, {valid}] of this.fieldStates.entries()) {
       const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == 'CHAI-' + fieldOfState.toUpperCase());
       if (correspondingFieldInSlot.length === 0) {
-        console.trace("Ignoring validation of field not in slot", fieldOfState);
+        console.trace("Ignoring validation of field not in slot", fieldOfState, this.formInstanceId);
         continue;
       }
       if (!valid) {
-        console.log('Invalid field', fieldOfState);
+        console.log('Invalid field', fieldOfState, this.formInstanceId);
         return;
       }
     }
@@ -365,7 +370,7 @@ export class ChaiForm extends LitElement {
       [key, value.value as string]);
     const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '';
     if (flowInstanceId == '') {
-      console.error('Flow instance ID not found in local storage');
+      console.error('Flow instance ID not found in local storage', this.formInstanceId);
       posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
     }
     const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
@@ -373,7 +378,7 @@ export class ChaiForm extends LitElement {
     publishGtmEvent("chai_form_submit", { flowType: this.overwrittenFlowType ?? this.flowType });
     posthog.capture("form_submitted", { flow_type: this.overwrittenFlowType ?? this.flowType });
 
-    console.info("Initiating submit via navigation", submitUrl);
+    console.info("Initiating submit via navigation", submitUrl, this.formInstanceId);
 
     window.open(submitUrl, '_blank');
   }
