@@ -31,8 +31,6 @@ const GITHUB_SHA = '{{GITHUB_SHA}}';
 export class ChaiForm extends LitElement {
   @state() private formInstanceId = `FORM-${crypto.randomUUID()}`;
 
-  @state() private visitorId: string;
-
   @state() private overwrittenFlowType: string | null = null;
 
   @state() private gaMeasurementId: string | null = null;
@@ -43,10 +41,11 @@ export class ChaiForm extends LitElement {
     super();
     
     console.log("chai.js commit hash", GITHUB_SHA, this.formInstanceId);
-    this.visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
-    localStorage.setItem('chai-visitorId', this.visitorId);
-    console.info("Visitor ID set", this.visitorId, this.formInstanceId);
-    posthog.identify(this.visitorId);
+    
+    const visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
+    localStorage.setItem('chai-visitorId', visitorId);
+    console.info("Visitor ID set", visitorId, this.formInstanceId);
+    posthog.identify(visitorId);
 
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
@@ -288,8 +287,9 @@ export class ChaiForm extends LitElement {
     // Initialize the flow instance if it hasn't been done yet.
     // We need to wait until this point in order to read the environment property.
     if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
-      api(this.environment).init(this.visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
-        console.info('Flow initialized', formInit, this.formInstanceId);
+      const visitorId = localStorage.getItem('chai-visitorId')!;
+      api(this.environment).init(visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
+        console.info('Flow initialized', formInit, visitorId, this.formInstanceId);
         localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
         this.gaMeasurementId = formInit.gaMeasurementId;
         localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
@@ -330,18 +330,20 @@ export class ChaiForm extends LitElement {
     //      Our solution for this is to include all field values in the submit request.
     if (valid) {
       const storageFlowInstanceId = localStorage.getItem('chai-flowInstanceId');
+      const visitorId = localStorage.getItem('chai-visitorId')!;
       if (storageFlowInstanceId != null) {
-        console.info('Sending field update to API', field, value, this.formInstanceId);
-        api(this.environment).update(this.visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
+        console.info('Sending field update to API', field, value, visitorId, this.formInstanceId);
+        api(this.environment).update(visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
       } else {
-        console.warn('Not sending field update to API; flow instance not initialized', field, value, this.formInstanceId);
+        console.warn('Not sending field update to API; flow instance not initialized', field, value, visitorId, this.formInstanceId);
       }
     }
   }
 
   submit(e: Event) {
     e.preventDefault();
-    console.info("Submit requested", this.formInstanceId);
+    const visitorId = localStorage.getItem('chai-visitorId')!;
+    console.info("Submit requested", visitorId, this.formInstanceId);
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
@@ -355,7 +357,7 @@ export class ChaiForm extends LitElement {
     for (const [fieldOfState, {valid}] of this.fieldStates.entries()) {
       const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == 'CHAI-' + fieldOfState.toUpperCase());
       if (correspondingFieldInSlot.length === 0) {
-        console.trace("Ignoring validation of field not in slot", fieldOfState, this.formInstanceId);
+        console.trace("Ignoring validation of field not in slot", fieldOfState, visitorId, this.formInstanceId);
         continue;
       }
       if (!valid) {
@@ -364,21 +366,21 @@ export class ChaiForm extends LitElement {
       }
     }
 
-    console.info("Preparing submit");
+    console.info("Preparing submit", visitorId, this.formInstanceId);
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
     const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '';
     if (flowInstanceId == '') {
-      console.error('Flow instance ID not found in local storage', this.formInstanceId);
+      console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
       posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
     }
-    const submitUrl = api(this.environment).buildSubmitUrl(this.visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
+    const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
     publishGtmEvent("chai_form_submit", { flowType: this.overwrittenFlowType ?? this.flowType });
-    posthog.capture("form_submitted", { flow_type: this.overwrittenFlowType ?? this.flowType });
+    posthog.capture("form_submitted", { flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId });
 
-    console.info("Initiating submit via navigation", submitUrl, this.formInstanceId);
+    console.info("Initiating submit via navigation", submitUrl, visitorId, this.formInstanceId);
 
     window.open(submitUrl, '_blank');
   }
