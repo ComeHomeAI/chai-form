@@ -26,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+      
+      - name: store git hash in local file to be read by chai-form.ts
+        run: sed -i 's/{{GITHUB_SHA}}/'"$GITHUB_SHA"'/g' src/chai-form.ts
 
       - name: Build for CDN
         run: npm run publish
