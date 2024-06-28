@@ -44,7 +44,7 @@
   "dependencies": {
     "@googlemaps/extended-component-library": "^0.6.10",
     "lit": "^3.0.0",
-    "posthog-js": "^1.128.1"
+    "posthog-js": "^1.142.1"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.1",
