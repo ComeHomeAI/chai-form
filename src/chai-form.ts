@@ -52,10 +52,10 @@ export class ChaiForm extends LitElement {
     this.fieldStates = new Map<string, FieldState>();
     if (window.location.hostname.includes('correirabros.com')) {
       this.overwrittenFlowType = 'correirabros.com';
-      if (localStorage.getItem("chai-hotfix-version") === null) {
-        localStorage.removeItem('chai-flowInstanceId');
-        localStorage.setItem('chai-hotfix-version', '1');
-      }
+    }
+    if (localStorage.getItem("chai-hotfix-version") === null || localStorage.getItem("chai-hotfix-version") === '1') {
+      localStorage.removeItem('chai-flowInstanceId');
+      localStorage.setItem('chai-hotfix-version', '2');
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
