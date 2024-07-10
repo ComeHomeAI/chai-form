@@ -2,7 +2,7 @@ const wrapperUrl = new URL(document.currentScript?.getAttribute('src') ?? import
 (() => {
   let innerScriptUrl;
   if (wrapperUrl && wrapperUrl.host.includes('comehome.ai')) {
-    innerScriptUrl = wrapperUrl.pathname.replace('chai-form.v1', 'chai-form-inner.v1');
+    innerScriptUrl = wrapperUrl.href.replace('chai-form.v1', 'chai-form-inner.v1');
   } else {
     innerScriptUrl = 'https://cdn.app.comehome.ai/chai-form-inner.v1.js';
   }
