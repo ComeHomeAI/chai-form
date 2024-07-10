@@ -6,14 +6,11 @@
 
 import summary from 'rollup-plugin-summary';
 import terser from '@rollup/plugin-terser';
-//import minifyHTML from 'rollup-plugin-minify-html-literals';
-import resolve from '@rollup/plugin-node-resolve';
-import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'chai-form.js',
+  input: 'chai-form-buster.js',
   output: {
-    file: 'dist/chai-form-inner.v1.js',
+    file: 'dist/chai-form.v1.js',
     format: 'esm',
   },
   onwarn(warning) {
@@ -22,11 +19,6 @@ export default {
     }
   },
   plugins: [
-    replace({
-      'Reflect.decorate': 'undefined',
-      // 'https://example.local:3000': 'https://form.app.comehome.ai',
-    }),
-    resolve(),
     /**
      * This minification setup is optimized for a standalone
      * production output (e.g., for CDN hosting).
@@ -34,7 +26,7 @@ export default {
     //minifyHTML(),
     terser({
       ecma: 2021,
-      module: true,
+      module: false,
       warnings: true,
       mangle: {
         properties: {
