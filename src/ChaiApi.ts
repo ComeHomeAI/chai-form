@@ -73,6 +73,28 @@ function getSessionData(measurementId: string, callback: (data: SessionData) => 
 
 export const api = (environment: ApiEnvironment) => {
   return {
+    formLoad: (visitorId: string | null, flowType: string | null, flowInstance: string | null) => {
+      if (visitorId && flowType && flowInstance) {
+        fetch(
+          `${environment}/formBff/formLoad`, {
+            body: JSON.stringify({
+              visitorId: visitorId,
+              flowType: flowType,
+              flowInstanceId: flowInstance,
+              currentUrl: window.location.host + window.location.pathname,
+            }),
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CHAI-VisitorID': visitorId,
+            },
+          }).then(r => {
+            if (!r.ok){
+              console.log("FormLoad failed");
+            }
+        });
+      }
+    },
     init: async (visitorId: string, flowType: string) => {
       const response = await fetch(
         `${environment}/formBff/init/${flowType}?${getUtmQueryParams()}`, {
