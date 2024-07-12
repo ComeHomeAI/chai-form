@@ -398,24 +398,23 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    this.initFlowIfNecessary().then(() => {
-      const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '';
-      if (flowInstanceId == '') {
-        console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
-        posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
-      }
-      const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
-      publishGtmEvent('chai_form_submit', {flowType: this.overwrittenFlowType ?? this.flowType});
-      posthog.capture('form_submitted', {flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId});
+    // If the flow has not initialized yet, then submit without a flow instance and expect that the server will
+    // generate a new flow instance on submit.
+    const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '00000000-0000-0000-0000-000000000000';
+    if (flowInstanceId == '00000000-0000-0000-0000-000000000000') {
+      console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
+      posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
+    }
+    const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
-      console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
+    publishGtmEvent('chai_form_submit', {flowType: this.overwrittenFlowType ?? this.flowType});
+    posthog.capture('form_submitted', {flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId});
 
-      window.open(submitUrl, '_blank');
-    });
+    console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
+
+    window.open(submitUrl, '_blank');
   }
-
-
 }
 
 declare global {
