@@ -73,15 +73,14 @@ function getSessionData(measurementId: string, callback: (data: SessionData) => 
 
 export const api = (environment: ApiEnvironment) => {
   return {
-    formLoad: (visitorId: string | null, flowType: string | null, flowInstance: string | null) => {
-      if (visitorId && flowType && flowInstance) {
-        fetch(
+    formLoad: (visitorId: string, flowType: string | null, flowInstance: string | null) => {
+      fetch(
           `${environment}/formBff/formLoad`, {
             body: JSON.stringify({
               visitorId: visitorId,
               flowType: flowType,
               flowInstanceId: flowInstance,
-              currentUrl: window.location.host + window.location.pathname,
+              currentUrl: window.location.href,
             }),
             method: 'PUT',
             headers: {
@@ -93,7 +92,7 @@ export const api = (environment: ApiEnvironment) => {
               console.log("FormLoad failed");
             }
         });
-      }
+
     },
     init: async (visitorId: string, flowType: string) => {
       const response = await fetch(

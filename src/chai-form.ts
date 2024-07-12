@@ -284,7 +284,7 @@ export class ChaiForm extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    api(this.environment).formLoad(localStorage.getItem('chai-visitorId')!, this.flowType, this.formInstanceId);
+    api(this.environment).formLoad(localStorage.getItem('chai-visitorId')!, this.flowType, localStorage.getItem('chai-flowInstanceId'));
   }
 
   override render() {
