@@ -113,6 +113,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
 
 
   protected override firstUpdated() {
+    super.firstUpdated();
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
     const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
     picker.addEventListener('gmpx-placechange', () => {

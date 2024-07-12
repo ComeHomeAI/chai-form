@@ -284,18 +284,7 @@ export class ChaiForm extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    // Initialize the flow instance if it hasn't been done yet.
-    // We need to wait until this point in order to read the environment property.
-    if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
-      const visitorId = localStorage.getItem('chai-visitorId')!;
-      api(this.environment).init(visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
-        console.info('Flow initialized', formInit, visitorId, this.formInstanceId);
-        localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
-        this.gaMeasurementId = formInit.gaMeasurementId;
-        localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
-      });
-    }
-
+    api(this.environment).formLoad(localStorage.getItem('chai-visitorId')!, this.flowType, localStorage.getItem('chai-flowInstanceId'));
   }
 
   override render() {
@@ -317,6 +306,30 @@ export class ChaiForm extends LitElement {
     `;
   }
 
+  async initFlowIfNecessary() {
+    if (localStorage.getItem('chai-flowInstanceId') != null) {
+      return;
+    }
+
+    // If the flow has not loaded within 30 seconds we try again
+    while (localStorage.getItem('chai-load-time-flow-instance') != null && localStorage.getItem('chai-load-time-flow-instance')! > String(Date.now() - 30_000)) {
+      console.debug('Waiting for flow instance to load by different instance', this.formInstanceId);
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    // Initialize the flow instance if it hasn't been done yet.
+    if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
+      localStorage.setItem('chai-load-time-flow-instance', String(Date.now()));
+      const visitorId = localStorage.getItem('chai-visitorId')!;
+      await api(this.environment).init(visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
+        console.info('Flow initialized', formInit, visitorId, this.formInstanceId);
+        localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
+        this.gaMeasurementId = formInit.gaMeasurementId;
+        localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
+      });
+
+    }
+  }
+
   handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
     console.info("Field changed", event.detail, this.formInstanceId);
 
@@ -324,20 +337,25 @@ export class ChaiForm extends LitElement {
 
     this.fieldStates.set(field, { value, valid });
 
-    //HACK: This works for an MSP, but returning visitors may end up with
-    //      some data not directly associated with the current flow instance.
-    //      That will primarily be an issue for the address, which is flow-specific.
-    //      Our solution for this is to include all field values in the submit request.
     if (valid) {
-      const storageFlowInstanceId = localStorage.getItem('chai-flowInstanceId');
-      const visitorId = localStorage.getItem('chai-visitorId')!;
-      if (storageFlowInstanceId != null) {
-        console.info('Sending field update to API', field, value, visitorId, this.formInstanceId);
-        api(this.environment).update(visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
-      } else {
-        console.warn('Not sending field update to API; flow instance not initialized', field, value, visitorId, this.formInstanceId);
-      }
+      this.initFlowIfNecessary().then(() => {
+        console.debug('flow instance loaded. Continue with fieldChange');
+        //HACK: This works for an MSP, but returning visitors may end up with
+        //      some data not directly associated with the current flow instance.
+        //      That will primarily be an issue for the address, which is flow-specific.
+        //      Our solution for this is to include all field values in the submit request.
+        const storageFlowInstanceId = localStorage.getItem('chai-flowInstanceId');
+        const visitorId = localStorage.getItem('chai-visitorId')!;
+        if (storageFlowInstanceId != null) {
+          console.info('Sending field update to API', field, value, visitorId, this.formInstanceId);
+          api(this.environment).update(visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
+        } else {
+          console.warn('Not sending field update to API; flow instance not initialized. Triggering new flowInit', field, value, visitorId, this.formInstanceId);
+          this.initFlowIfNecessary();
+        }
+      });
     }
+
   }
 
   submit(e: Event) {
@@ -380,19 +398,21 @@ export class ChaiForm extends LitElement {
 
     const fieldValues = Array.from(this.fieldStates.entries()).map(([key, value]) =>
       [key, value.value as string]);
-    const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '';
-    if (flowInstanceId == '') {
-      console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
-      posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
-    }
-    const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
+    this.initFlowIfNecessary().then(() => {
+      const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '';
+      if (flowInstanceId == '') {
+        console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
+        posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
+      }
+      const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
-    publishGtmEvent("chai_form_submit", { flowType: this.overwrittenFlowType ?? this.flowType });
-    posthog.capture("form_submitted", { flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId });
+      publishGtmEvent('chai_form_submit', {flowType: this.overwrittenFlowType ?? this.flowType});
+      posthog.capture('form_submitted', {flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId});
 
-    console.info("Initiating submit via navigation", submitUrl, visitorId, this.formInstanceId);
+      console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
 
-    window.open(submitUrl, '_blank');
+      window.open(submitUrl, '_blank');
+    });
   }
 
 

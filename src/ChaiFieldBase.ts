@@ -34,6 +34,8 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
   @state() protected isChanged = false;
 
+  @state() protected timeout: number | undefined;
+
 
   constructor(protected _fieldId: string,
     protected _defaultLabel: string, protected _invalidMessage?: string) {
@@ -44,11 +46,9 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     console.info("Field initialized", this._fieldId, this.value);
   }
 
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-
-    // When connected, bubble up an event to notify the parent form of the field's existence
+  protected override firstUpdated(): void {
+    console.log("Field first updated");
+    // When first changed, bubble up an event to notify the parent form of the field's existence
     // and its initial state.
     this.notifyParentForm();
   }
@@ -68,6 +68,16 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     return (this.isChanged || this.forceValidation || this.isValueSet()) && !this.isValueValid();
   }
 
+  private debounce(callback: Function, wait: number) {
+      if (this.timeout !== undefined) {
+        clearTimeout(this.timeout);
+      }
+      this.timeout = setTimeout(() => {
+        console.log('executing');
+        callback();
+      }, wait);
+  }
+
   protected updateField(newValue: T) {
     console.info("Field updated", this._fieldId, newValue);
 
@@ -77,7 +87,8 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     localStorage.setItem(`chai-${this._fieldId}`, serializedValue);
 
     // After rendering, bubble up an event to notify the parent form of the update.
-    this.notifyParentForm();
+    // Debounce this to avoid minor changes racing each other on the backend
+    this.debounce(() => this.notifyParentForm(), 500);
   }
 
   protected blurField() {

@@ -17,6 +17,7 @@ export class ChaiDate extends ChaiTextFieldBase {
   }
 
   protected override firstUpdated() {
+    super.firstUpdated();
     // Set the minimum date to today's date (or tomorrow's date, depending on timezone offset).
     this.input.min = new Date().toISOString().substring(0, 10);
   }
