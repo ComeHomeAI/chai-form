@@ -15,7 +15,8 @@ import { ChaiFieldBase } from './ChaiFieldBase';
  * with additional logic to handle the general needs of text/input-type fields.
  */
 export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
-  static override styles = css`
+  static override styles = [
+    css`
     :host {
       /**
        * The form-level CSS properties provide the initial look and feel for the form.
@@ -89,7 +90,7 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
         border-width: 2px;
       }
     }
-  `;
+  `];
 
 
   /**
