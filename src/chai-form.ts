@@ -5,15 +5,15 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date";
-import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
-import {ApiEnvironment, api, extractFlowTypeFromHostname} from './ChaiApi';
-import {publishGtmEvent} from './ChaiAnalytics';
+import { ChaiFieldBase, ChaiFieldChangedDetails } from './ChaiFieldBase';
+import { ApiEnvironment, api, extractFlowTypeFromHostname } from './ChaiApi';
+import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import "./chai-stepper";
 
@@ -210,6 +210,7 @@ export class ChaiForm extends LitElement {
     }
     input {
       font-size: var(--chai-form-font-size);
+      font-family: sans-serif;
       color: var(--chai-input-color);
       border: var(--chai-input-border);
       border-radius: var(--chai-input-corner-radius);
@@ -375,7 +376,7 @@ export class ChaiForm extends LitElement {
 
     const validatedTagNames: string[] = [];
     // Every field must have a valid value.
-    for (const [fieldOfState, {valid}] of this.fieldStates.entries()) {
+    for (const [fieldOfState, { valid }] of this.fieldStates.entries()) {
       const tagNameForFieldState = 'CHAI-' + fieldOfState.toUpperCase();
       const correspondingFieldInSlot = fieldElements.filter(element => element.tagName == tagNameForFieldState);
       if (correspondingFieldInSlot.length === 0) {
@@ -404,12 +405,12 @@ export class ChaiForm extends LitElement {
     const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '00000000-0000-0000-0000-000000000000';
     if (flowInstanceId == '00000000-0000-0000-0000-000000000000') {
       console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
-      posthog.capture('form_submit_error', {error: 'Flow instance ID not found in local storage', flow_type: this.flowType});
+      posthog.capture('form_submit_error', { error: 'Flow instance ID not found in local storage', flow_type: this.flowType });
     }
     const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
-    publishGtmEvent('chai_form_submit', {flowType: this.overwrittenFlowType ?? this.flowType});
-    posthog.capture('form_submitted', {flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId});
+    publishGtmEvent('chai_form_submit', { flowType: this.overwrittenFlowType ?? this.flowType });
+    posthog.capture('form_submitted', { flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId });
 
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
 

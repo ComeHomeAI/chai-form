@@ -4,20 +4,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {customElement, state} from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { ChaiTextFieldBase } from './ChaiTextFieldBase';
-import {css, html} from 'lit';
-import {ifDefined} from 'lit/directives/if-defined.js';
-import {classMap} from 'lit/directives/class-map.js';
+import { css, html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 /**
  * The standard form element for the requested service date.
  */
 @customElement('chai-date')
 export class ChaiDate extends ChaiTextFieldBase {
-
-  @state()
-  private isMobile = false;
 
   constructor() {
     super("date", "date", "Date", undefined, "Please enter a valid future date.", "off");
@@ -73,7 +70,7 @@ export class ChaiDate extends ChaiTextFieldBase {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          font-family: system-ui;
+          font-family: sans-serif;
           font-size: var(--chai-form-font-size);
           color: var(--chai-input-color);
           opacity: .6;
@@ -122,12 +119,6 @@ export class ChaiDate extends ChaiTextFieldBase {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.isMobile = this.detectMobile();
-    console.info(`Rendering chai-date in ${this.isMobile ? 'mobile' : 'desktop'} mode`);
-  }
-
-  private detectMobile(): boolean {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
   protected override firstUpdated() {
@@ -141,22 +132,18 @@ export class ChaiDate extends ChaiTextFieldBase {
   }
 
   override renderInput() {
-    if (this.isMobile) {
-      const invalid = this.isFieldInvalid();
-      const empty = this.value === "";
-      return html`
-        <div class="date-picker">
-          <input id=${this._fieldId} type="${this._inputType}" placeholder="${ifDefined(this.placeholder)}"
-                 class=${classMap({invalid: invalid, empty: empty})} @blur="${this.blurField()}"
-                 autocomplete=${ifDefined(this._autocomplete)} required
-                 .value="${this.value}"
-                 @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">
-          <div class="placeholder"></div>
-        </div>
-      `;
-    } else {
-      return super.renderInput();
-    }
+    const invalid = this.isFieldInvalid();
+    const empty = this.value === "";
+    return html`
+      <div class="date-picker">
+        <input id=${this._fieldId} type="${this._inputType}" placeholder="${ifDefined(this.placeholder)}"
+                class=${classMap({ invalid: invalid, empty: empty })} @blur="${this.blurField()}"
+                autocomplete=${ifDefined(this._autocomplete)} required
+                .value="${this.value}"
+                @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">
+        <div class="placeholder"></div>
+      </div>
+    `;
   }
 }
 

@@ -84,7 +84,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       /* --gmpx-color-on-surface-variant: #757575; */
       --gmpx-color-primary: var(--chai-form-color-brand);
       /* --gmpx-color-on-primary: #fff; */
-      --gmpx-font-family-base: var(--chai-form-font-family); //TODO: ???
+      --gmpx-font-family-base: sans-serif;//var(--chai-form-font-family); //TODO: ???
       /* --gmpx-font-family-headings: var(--chai-form-font-family); //TODO: ??? */
       --gmpx-font-size-base: var(--chai-form-font-size);//0.875rem;
       box-shadow: var(--chai-input-shadow);

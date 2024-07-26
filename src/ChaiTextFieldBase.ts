@@ -78,6 +78,7 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
     }
     input {
       font-size: var(--chai-form-font-size);
+      font-family: sans-serif;
       color: var(--chai-input-color);
       border: var(--chai-input-border);
       border-radius: var(--chai-input-corner-radius);
