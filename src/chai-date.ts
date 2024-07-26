@@ -60,8 +60,7 @@ export class ChaiDate extends ChaiTextFieldBase {
           border-width: 2px;
       }
 
-      .date-picker > .placeholder::after {
-          content: "Estimated Move Date";
+      .date-picker > .placeholder > .placeholder-label {
           pointer-events: none;
           position: absolute;
           width: 100%;
@@ -141,7 +140,7 @@ export class ChaiDate extends ChaiTextFieldBase {
                 autocomplete=${ifDefined(this._autocomplete)} required
                 .value="${this.value}"
                 @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">
-        <div class="placeholder"></div>
+        <div class="placeholder"><div class="placeholder-label">${this.placeholder}</div></div>
       </div>
     `;
   }
