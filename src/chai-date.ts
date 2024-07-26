@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { ChaiTextFieldBase } from './ChaiTextFieldBase';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
