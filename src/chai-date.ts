@@ -73,7 +73,7 @@ export class ChaiDate extends ChaiTextFieldBase {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          font-family: system-ui;
+          font-family: sans-serif;
           font-size: var(--chai-form-font-size);
           color: var(--chai-input-color);
           opacity: .6;
