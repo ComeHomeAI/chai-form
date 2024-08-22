@@ -6,8 +6,11 @@ declare global {
 }
 
 posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM', {
-  api_host: "https://us.posthog.com"
-});
+  api_host: "https://us.posthog.com",
+  session_recording: {
+    maskAllInputs: false
+  }
+})!;
 
 /**
  * Publish an event to the Google Tag Manager dataLayer, if present.
