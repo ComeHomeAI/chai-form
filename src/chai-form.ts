@@ -45,6 +45,11 @@ export class ChaiForm extends LitElement {
     const visitorId = localStorage.getItem('chai-visitorId') || crypto.randomUUID();
     localStorage.setItem('chai-visitorId', visitorId);
     console.info("Visitor ID set", visitorId, this.formInstanceId);
+    const newVisitorIdFromLocalStorage = localStorage.getItem('chai-visitorId');
+    if (newVisitorIdFromLocalStorage == null || newVisitorIdFromLocalStorage !== visitorId) {
+      console.error('Visitor ID could not be set in local storage', visitorId, this.formInstanceId);
+      posthog.capture('missing_visitor_id', {error: 'Visitor ID could not be set in local storage', flow_type: this.flowType});
+    }
     posthog.identify(visitorId);
 
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
@@ -361,7 +366,12 @@ export class ChaiForm extends LitElement {
 
   submit(e: Event) {
     e.preventDefault();
-    const visitorId = localStorage.getItem('chai-visitorId')!;
+    let visitorId = localStorage.getItem('chai-visitorId');
+    if (visitorId == null) {
+      console.error('Visitor ID not found in local storage. Generating new one', this.formInstanceId);
+      posthog.capture('missing_visitor_id', {error: 'Visitor ID not found in local storage', flow_type: this.flowType});
+      visitorId = crypto.randomUUID();
+    }
     console.info("Submit requested", visitorId, this.formInstanceId);
 
     // At this point, we know the user has interacted with the form
