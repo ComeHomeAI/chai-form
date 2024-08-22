@@ -42,9 +42,9 @@
   "author": "Google LLC",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@googlemaps/extended-component-library": "^0.6.10",
-    "lit": "^3.0.0",
-    "posthog-js": "^1.142.1"
+    "@googlemaps/extended-component-library": "^0.6.11",
+    "lit": "^3.2.0",
+    "posthog-js": "^1.157.2"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.1",
@@ -54,7 +54,7 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
-    "@types/google.maps": "^3.55.7",
+    "@types/google.maps": "^3.55.12",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "@web/dev-server": "^0.1.31",
