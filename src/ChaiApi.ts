@@ -73,8 +73,8 @@ function getSessionData(measurementId: string, callback: (data: SessionData) => 
 
 export const api = (environment: ApiEnvironment) => {
   return {
-    formLoad: (visitorId: string, flowType: string | null, flowInstance: string | null) => {
-      fetch(
+    formLoad: async (visitorId: string, flowType: string | null, flowInstance: string | null) => {
+      const response = await fetch(
           `${environment}/formBff/formLoad`, {
             body: JSON.stringify({
               visitorId: visitorId,
@@ -87,11 +87,11 @@ export const api = (environment: ApiEnvironment) => {
               'Content-Type': 'application/json',
               'X-CHAI-VisitorID': visitorId,
             },
-          }).then(r => {
-            if (!r.ok){
-              console.log("FormLoad failed");
-            }
         });
+      if (!response.ok) {
+        console.log('FormLoad failed');
+      }
+      return await response.json() as unknown as boolean;
 
     },
     init: async (visitorId: string, flowType: string) => {

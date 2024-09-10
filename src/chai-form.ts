@@ -289,8 +289,40 @@ export class ChaiForm extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.verifyCurrentFlowInstanceIdThroughFormLoad();
+  }
 
-    api(this.environment).formLoad(localStorage.getItem('chai-visitorId')!, this.flowType, localStorage.getItem('chai-flowInstanceId'));
+  private verifyCurrentFlowInstanceIdThroughFormLoad() {
+    // Avoid running any field updates while this is running
+    console.debug('Form connected, running FormLoad', this.formInstanceId);
+    localStorage.setItem('chai-form-load', String(Date.now()));
+    api(this.environment)
+      .formLoad(
+        localStorage.getItem('chai-visitorId')!,
+        this.flowType,
+        localStorage.getItem('chai-flowInstanceId')
+      )
+      .then((localStorageValid) => {
+        console.debug('FormLoad finished', this.formInstanceId);
+        localStorage.removeItem('chai-form-load');
+        if (!localStorageValid) {
+          console.info('Resetting form state', this.formInstanceId);
+          if (localStorage.getItem('chai-flowInstanceId') != null) {
+            console.warn(
+              'Removing flow instance ID from local storage',
+              this.formInstanceId,
+              this.formInstanceId
+            );
+          }
+          const fieldElements = this.getFieldsInCurrentSlot();
+          fieldElements.forEach((element) => {
+            // This way we reset the fields in localStorage and in the form
+            (element as ChaiFieldBase<unknown>).reset();
+          });
+          localStorage.removeItem('chai-flowInstanceId');
+          localStorage.removeItem('chai-load-time-flow-instance');
+        }
+      });
   }
 
   override render() {
@@ -312,15 +344,37 @@ export class ChaiForm extends LitElement {
     `;
   }
 
+  private lastFormLoadIsRecent() {
+    return (
+      localStorage.getItem('chai-form-load') != null &&
+      localStorage.getItem('chai-form-load')! > String(Date.now() - 30_000)
+    );
+  }
+
+  private lastFormInitIsRecent() {
+    return (
+      localStorage.getItem('chai-load-time-flow-instance') != null &&
+      localStorage.getItem('chai-load-time-flow-instance')! >
+        String(Date.now() - 30_000)
+    );
+  }
+
   async initFlowIfNecessary() {
-    if (localStorage.getItem('chai-flowInstanceId') != null) {
+    // if we don't have a last form load time, or it's more than 30 seconds ago,ago
+    // AND we have a flowInstanceId, we assume it has been validated and continue
+    if (
+      !this.lastFormLoadIsRecent() &&
+      localStorage.getItem('chai-flowInstanceId') != null
+    ) {
       return;
     }
 
-    // If the flow has not loaded within 30 seconds we try again
-    while (localStorage.getItem('chai-load-time-flow-instance') != null && localStorage.getItem('chai-load-time-flow-instance')! > String(Date.now() - 30_000)) {
-      console.debug('Waiting for flow instance to load by different instance', this.formInstanceId);
-      await new Promise(resolve => setTimeout(resolve, 100));
+    while (this.lastFormInitIsRecent()) {
+      console.debug(
+        'Waiting for flow instance to load by different instance',
+        this.formInstanceId
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
     // Initialize the flow instance if it hasn't been done yet.
     if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
@@ -341,7 +395,17 @@ export class ChaiForm extends LitElement {
 
     const { field, value, valid } = event.detail;
 
-    this.fieldStates.set(field, { value, valid });
+    if (this.lastFormLoadIsRecent()) {
+      console.info(
+        'Ignoring field change because form load has not finished yet - ',
+        field,
+        value,
+        this.formInstanceId
+      );
+      return;
+    }
+
+    this.fieldStates.set(field, {value, valid});
 
     if (valid) {
       this.initFlowIfNecessary().then(() => {
@@ -376,8 +440,7 @@ export class ChaiForm extends LitElement {
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
-    const defaultSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
-    const fieldElements = defaultSlot!.assignedElements({ flatten: true }).filter(element => element.tagName.startsWith("CHAI-"));
+    const fieldElements = this.getFieldsInCurrentSlot();
     const tagNamesToValidate: string[] = [];
     fieldElements.forEach(element => {
       (element as ChaiFieldBase<unknown>).forceValidation = true;
@@ -425,6 +488,14 @@ export class ChaiForm extends LitElement {
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
 
     window.open(submitUrl, '_blank');
+  }
+
+  private getFieldsInCurrentSlot() {
+    const defaultSlot =
+      this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
+    return defaultSlot!
+      .assignedElements({flatten: true})
+      .filter((element) => element.tagName.startsWith('CHAI-'));
   }
 }
 

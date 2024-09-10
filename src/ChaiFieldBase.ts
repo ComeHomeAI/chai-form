@@ -73,7 +73,6 @@ export abstract class ChaiFieldBase<T> extends LitElement {
         clearTimeout(this.timeout);
       }
       this.timeout = setTimeout(() => {
-        console.log('executing');
         callback();
       }, wait);
   }
@@ -121,6 +120,11 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     this.dispatchEvent(fieldChangedEvent);
   }
 
+  public reset() {
+    this.value = this.deserializeValue(null);
+    this.isChanged = false;
+    localStorage.removeItem(`chai-${this._fieldId}`);
+  }
 
   protected abstract deserializeValue(storedValue: string | null): T;
 
