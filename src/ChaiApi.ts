@@ -1,5 +1,6 @@
 export interface FormInitResponse {
   flowInstanceId: string;
+  flowType: string;
   gaMeasurementId: string;
 }
 
