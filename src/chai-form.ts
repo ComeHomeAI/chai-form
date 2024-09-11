@@ -306,23 +306,27 @@ export class ChaiForm extends LitElement {
         console.debug('FormLoad finished', this.formInstanceId);
         localStorage.removeItem('chai-form-load');
         if (!localStorageValid) {
-          console.info('Resetting form state', this.formInstanceId);
-          if (localStorage.getItem('chai-flowInstanceId') != null) {
-            console.warn(
-              'Removing flow instance ID from local storage',
-              this.formInstanceId,
-              this.formInstanceId
-            );
-          }
-          const fieldElements = this.getFieldsInCurrentSlot();
-          fieldElements.forEach((element) => {
-            // This way we reset the fields in localStorage and in the form
-            (element as ChaiFieldBase<unknown>).reset();
-          });
-          localStorage.removeItem('chai-flowInstanceId');
-          localStorage.removeItem('chai-load-time-flow-instance');
+          this.resetForm();
         }
       });
+  }
+
+  private resetForm(){
+    console.info('Resetting form state', this.formInstanceId);
+    if (localStorage.getItem('chai-flowInstanceId') != null) {
+      console.warn(
+        'Removing flow instance ID from local storage',
+        this.formInstanceId,
+        this.formInstanceId
+      );
+    }
+    const fieldElements = this.getFieldsInCurrentSlot();
+    fieldElements.forEach((element) => {
+      // This way we reset the fields in localStorage and in the form
+      (element as ChaiFieldBase<unknown>).reset();
+    });
+    localStorage.removeItem('chai-flowInstanceId');
+    localStorage.removeItem('chai-load-time-flow-instance');
   }
 
   override render() {
@@ -345,17 +349,19 @@ export class ChaiForm extends LitElement {
   }
 
   private lastFormLoadIsRecent() {
+    const chaiFormLoad = localStorage.getItem('chai-form-load');
     return (
-      localStorage.getItem('chai-form-load') != null &&
-      localStorage.getItem('chai-form-load')! > String(Date.now() - 30_000)
+      chaiFormLoad != null &&
+      chaiFormLoad! > String(Date.now() - 30_000)
     );
   }
 
   private lastFormInitIsRecent() {
+    const chaiLoadTimeFlowInstance = localStorage.getItem('chai-load-time-flow-instance');
     return (
-      localStorage.getItem('chai-load-time-flow-instance') != null &&
-      localStorage.getItem('chai-load-time-flow-instance')! >
-        String(Date.now() - 30_000)
+      chaiLoadTimeFlowInstance != null &&
+      chaiLoadTimeFlowInstance! >
+      String(Date.now() - 30_000)
     );
   }
 
