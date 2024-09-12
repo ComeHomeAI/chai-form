@@ -72,7 +72,7 @@ export class ChaiForm extends LitElement {
       this.handleFieldChange as (e: Event) => void
     );
     this.addEventListener(
-      'chai-field-init',
+      'chai-fieldinit',
       this.handleFieldInit as (e: Event) => void
     );
   }

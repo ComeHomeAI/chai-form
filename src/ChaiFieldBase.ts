@@ -108,7 +108,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
     let eventTarget: string;
     if (fieldInitialLoad) {
-      eventTarget = 'chai-field-init';
+      eventTarget = 'chai-fieldinit';
     } else {
       eventTarget = 'chai-fieldchanged';
     }
