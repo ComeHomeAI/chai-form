@@ -316,9 +316,7 @@ export class ChaiForm extends LitElement {
         .then((localStorageValid) => {
           console.debug('FormLoad finished', this.formInstanceId);
           if (!localStorageValid) {
-            // TODO There is a race condition where the user might have entered data into the field before the formLoad finished with a reset.
-            //  The form reset will then remove the data that has been entered and submitted to the backend
-            this.resetForm();
+            this.resetFlowInstanceId();
           }
         }).catch((e)=> {
           console.error('FormLoad failed', e, this.formInstanceId);
@@ -328,7 +326,7 @@ export class ChaiForm extends LitElement {
     }
   }
 
-  private resetForm(){
+  private resetFlowInstanceId(){
     console.info('Resetting form state', this.formInstanceId);
     if (localStorage.getItem('chai-flowInstanceId') != null) {
       console.warn(
@@ -337,11 +335,6 @@ export class ChaiForm extends LitElement {
         this.formInstanceId
       );
     }
-    const fieldElements = this.getFieldsInCurrentSlot();
-    fieldElements.forEach((element) => {
-      // This way we reset the fields in localStorage and in the form
-      (element as ChaiFieldBase<unknown>).reset();
-    });
     localStorage.removeItem('chai-flowInstanceId');
   }
 
@@ -369,47 +362,59 @@ export class ChaiForm extends LitElement {
     try {
       await ChaiForm._formLoadPromise;
     } catch (e) {
-      console.debug("Ignore failed formLoad", e, this.formInstanceId);
+      console.debug('Ignore failed formLoad', e, this.formInstanceId);
     }
     // If FormLoad has finished and we have a flowInstanceId, we assume it has been validated and continue
     if (localStorage.getItem('chai-flowInstanceId') != null) {
       return;
     }
 
-    // Initialize the flow instance if it hasn't been done yet.
-    if (!ChaiForm._initPromise) {
-      if (
-        localStorage.getItem('chai-flowInstanceId') == null ||
-        this.gaMeasurementId == null
-      ) {
-        const visitorId = localStorage.getItem('chai-visitorId')!;
-        ChaiForm._initPromise = api(this.environment)
-          .init(visitorId, this.overwrittenFlowType ?? this.flowType)
-          .then((formInit) => {
-            console.info(
-              'Flow initialized',
-              formInit,
+    // Initialize the flow instance if it hasn't been done yet. Keep the flowInstanceId from LocalStorage if it exists.
+    if (
+      !ChaiForm._initPromise &&
+      localStorage.getItem('chai-flowInstanceId') == null
+    ) {
+      const visitorId = localStorage.getItem('chai-visitorId')!;
+      ChaiForm._initPromise = api(this.environment)
+        .init(visitorId, this.overwrittenFlowType ?? this.flowType)
+        .then((formInit) => {
+          console.info(
+            'Flow initialized',
+            formInit,
+            visitorId,
+            this.formInstanceId
+          );
+          if (formInit.flowType != this.flowType) {
+            console.warn(
+              'Flow type mismatch',
+              formInit.flowType,
+              this.flowType,
               visitorId,
               this.formInstanceId
             );
-            if (formInit.flowType != this.flowType) {
-              console.warn("Flow type mismatch", formInit.flowType, this.flowType, visitorId, this.formInstanceId);
-              posthog.capture("flow_type_mismatch", {flow_type: formInit.flowType, expected_flow_type: this.flowType});
-            }
-            localStorage.setItem(
-              'chai-flowInstanceId',
-              formInit.flowInstanceId
-            );
-            this.gaMeasurementId = formInit.gaMeasurementId;
-            localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
-          })
-          .catch((error) => {
-            console.error('Flow initialization failed', error, visitorId, this.formInstanceId);
-            posthog.capture('flow_init_error', {error: error, flow_type: this.flowType});
-            // Setting the promise to null will cause the form to retry the initialization on the next field change
-            ChaiForm._initPromise = null;
+            posthog.capture('flow_type_mismatch', {
+              flow_type: formInit.flowType,
+              expected_flow_type: this.flowType,
+            });
+          }
+          localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
+          this.gaMeasurementId = formInit.gaMeasurementId;
+          localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
+        })
+        .catch((error) => {
+          console.error(
+            'Flow initialization failed',
+            error,
+            visitorId,
+            this.formInstanceId
+          );
+          posthog.capture('flow_init_error', {
+            error: error,
+            flow_type: this.flowType,
           });
-      }
+          // Setting the promise to null will cause the form to retry the initialization on the next field change
+          ChaiForm._initPromise = null;
+        });
     }
     await ChaiForm._initPromise;
   }

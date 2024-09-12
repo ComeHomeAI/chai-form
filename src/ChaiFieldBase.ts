@@ -126,11 +126,6 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     this.dispatchEvent(event);
   }
 
-  public reset() {
-    this.value = this.deserializeValue(null);
-    this.isChanged = false;
-    localStorage.removeItem(`chai-${this._fieldId}`);
-  }
 
   protected abstract deserializeValue(storedValue: string | null): T;
 
