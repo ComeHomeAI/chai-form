@@ -11,7 +11,7 @@ import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date";
-import { ChaiFieldBase, ChaiFieldChangedDetails } from './ChaiFieldBase';
+import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
 import { ApiEnvironment, api, extractFlowTypeFromHostname } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
@@ -29,6 +29,10 @@ const GITHUB_SHA = '{{GITHUB_SHA}}';
  */
 @customElement('chai-form')
 export class ChaiForm extends LitElement {
+
+  static _formLoadPromise: Promise<void | string> | null = null;
+  static _initPromise: Promise<void | string> | null = null;
+
   @state() private formInstanceId = `FORM-${crypto.randomUUID()}`;
 
   @state() private overwrittenFlowType: string | null = null;
@@ -63,9 +67,14 @@ export class ChaiForm extends LitElement {
       localStorage.setItem('chai-hotfix-version', '2');
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    this.addEventListener('chai-fieldchanged', this.handleFieldChange);
+    this.addEventListener(
+      'chai-fieldchanged',
+      this.handleFieldChange as (e: Event) => void
+    );
+    this.addEventListener(
+      'chai-fieldinit',
+      this.handleFieldInit as (e: Event) => void
+    );
   }
 
   static override styles = css`
@@ -289,8 +298,44 @@ export class ChaiForm extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.verifyCurrentFlowInstanceIdThroughFormLoad();
+  }
 
-    api(this.environment).formLoad(localStorage.getItem('chai-visitorId')!, this.flowType, localStorage.getItem('chai-flowInstanceId'));
+  private verifyCurrentFlowInstanceIdThroughFormLoad() {
+    // Avoid running any field updates while this is running
+    console.debug('Form connected, running FormLoad', this.formInstanceId);
+    // If the shared promise doesn't exist, create it.
+    // This approach ensures that only one call to formLoad() will run
+    if (!ChaiForm._formLoadPromise) {
+      ChaiForm._formLoadPromise = api(this.environment)
+        .formLoad(
+          localStorage.getItem('chai-visitorId')!,
+          this.flowType,
+          localStorage.getItem('chai-flowInstanceId')
+        )
+        .then((localStorageValid) => {
+          console.debug('FormLoad finished', this.formInstanceId);
+          if (!localStorageValid) {
+            this.resetFlowInstanceId();
+          }
+        }).catch((e)=> {
+          console.error('FormLoad failed', e, this.formInstanceId);
+          posthog.capture('form_load_error', {error: e, flow_type: this.flowType});
+          // We leave the rejected promise in memory for reference, but it will not be retried and it's failure will be ignored in flowInit
+        });
+    }
+  }
+
+  private resetFlowInstanceId(){
+    console.info('Resetting form state', this.formInstanceId);
+    if (localStorage.getItem('chai-flowInstanceId') != null) {
+      console.warn(
+        'Removing flow instance ID from local storage',
+        this.formInstanceId,
+        this.formInstanceId
+      );
+    }
+    localStorage.removeItem('chai-flowInstanceId');
   }
 
   override render() {
@@ -312,28 +357,66 @@ export class ChaiForm extends LitElement {
     `;
   }
 
+
   async initFlowIfNecessary() {
+    try {
+      await ChaiForm._formLoadPromise;
+    } catch (e) {
+      console.debug('Ignore failed formLoad', e, this.formInstanceId);
+    }
+    // If FormLoad has finished and we have a flowInstanceId, we assume it has been validated and continue
     if (localStorage.getItem('chai-flowInstanceId') != null) {
       return;
     }
 
-    // If the flow has not loaded within 30 seconds we try again
-    while (localStorage.getItem('chai-load-time-flow-instance') != null && localStorage.getItem('chai-load-time-flow-instance')! > String(Date.now() - 30_000)) {
-      console.debug('Waiting for flow instance to load by different instance', this.formInstanceId);
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    // Initialize the flow instance if it hasn't been done yet.
-    if (localStorage.getItem('chai-flowInstanceId') == null || this.gaMeasurementId == null) {
-      localStorage.setItem('chai-load-time-flow-instance', String(Date.now()));
+    // Initialize the flow instance if it hasn't been done yet. Keep the flowInstanceId from LocalStorage if it exists.
+    if (
+      !ChaiForm._initPromise &&
+      localStorage.getItem('chai-flowInstanceId') == null
+    ) {
       const visitorId = localStorage.getItem('chai-visitorId')!;
-      await api(this.environment).init(visitorId, this.overwrittenFlowType ?? this.flowType).then(formInit => {
-        console.info('Flow initialized', formInit, visitorId, this.formInstanceId);
-        localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
-        this.gaMeasurementId = formInit.gaMeasurementId;
-        localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
-      });
-
+      ChaiForm._initPromise = api(this.environment)
+        .init(visitorId, this.overwrittenFlowType ?? this.flowType)
+        .then((formInit) => {
+          console.info(
+            'Flow initialized',
+            formInit,
+            visitorId,
+            this.formInstanceId
+          );
+          if (formInit.flowType != this.flowType) {
+            console.warn(
+              'Flow type mismatch',
+              formInit.flowType,
+              this.flowType,
+              visitorId,
+              this.formInstanceId
+            );
+            posthog.capture('flow_type_mismatch', {
+              flow_type: formInit.flowType,
+              expected_flow_type: this.flowType,
+            });
+          }
+          localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
+          this.gaMeasurementId = formInit.gaMeasurementId;
+          localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
+        })
+        .catch((error) => {
+          console.error(
+            'Flow initialization failed',
+            error,
+            visitorId,
+            this.formInstanceId
+          );
+          posthog.capture('flow_init_error', {
+            error: error,
+            flow_type: this.flowType,
+          });
+          // Setting the promise to null will cause the form to retry the initialization on the next field change
+          ChaiForm._initPromise = null;
+        });
     }
+    await ChaiForm._initPromise;
   }
 
   handleFieldChange(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
@@ -341,7 +424,7 @@ export class ChaiForm extends LitElement {
 
     const { field, value, valid } = event.detail;
 
-    this.fieldStates.set(field, { value, valid });
+    this.fieldStates.set(field, {value, valid});
 
     if (valid) {
       this.initFlowIfNecessary().then(() => {
@@ -356,12 +439,19 @@ export class ChaiForm extends LitElement {
           console.info('Sending field update to API', field, value, visitorId, this.formInstanceId);
           api(this.environment).update(visitorId, storageFlowInstanceId, this.gaMeasurementId, field, value);
         } else {
-          console.warn('Not sending field update to API; flow instance not initialized. Triggering new flowInit', field, value, visitorId, this.formInstanceId);
-          this.initFlowIfNecessary();
+          console.warn('Not sending field update to API; flow init failed.', field, value, visitorId, this.formInstanceId);
         }
       });
     }
 
+  }
+
+  handleFieldInit(event: CustomEvent<ChaiFieldChangedDetails<unknown>>) {
+    console.info("Field init", event.detail, this.formInstanceId);
+
+    const { field, value, valid } = event.detail;
+
+    this.fieldStates.set(field, {value, valid});
   }
 
   submit(e: Event) {
@@ -376,8 +466,7 @@ export class ChaiForm extends LitElement {
 
     // At this point, we know the user has interacted with the form
     // so we can enforce display of any validation errors.
-    const defaultSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
-    const fieldElements = defaultSlot!.assignedElements({ flatten: true }).filter(element => element.tagName.startsWith("CHAI-"));
+    const fieldElements = this.getFieldsInCurrentSlot();
     const tagNamesToValidate: string[] = [];
     fieldElements.forEach(element => {
       (element as ChaiFieldBase<unknown>).forceValidation = true;
@@ -425,6 +514,14 @@ export class ChaiForm extends LitElement {
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
 
     window.open(submitUrl, '_blank');
+  }
+
+  private getFieldsInCurrentSlot() {
+    const defaultSlot =
+      this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
+    return defaultSlot!
+      .assignedElements({flatten: true})
+      .filter((element) => element.tagName.startsWith('CHAI-'));
   }
 }
 

@@ -49,8 +49,8 @@ export abstract class ChaiFieldBase<T> extends LitElement {
   protected override firstUpdated(): void {
     console.log("Field first updated");
     // When first changed, bubble up an event to notify the parent form of the field's existence
-    // and its initial state.
-    this.notifyParentForm();
+    // Ignore the initial state. Once the user interacts with the field we will send the data to the server
+    this.notifyParentForm(true);
   }
 
   override render() {
@@ -73,7 +73,6 @@ export abstract class ChaiFieldBase<T> extends LitElement {
         clearTimeout(this.timeout);
       }
       this.timeout = setTimeout(() => {
-        console.log('executing');
         callback();
       }, wait);
   }
@@ -88,7 +87,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
     // After rendering, bubble up an event to notify the parent form of the update.
     // Debounce this to avoid minor changes racing each other on the backend
-    this.debounce(() => this.notifyParentForm(), 500);
+    this.debounce(() => this.notifyParentForm(false), 500);
   }
 
   protected blurField() {
@@ -98,7 +97,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     };
   }
 
-  protected notifyParentForm() {
+  protected notifyParentForm(fieldInitialLoad: boolean) {
     let valid;
     try {
       valid = this.isValueValid();
@@ -107,7 +106,13 @@ export abstract class ChaiFieldBase<T> extends LitElement {
       valid = false;
     }
 
-    const fieldChangedEvent = new CustomEvent<ChaiFieldChangedDetails<T>>('chai-fieldchanged', {
+    let eventTarget: string;
+    if (fieldInitialLoad) {
+      eventTarget = 'chai-fieldinit';
+    } else {
+      eventTarget = 'chai-fieldchanged';
+    }
+    const event = new CustomEvent<ChaiFieldChangedDetails<T>>(eventTarget, {
       detail: {
         field: this._fieldId,
         value: this.value,
@@ -118,7 +123,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
       composed: true
     });
 
-    this.dispatchEvent(fieldChangedEvent);
+    this.dispatchEvent(event);
   }
 
 
