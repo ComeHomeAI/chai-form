@@ -1,6 +1,7 @@
 export interface FormInitResponse {
   flowInstanceId: string;
   flowType: string;
+  residentId: string;
   gaMeasurementId: string;
 }
 
@@ -110,7 +111,7 @@ export const api = (environment: ApiEnvironment) => {
 
     update: async (visitorId: string, flowInstanceId: string, gaMeasurementId: string|null, field: string, value: unknown) => {
 
-      let headers: Headers = new Headers();
+      const headers: Headers = new Headers();
       headers.set('Content-Type', 'application/json');
       headers.set('X-CHAI-VisitorID', visitorId);
       if (gaMeasurementId) {

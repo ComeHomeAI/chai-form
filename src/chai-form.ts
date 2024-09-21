@@ -52,9 +52,8 @@ export class ChaiForm extends LitElement {
     const newVisitorIdFromLocalStorage = localStorage.getItem('chai-visitorId');
     if (newVisitorIdFromLocalStorage == null || newVisitorIdFromLocalStorage !== visitorId) {
       console.error('Visitor ID could not be set in local storage', visitorId, this.formInstanceId);
-      posthog.capture('missing_visitor_id', {error: 'Visitor ID could not be set in local storage', flow_type: this.flowType});
+      posthog.capture('form:visitor_id_missing', {chai_exception: 'Visitor ID could not be set in local storage', flow_type: this.flowType});
     }
-    posthog.identify(visitorId);
 
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
@@ -320,7 +319,7 @@ export class ChaiForm extends LitElement {
           }
         }).catch((e)=> {
           console.error('FormLoad failed', e, this.formInstanceId);
-          posthog.capture('form_load_error', {error: e, flow_type: this.flowType});
+          posthog.capture('form:load_error', {chai_exception: e, flow_type: this.flowType});
           // We leave the rejected promise in memory for reference, but it will not be retried and it's failure will be ignored in flowInit
         });
     }
@@ -384,6 +383,7 @@ export class ChaiForm extends LitElement {
             visitorId,
             this.formInstanceId
           );
+          posthog.identify(formInit.residentId,{flow_type: this.flowType});
           if (formInit.flowType != this.flowType) {
             console.warn(
               'Flow type mismatch',
@@ -392,11 +392,17 @@ export class ChaiForm extends LitElement {
               visitorId,
               this.formInstanceId
             );
-            posthog.capture('flow_type_mismatch', {
+            posthog.capture('form:flow_type_mismatch', {
+              chai_exception: "flowTypeMismatch",
               flow_type: formInit.flowType,
               expected_flow_type: this.flowType,
             });
           }
+          posthog.capture('form:flow_init', {
+            survey_id: formInit.flowInstanceId,
+            flow_type: formInit.flowType,
+          });
+          posthog.register({flow_type: formInit.flowType, survey_id: formInit.flowInstanceId});
           localStorage.setItem('chai-flowInstanceId', formInit.flowInstanceId);
           this.gaMeasurementId = formInit.gaMeasurementId;
           localStorage.setItem('chai-gaMeasurementId', this.gaMeasurementId);
@@ -408,8 +414,8 @@ export class ChaiForm extends LitElement {
             visitorId,
             this.formInstanceId
           );
-          posthog.capture('flow_init_error', {
-            error: error,
+          posthog.capture('form:flow_init', {
+            chai_exception: error,
             flow_type: this.flowType,
           });
           // Setting the promise to null will cause the form to retry the initialization on the next field change
@@ -423,6 +429,14 @@ export class ChaiForm extends LitElement {
     console.info("Field changed", event.detail, this.formInstanceId);
 
     const { field, value, valid } = event.detail;
+
+    posthog.capture('form:field_changed', {
+      flow_type: this.flowType,
+      survey_id: localStorage.getItem('chai-flowInstanceId'),
+      field_name: event.detail.field,
+      field_value: event.detail.value,
+      valid,
+    });
 
     this.fieldStates.set(field, {value, valid});
 
@@ -459,7 +473,7 @@ export class ChaiForm extends LitElement {
     let visitorId = localStorage.getItem('chai-visitorId');
     if (visitorId == null) {
       console.error('Visitor ID not found in local storage. Generating new one', this.formInstanceId);
-      posthog.capture('missing_visitor_id', {error: 'Visitor ID not found in local storage', flow_type: this.flowType});
+      posthog.capture('form:visitor_id_missing', {chai_exception: 'Visitor ID not found in local storage', flow_type: this.flowType});
       visitorId = crypto.randomUUID();
     }
     console.info("Submit requested", visitorId, this.formInstanceId);
@@ -473,7 +487,9 @@ export class ChaiForm extends LitElement {
       tagNamesToValidate.push((element as ChaiFieldBase<unknown>).tagName);
     });
 
+    const formSubmitClickedEventName = 'form:submit_button_clicked';
     const validatedTagNames: string[] = [];
+    const failedValidationTagNames: string[] = [];
     // Every field must have a valid value.
     for (const [fieldOfState, { valid }] of this.fieldStates.entries()) {
       const tagNameForFieldState = 'CHAI-' + fieldOfState.toUpperCase();
@@ -482,15 +498,26 @@ export class ChaiForm extends LitElement {
         console.trace('Ignoring validation of field not in slot', fieldOfState, visitorId, this.formInstanceId);
         continue;
       }
-      validatedTagNames.push(tagNameForFieldState);
       if (!valid) {
         console.log('Invalid field', fieldOfState, this.formInstanceId);
-        return;
+        failedValidationTagNames.push(tagNameForFieldState);
+      } else {
+        validatedTagNames.push(tagNameForFieldState);
       }
     }
 
-    if (!tagNamesToValidate.every(tagName => validatedTagNames.includes(tagName))) {
-      console.log('Not all fields validated', visitorId, this.formInstanceId);
+    // We only want to add elements to the failedValidationTagNames array if they are not already in there
+    failedValidationTagNames.push(...tagNamesToValidate.filter(tagName => !failedValidationTagNames.includes(tagName) && !validatedTagNames.includes(tagName)));
+    if (failedValidationTagNames.length > 0) {
+      console.log('Fields missing or invalid', visitorId, this.formInstanceId);
+      posthog.capture(formSubmitClickedEventName, {
+        flow_type: this.overwrittenFlowType ?? this.flowType,
+        survey_id: localStorage.getItem('chai-flowInstanceId'),
+        valid: false,
+        valid_fields: validatedTagNames,
+        invalid_fields: [failedValidationTagNames],
+        visitorId: visitorId
+      });
       return;
     }
 
@@ -504,12 +531,21 @@ export class ChaiForm extends LitElement {
     const flowInstanceId = localStorage.getItem('chai-flowInstanceId') || '00000000-0000-0000-0000-000000000000';
     if (flowInstanceId == '00000000-0000-0000-0000-000000000000') {
       console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
-      posthog.capture('form_submit_error', { error: 'Flow instance ID not found in local storage', flow_type: this.flowType });
+      posthog.capture('form:submit_button_error', { chai_exception: 'Flow instance ID not found in local storage', flow_type: this.flowType });
     }
     const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
 
     publishGtmEvent('chai_form_submit', { flowType: this.overwrittenFlowType ?? this.flowType });
-    posthog.capture('form_submitted', { flow_type: this.overwrittenFlowType ?? this.flowType, visitorId: visitorId });
+    posthog.capture(formSubmitClickedEventName, {
+      flow_type: this.overwrittenFlowType ?? this.flowType,
+      survey_id: localStorage.getItem('chai-flowInstanceId'),
+      valid: true,
+      valid_fields: validatedTagNames,
+      invalid_fields: [failedValidationTagNames],
+      submit_url: submitUrl,
+      visitorId: visitorId
+    });
+
 
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
 
