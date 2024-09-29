@@ -15,3 +15,9 @@ Chai*.d.ts.map
 chai-form.bundled.js
 # only generated for publishing
 /dist/
+
+# ide-configs
+.idea/
+*.iml
+
+
