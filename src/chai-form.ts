@@ -6,6 +6,7 @@
 
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
@@ -40,6 +41,8 @@ export class ChaiForm extends LitElement {
   @state() private gaMeasurementId: string | null = null;
 
   @state() private fieldStates: Map<string, FieldState>;
+
+  @state() private submitted = false;
 
   constructor() {
     super();
@@ -348,7 +351,9 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        <a href="https://www.comehome.ai" @click="${this.submit}">${this.buttonText}</a>
+        <a href="https://www.comehome.ai" @click="${this.submit}" 
+           style=${styleMap({ background: this.submitted ? 'grey' : '' })}
+        >${this.submitted ? "Submission successful" : this.buttonText}</a>
       </form>
       <slot name="after">
         <chai-stepper></chai-stepper>
@@ -545,6 +550,7 @@ export class ChaiForm extends LitElement {
       submit_url: submitUrl,
       visitorId: visitorId
     });
+    this.submitted = true;
 
 
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
