@@ -36,7 +36,9 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai">
+        <a href="https://www.comehome.ai"
+          style="background:;"
+        >
           Get a Quote!
         </a>
       </form>
@@ -69,7 +71,9 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai">
+        <a href="https://www.comehome.ai"
+          style="background:;"
+        >
           Get a Quote!
         </a>
       </form>
@@ -105,7 +109,9 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai">
+        <a href="https://www.comehome.ai"
+          style="background:;"
+        >
           Get a Quote!
         </a>
       </form>

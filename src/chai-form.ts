@@ -353,7 +353,7 @@ export class ChaiForm extends LitElement {
         </slot>
         <a href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
-        >${this.submitted ? "submission successful" : this.buttonText}</a>
+        >${this.submitted ? "Submission successful" : this.buttonText}</a>
       </form>
       <slot name="after">
         <chai-stepper></chai-stepper>
