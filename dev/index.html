@@ -8,6 +8,8 @@
   <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../node_modules/lit/polyfill-support.js"></script>
   <script type="module" src="../chai-form.js"></script>
+    <script type="module" src="../chai-dynamic-form-panel.js"></script>
+
   <style>
     body {
       font-family: 'Times New Roman';
@@ -124,7 +126,7 @@
   <div id="demos">
 
     <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-default"></chai-form>
+    <chai-form environment="https://192.168.2.169:7034/form" id="form1" class="mover-default"></chai-form>
 
     <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
       headertext="Get a Free Moving Estimate" buttontext="Continue">
@@ -157,6 +159,8 @@
       <chai-email label="Email Address" placeholder="Email"></chai-email>
       <chai-date label="Requested Move Date"></chai-date>
     </chai-form>
+        <dynamic-control-panel targetId="form1"></dynamic-control-panel>
+
 
   </div>
 </body>
