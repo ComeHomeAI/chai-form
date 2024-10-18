@@ -125,13 +125,13 @@ export class ChaiFieldConfigurator extends LitElement {
     <div class="row">
         <div class="col-sm-12">
             <label for="chai-form-font-size">Form Font Size</label>
-            <input type="number" class="form-control" id="chai-form-font-size" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-form-font-size','px')}}">
+            <input type="range" class="form-control" id="chai-form-font-size" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-form-font-size','px')}}">
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
             <label for="chai-form-spacing">Form Spacing</label>
-            <input type="number" class="form-control" id="chai-form-spacing" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-form-spacing','px')}}">
+            <input type="range" class="form-control" id="chai-form-spacing" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-form-spacing','px')}}">
         </div>
     </div>
     <div class="row">
@@ -171,7 +171,7 @@ export class ChaiFieldConfigurator extends LitElement {
     <div class="row">
         <div class="col-sm-12">
             <label for="chai-label-height">Label Height:</label>
-            <input type="number" class="form-control" id="chai-label-height" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-label-height','px')}}">
+            <input type="range" class="form-control" id="chai-label-height" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-label-height','px')}}">
         </div>
     </div>
     <div class="row">
@@ -183,7 +183,7 @@ export class ChaiFieldConfigurator extends LitElement {
     <div class="row">
         <div class="col-sm-12">
             <label for="chai-input-corner-radius">Input Corner Radius:</label>
-            <input type="number" class="form-control" id="chai-input-corner-radius" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-input-corner-radius','px')}}">
+            <input type="range" class="form-control" id="chai-input-corner-radius" @input="${(event: CustomEvent)=>{this.applyChaiStyle(event,'--chai-input-corner-radius','px')}}">
         </div>
     </div>
     <div class="row">

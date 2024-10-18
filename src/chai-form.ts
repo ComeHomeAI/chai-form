@@ -17,7 +17,6 @@ import { ApiEnvironment, api, extractFlowTypeFromHostname } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import "./chai-stepper";
-import { ChaiFormSnippet } from './chai-form-snippet';
 
 type FieldState = {
   value: unknown,
@@ -146,6 +145,10 @@ export class ChaiForm extends LitElement {
        * Inputs and the button have their own border styles.
        */
       --chai-form-border: 1px solid #ccc;
+      --chai-form-border-style: 'solid' ;
+      --chai-form-border-width: '1px' ;
+      --chai-form-border-color: '#ccc' ;
+
       /**
        * This corner radius is applied to the form border, input field borders, and
        * the button by default.
@@ -200,6 +203,9 @@ export class ChaiForm extends LitElement {
       text-shadow: none;
       text-align: left;
       border: var(--chai-form-border);
+      border-width :var(--chai-form-border-width);
+      border-style :var(--chai-form-border-style);
+      border-color :var(--chai-form-border-color);
       border-radius: var(--chai-form-corner-radius);
       padding: var(--chai-form-spacing);
       background: var(--chai-form-background);

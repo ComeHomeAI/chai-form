@@ -11,8 +11,7 @@ export class ChaiFormSnippet extends LitElement {
   
   .snippet{
     position: relative;
-    top:  650px;;
-    right: 404px;
+
   }
 
   .snippet-input{
@@ -64,7 +63,16 @@ export class ChaiFormSnippet extends LitElement {
       const target = document.getElementById(this.targetForm) as ChaiForm; 
         if (!target) return;
   
-    const snippet= target.shadowRoot?.innerHTML  || '' as string; // Get the inner HTML
+    // const snippet= target.shadowRoot?.innerHTML  || '' as string; // Get the inner HTML
+
+    const snippet = `
+${target.outerHTML.replace('</chia-form>', '')}
+${target.shadowRoot?.getElementById('chai-name')?.outerHTML}
+${target.shadowRoot?.getElementById('chai-phone')?.outerHTML}
+${target.shadowRoot?.getElementById('chai-email')?.outerHTML}
+${target.shadowRoot?.getElementById('chai-address')?.outerHTML}
+</chia-form>
+`;
     console.log(snippet);
 
 

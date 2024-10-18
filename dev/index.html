@@ -129,8 +129,12 @@
   <h1>Form Demo</h1>
   <div id="demos">
 
+    
     <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
+     <div>
     <chai-form environment="https://192.168.2.169:7034/form" id="form1" class="mover-default"></chai-form>
+      <chai-form-snippet id="form-snippet" targetForm="form1"></chai-form-snippet>
+      </div>
 
     <!-- <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
       headertext="Get a Free Moving Estimate" buttontext="Continue">
@@ -164,7 +168,6 @@
       <chai-date label="Requested Move Date"></chai-date>
     </chai-form> -->
 
-       <chai-form-snippet id="form-snippet" targetForm="form1"></chai-form-snippet>
        <chai-field-configurator targetForm="form1"></chai-field-configurator>
       <chai-form-configurator targetForm="form1"></dchai-form-configurator>
   </div>

@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { ChaiForm } from './chai-form';
-import { ChaiFormSnippet } from './chai-form-snippet';
 
 @customElement('chai-form-configurator')
 export class ChaiFormConfigurator extends LitElement {
@@ -47,6 +46,8 @@ export class ChaiFormConfigurator extends LitElement {
      const target = document.getElementById(this.targetForm) as ChaiForm; 
         if (!target) return;
 
+            
+
           const checkbox = event.target as HTMLInputElement; 
         if(!checkbox) return;
 
@@ -73,6 +74,7 @@ export class ChaiFormConfigurator extends LitElement {
         if (!target) return;
         const input = event.target as HTMLInputElement;
         target.style.setProperty(cssVaraible , input.value + px);
+        
   }
 
 
@@ -89,8 +91,8 @@ export class ChaiFormConfigurator extends LitElement {
         <div class="col-sm-6">
             <div class="row">
                 <div class="col-sm-12">
-                    <label for="form-felx-direction">Form Flex Direction</label>
-                    <select id='form-felx-direction' class="form-control" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-felx-direction','')}}">
+                    <label for="form-flex-direction">Form Flex Direction</label>
+                    <select id='form-flex-direction' class="form-control" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-flex-direction','')}}">
                         <option value=''>Choose Flex Direction</option>
                         <option value='column'>Column</option>
                         <option value='row'>row</option>
@@ -116,7 +118,7 @@ export class ChaiFormConfigurator extends LitElement {
                 <div class="col-sm-12">
 
                     <label for="form-font-size">Form Font Size</label>
-                    <input type="number" class="form-control" id="form-font-size" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-font-size','px')}}">
+                    <input type="range" class="form-control" id="form-font-size" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-font-size','px')}}">
                 </div>
             </div>
 
@@ -124,7 +126,7 @@ export class ChaiFormConfigurator extends LitElement {
                 <div class="col-sm-12">
                     <!-- Border Controls -->
                     <label for="form-border-style">Form Border Style</label>
-                    <select id="form-border-Style" @change="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-Style','')}}" class="form-control">
+                    <select id="form-border-Style" @change="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-style','')}}" class="form-control">
                         <option value="">Choose Style</option>
                         <option value="solid">Solid</option>
                         <option value="dashed">Dashed</option>
@@ -139,21 +141,27 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="form-border-width">Border Width (px)</label>
-                    <input type="number" class="form-control" id="form-border-width" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-width','px')}}">
+                    <input type="range" class="form-control" id="form-border-width" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-width','px')}}">
+                </div>
+            </div>
+             <div class="row">
+                <div class="col-sm-12">
+                    <label for="form-border-width">Border Color </label>
+                    <input type="color" class="form-control" id="form-border-color" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-color','')}}">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-sm-12">
                     <label for="form-border-Radius">Border Radius (px)</label>
-                    <input type="number" class="form-control" id="form-border-radius" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-radius','px')}}">
+                    <input type="range" class="form-control" id="form-border-radius" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-border-radius','px')}}">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-sm-12">
                     <label for="header-font-size">Form Header Font Size (px)</label>
-                    <input type="number" class="form-control" id="header-font-size" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-header-font-size','px')}}">
+                    <input type="range" class="form-control" id="header-font-size" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-header-font-size','px')}}">
                 </div>
             </div>
 
@@ -198,7 +206,7 @@ export class ChaiFormConfigurator extends LitElement {
              <div class="row">
                 <div class="col-sm-12">
                     <label for="button-font-size">Form Button Font Size (px)</label>
-                    <input type="number" class="form-control" id="button-font-size" @change="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-button-font-size','px')}}">
+                    <input type="range" class="form-control" id="button-font-size" @change="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-button-font-size','px')}}">
                 </div>
             </div>
 
@@ -232,7 +240,7 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="from-max-width">Form Max Width (px)</label>
-                    <input type="number" class="form-control" id="form-max-width"  @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-max-width','px')}}">
+                    <input type="range" class="form-control" id="form-max-width"  @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-max-width','px')}}">
                 </div>
             </div>
 
@@ -255,7 +263,7 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="orm-font-wight">Form Font Weight (px)</label>
-                    <input type="number"  class="form-control" id="form-font-wight" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-font-wight','px')}}">
+                    <input type="range"  class="form-control" id="form-font-wight" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-font-wight','px')}}">
                 </div>
             </div>
 
@@ -269,7 +277,7 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="form-spacing">Form Spacing (px)</label>
-                    <input class="form-control" type="number" id="form-spacing" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-spacing','px')}}">
+                    <input class="form-control" type="range" id="form-spacing" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-form-spacing','px')}}">
                 </div>
             </div>
 
@@ -317,7 +325,7 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="label-height">Form Label Height (px)</label>
-                    <input type="number" class="form-control" id="label-height" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-label-height','px')}}">
+                    <input type="range" class="form-control" id="label-height" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-label-height','px')}}">
                 </div>
             </div>
 
@@ -325,7 +333,7 @@ export class ChaiFormConfigurator extends LitElement {
                 <div class="col-sm-12">
 
                     <label for="input-corner-radius">Form Input Corner Radius (px)</label>
-                    <input class="form-control" type="number" id="input-corner-radius" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-input-corner-radius','px')}}">
+                    <input class="form-control" type="range" id="input-corner-radius" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-input-corner-radius','px')}}">
                 </div>
             </div>
 
@@ -333,7 +341,7 @@ export class ChaiFormConfigurator extends LitElement {
             <div class="row">
                 <div class="col-sm-12">
                     <label for="input-border-width">Form Input Border Width (px)</label>
-                    <input type="number" class="form-control" id="input-border-width" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-input-border-width' , 'px')}}">
+                    <input type="range" class="form-control" id="input-border-width" @input="${(event:CustomEvent) => {this.applyChaiStyle(event,'--chai-input-border-width' , 'px')}}">
                 </div>
             </div>
             <div class="row">
