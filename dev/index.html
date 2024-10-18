@@ -8,8 +8,9 @@
   <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../node_modules/lit/polyfill-support.js"></script>
   <script type="module" src="../chai-form.js"></script>
-    <script type="module" src="../chai-dynamic-form-panel.js"></script>
-
+    <script type="module" src="../chai-form-configurator.js"></script>
+    <script type="module" src="../chai-field-configurator.js"></script>
+    <script type="module" src="../chai-form-snippet.js"></script>
   <style>
     body {
       font-family: 'Times New Roman';
@@ -119,6 +120,9 @@
     href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
+        
+
+  
 </head>
 
 <body>
@@ -128,12 +132,12 @@
     <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
     <chai-form environment="https://192.168.2.169:7034/form" id="form1" class="mover-default"></chai-form>
 
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
+    <!-- <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
       headertext="Get a Free Moving Estimate" buttontext="Continue">
       <chai-address placeholder="Pickup"></chai-address>
       <chai-name placeholder="Full Name"></chai-name>
       <chai-phone placeholder="Cell Phone #"></chai-phone>
-      <!-- <chai-email placeholder="Email"></chai-email> -->
+
       <chai-date label="Moving Date"></chai-date>
       <span slot="after"></span>
     </chai-form>
@@ -158,10 +162,11 @@
       <chai-phone label="Cell Phone #" placeholder="Enter your mobile #"></chai-phone>
       <chai-email label="Email Address" placeholder="Email"></chai-email>
       <chai-date label="Requested Move Date"></chai-date>
-    </chai-form>
-        <dynamic-control-panel targetId="form1"></dynamic-control-panel>
+    </chai-form> -->
 
-
+       <chai-form-snippet id="form-snippet" targetForm="form1"></chai-form-snippet>
+       <chai-field-configurator targetForm="form1"></chai-field-configurator>
+      <chai-form-configurator targetForm="form1"></dchai-form-configurator>
   </div>
 </body>
 

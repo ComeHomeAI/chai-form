@@ -5,7 +5,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, state  , query } from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import "./chai-name";
 import "./chai-phone";
@@ -17,6 +17,7 @@ import { ApiEnvironment, api, extractFlowTypeFromHostname } from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import "./chai-stepper";
+import { ChaiFormSnippet } from './chai-form-snippet';
 
 type FieldState = {
   value: unknown,
@@ -43,6 +44,16 @@ export class ChaiForm extends LitElement {
   @state() private fieldStates: Map<string, FieldState>;
 
   @state() private submitted = false;
+
+  @query('chai-address') childAddress!: HTMLElement; 
+  @query('chai-email')   chielEmail!: HTMLElement; 
+  @query('chai-phone')   childPhone!: HTMLElement; 
+  @query('chai-name')    childName!: HTMLElement; 
+
+  @property({ type: Boolean }) isCreateName: Boolean = true;
+  @property({ type: Boolean }) isCreateAddress: Boolean = true;
+  @property({ type: Boolean }) isCreatePhone: Boolean = true;
+  @property({ type: Boolean }) isCreateEmail: Boolean = true;
 
   constructor() {
     super();
@@ -341,15 +352,17 @@ export class ChaiForm extends LitElement {
   }
 
   override render() {
+debugger
     return html`
       <h2>${this.headerText}</h2>
       <slot name="before"></slot>
       <form id="chai-quote-form">
         <slot>
-          <chai-name></chai-name>
-          <chai-phone></chai-phone>
-          <chai-email></chai-email>
-          <chai-address></chai-address>
+
+          ${this.isCreateName ?  html`<chai-name id="chai-name"></chai-name>` : ''}
+          ${this.isCreatePhone ?  html`<chai-phone id="chai-phone"></chai-phone>` : ''}
+          ${this.isCreateEmail ?  html`<chai-email id="chai-email"></chai-email>` : ''}
+          ${this.isCreateAddress ?  html`<chai-address id="chai-address"></chai-address>` : ''}
         </slot>
         <a href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
