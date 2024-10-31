@@ -5,7 +5,7 @@
  */
 
 import {LitElement, html, css} from 'lit';
-import {customElement, property, state, query} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import './chai-name';
 import './chai-phone';

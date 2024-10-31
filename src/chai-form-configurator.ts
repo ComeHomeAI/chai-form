@@ -121,32 +121,30 @@ export class ChaiFormConfigurator extends LitElement {
       const inputRanges = shadowRoot.querySelectorAll('input[type="range"]');
 
       // Loop through each input range
-      inputRanges.forEach(
-        (input: Element, index: number, parent: NodeListOf<Element>) => {
-          // Cast the input to HTMLInputElement
-          const htmlInput = input as HTMLInputElement;
+      inputRanges.forEach((input: Element) => {
+        // Cast the input to HTMLInputElement
+        const htmlInput = input as HTMLInputElement;
 
-          // Get the current value of the input
-          const currentValue = htmlInput.value;
+        // Get the current value of the input
+        const currentValue = htmlInput.value;
 
-          // Construct the span ID based on the input ID
-          const spanId = `${htmlInput.id}-slider-value`;
+        // Construct the span ID based on the input ID
+        const spanId = `${htmlInput.id}-slider-value`;
 
-          // Get the corresponding span using the constructed ID
-          const fontSizeDisplay = shadowRoot.getElementById(
-            spanId
-          ) as HTMLSpanElement;
+        // Get the corresponding span using the constructed ID
+        const fontSizeDisplay = shadowRoot.getElementById(
+          spanId
+        ) as HTMLSpanElement;
 
-          if (fontSizeDisplay) {
-            // Update the span's text content with the current value
-            fontSizeDisplay.textContent = currentValue;
-          } else {
-            console.warn(
-              `Span with ID ${spanId} not found for input ${htmlInput.id}`
-            );
-          }
+        if (fontSizeDisplay) {
+          // Update the span's text content with the current value
+          fontSizeDisplay.textContent = currentValue;
+        } else {
+          console.warn(
+            `Span with ID ${spanId} not found for input ${htmlInput.id}`
+          );
         }
-      );
+      });
     } else {
       console.error('Shadow root is not accessible.');
     }
@@ -819,7 +817,7 @@ export class ChaiFormConfigurator extends LitElement {
                   />
                 </label>
 
-                <label for="date">
+                <!-- <label for="date">
                   Date
 
                   <input
@@ -831,7 +829,7 @@ export class ChaiFormConfigurator extends LitElement {
                       this.toggleChaiFormSlots(event, 'chai-date');
                     }}"
                   />
-                </label>
+                </label> -->
               </div>
             </div>
           </div>
