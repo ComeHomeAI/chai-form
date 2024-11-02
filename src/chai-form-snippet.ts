@@ -24,8 +24,7 @@ export class ChaiFormSnippet extends LitElement {
     }
 
     .snippet-input {
-      width: 400px;
-      height: 201px;
+      min-height: 300px;
     }
 
     .snippet-header {
@@ -50,6 +49,10 @@ export class ChaiFormSnippet extends LitElement {
       margin-top: 9px;
       color: yellow;
       font-family: sans-serif;
+    }
+
+    .btn-copy {
+      margin-bottom: 20px;
     }
   `;
 
@@ -83,12 +86,11 @@ export class ChaiFormSnippet extends LitElement {
 
     let snippet = `
     <style>
-     
+     chia-form.${this.defaultClass} {
       ${this.cssStyles}
-     
+     }
     </style>
       ${target.outerHTML.replace('</chia-form>', '')}
-
           ${
             this.checkedComponentsDetails && this.checkedComponentsDetails.name
               ? `<chai-name id="chai-name"></chai-name>`
@@ -115,7 +117,6 @@ export class ChaiFormSnippet extends LitElement {
               ? `<chai-date id="chai-date"></chai-date>`
               : ''
           }
-
       </chia-form>
 `;
     snippet = snippet.replace(/ style="[^"]*"/g, '');
@@ -133,6 +134,8 @@ export class ChaiFormSnippet extends LitElement {
 
       // Optionally show a message or change the state
       this.isCodeSnippedVisible = true;
+      this.showCopyMessageAfterSeconds();
+      this.hideCopyMessageAfterSeconds(3000);
     } catch (error) {
       console.error('Failed to copy: ', error);
       // Handle errors here, e.g., show an alert or message to the user
@@ -151,8 +154,41 @@ export class ChaiFormSnippet extends LitElement {
     window.removeEventListener('style-updated', this.getSnippet.bind(this));
   }
 
+  showCopyMessageAfterSeconds() {
+    var shadowRoot = this.shadowRoot;
+    if (shadowRoot) {
+      var lblCoppiedMessageElement = shadowRoot.getElementById(
+        'coppied'
+      ) as HTMLElement;
+      if (lblCoppiedMessageElement) {
+        lblCoppiedMessageElement.style.display = 'block';
+      }
+    }
+  }
+
+  hideCopyMessageAfterSeconds(n: number) {
+    setTimeout(() => {
+      var shadowRoot = this.shadowRoot;
+      if (shadowRoot) {
+        var lblCoppiedMessageElement = shadowRoot.getElementById(
+          'coppied'
+        ) as HTMLElement;
+        if (lblCoppiedMessageElement) {
+          lblCoppiedMessageElement.style.display = 'none';
+        }
+      }
+    }, n);
+  }
+
   override render() {
     return html`
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+        crossorigin="anonymous"
+      />
+
       <div class="snippet">
         <!-- <h2 class="snippet-header-message">please copy and past this code into your website</h2> -->
         ${!this.isCodeSnippedVisible
@@ -169,9 +205,12 @@ export class ChaiFormSnippet extends LitElement {
         <input
           type="button"
           value="please copy and past this code into your website"
-          class="form-control snippet-copy-btn"
+          class="form-control btn-primary btn-copy"
           @click="${() => this.copyToClipboard(this.snippet)}"
         />
+        <label style="display:none;color:green;" id="coppied"
+          >code snippet coppied successfully.</label
+        >
       </div>
     `;
   }

@@ -9,7 +9,6 @@
   <script src="../node_modules/lit/polyfill-support.js"></script>
   <script type="module" src="../chai-form.js"></script>
     <script type="module" src="../chai-form-configurator.js"></script>
-    <script type="module" src="../chai-field-configurator.js"></script>
     <script type="module" src="../chai-form-snippet.js"></script>
   <style>
     body {
@@ -133,10 +132,10 @@
     <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
      <div>
        <chai-form environment="https://192.168.2.169:7034/form" id="form1" class="mover-default"></chai-form>
-       <chai-form-snippet id="form-snippet" targetForm="form1"></chai-form-snippet>
+      
       </div>
 
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
+    <!-- <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
       headertext="Get a Free Moving Estimate" buttontext="Continue">
       <chai-address placeholder="Pickup"></chai-address>
       <chai-name placeholder="Full Name"></chai-name>
@@ -166,13 +165,14 @@
       <chai-phone label="Cell Phone #" placeholder="Enter your mobile #"></chai-phone>
       <chai-email label="Email Address" placeholder="Email"></chai-email>
       <chai-date label="Requested Move Date"></chai-date>
-    </chai-form>
-  <div>
-      <chai-form-configurator targetForm="form1"></dchai-form-configurator>
-
-  </div>
+    </chai-form> -->
+ 
        <!-- <chai-field-configurator  targetForm="form1"></chai-field-configurator> -->
+      <div style="max-width: 800px;">
+          <chai-form-configurator targetForm="form1"></dchai-form-configurator>
+      </div>
   </div>
+  
 </body>
 
 </html>

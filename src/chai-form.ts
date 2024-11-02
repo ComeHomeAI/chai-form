@@ -148,9 +148,6 @@ export class ChaiForm extends LitElement {
        * Inputs and the button have their own border styles.
        */
       --chai-form-border: 1px solid #ccc;
-      --chai-form-border-style: 'solid';
-      --chai-form-border-width: '1px';
-      --chai-form-border-color: '#ccc';
 
       /**
        * This corner radius is applied to the form border, input field borders, and

@@ -45,7 +45,6 @@ export class ChaiFieldConfigurator extends LitElement {
     const target = document.getElementById(this.targetForm) as ChaiForm;
     const input = event.target as HTMLInputElement;
     const value = input.value + px;
-    debugger;
     var shadowRoot = target.shadowRoot;
     if (shadowRoot) {
       shadowRoot
@@ -65,7 +64,6 @@ export class ChaiFieldConfigurator extends LitElement {
   }
 
   notifySnippetComponent() {
-    debugger;
     this.dispatchEvent(
       new CustomEvent('style-updated', {
         detail: {},
