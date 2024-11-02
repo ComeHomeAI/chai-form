@@ -8,6 +8,8 @@ export class ChaiFormSnippet extends LitElement {
   @property({type: Boolean}) isCodeSnippedVisible: Boolean = false;
   @property({type: String}) cssStyles: string = '';
   @property({type: String}) snippet: string = '';
+  @property({type: String}) defaultClass: string = '';
+
   @property({type: Object}) checkedComponentsDetails: any = {
     name: true,
     email: true,
@@ -74,44 +76,47 @@ export class ChaiFormSnippet extends LitElement {
           result += `${key}: ${configuratorStyles[key]}; \n `;
         }
       }
+      this.defaultClass = event.detail.defaultClass;
+
       this.cssStyles = result;
     }
 
     let snippet = `
-    <style data-target-styles='${this.targetForm}'>
-      #${this.targetForm} {
+    <style>
+     
       ${this.cssStyles}
-      }
+     
     </style>
-${target.outerHTML.replace('</chia-form>', '')}
+      ${target.outerHTML.replace('</chia-form>', '')}
 
- ${
-   this.checkedComponentsDetails && this.checkedComponentsDetails.name
-     ? `<chai-name id="chai-name"></chai-name>`
-     : ''
- }
-  ${
-    this.checkedComponentsDetails && this.checkedComponentsDetails.phone
-      ? `<chai-phone id="chai-phone"></chai-phone>`
-      : ''
-  }
-   ${
-     this.checkedComponentsDetails && this.checkedComponentsDetails.email
-       ? `<chai-email id="chai-email"></chai-email>`
-       : ''
-   }
-    ${
-      this.checkedComponentsDetails && this.checkedComponentsDetails.address
-        ? `<chai-address id="chai-address"></chai-address>`
-        : ''
-    }
-     ${
-       this.checkedComponentsDetails && this.checkedComponentsDetails.date
-         ? `<chai-date id="chai-date"></chai-date>`
-         : ''
-     }
+          ${
+            this.checkedComponentsDetails && this.checkedComponentsDetails.name
+              ? `<chai-name id="chai-name"></chai-name>`
+              : ''
+          }
+          ${
+            this.checkedComponentsDetails && this.checkedComponentsDetails.phone
+              ? `<chai-phone id="chai-phone"></chai-phone>`
+              : ''
+          }
+          ${
+            this.checkedComponentsDetails && this.checkedComponentsDetails.email
+              ? `<chai-email id="chai-email"></chai-email>`
+              : ''
+          }
+          ${
+            this.checkedComponentsDetails &&
+            this.checkedComponentsDetails.address
+              ? `<chai-address id="chai-address"></chai-address>`
+              : ''
+          }
+          ${
+            this.checkedComponentsDetails && this.checkedComponentsDetails.date
+              ? `<chai-date id="chai-date"></chai-date>`
+              : ''
+          }
 
-</chia-form>
+      </chia-form>
 `;
     snippet = snippet.replace(/ style="[^"]*"/g, '');
     this.snippet = snippet;
