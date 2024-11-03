@@ -6,11 +6,11 @@
     <title>&lt;chai-form> Demo</title>
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/lit/polyfill-support.js"></script>
-    <script type="module" src="../chai-form.js"></script>
-    <script type="module" src="../chai-dynamic-form-panel.js"></script>
+    <!-- <script type="module" src="../chai-form.js"></script> -->
+    <!-- <script type="module" src="../chai-dynamic-form-panel.js"></script>
     <script type="module" src="../chai-general-form-panel.js"></script>
     <script type="module" src="../chai-inputs-style-panel.js"></script>
-    <script type="module" src="../chai-inputs-state-handler.js"></script>
+    <script type="module" src="../chai-inputs-state-handler.js"></script> -->
     <script type="module" src="../chai-form-container.js"></script>
     <style>
       body {
@@ -132,6 +132,41 @@
       rel="stylesheet"
     />
   </head>
+
+  <style>
+    chai-form.trest {
+      --chai-button-background: #334b4d;
+      --chai-button-background-active: #55a0a5;
+      --chai-button-background-hover: #01919b;
+      --chai-button-color: #a76262;
+      --chai-button-corner-radius: 8px;
+      --chai-button-filter-active: brightness(0.6);
+      --chai-button-filter-hover: brightness(1.2);
+      --chai-button-font-size: 24px;
+      --chai-button-text-transform: uppercase;
+      --chai-form-background: #fffaf6;
+      --chai-form-border: 5px double #4f1212;
+      --chai-form-color-alert: #fa2829;
+      --chai-form-color-brand: #2e4547;
+      --chai-form-color-text: #01919b;
+      --chai-form-corner-radius: 31px;
+      --chai-form-flex-direction: column;
+      --chai-form-font-family: Arial, sans-serif;
+      --chai-form-font-size: 39px;
+      --chai-form-font-weight: 700;
+      --chai-form-max-width: 800px;
+      --chai-form-spacing: 16px;
+      --chai-header-color: #01919b;
+      --chai-header-font-size: calc(39px * 1.5);
+      --chai-input-border: 0.8px solid rgb(233, 228, 224);
+      --chai-input-color: #000;
+      --chai-input-corner-radius: calc(31px / 4);
+      --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
+      --chai-label-color: #01919b;
+      --chai-label-height: auto;
+      --chai-label-visibility: visible;
+    }
+  </style>
 
   <body>
     <h1>Form Demo</h1>

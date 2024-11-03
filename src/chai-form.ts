@@ -17,7 +17,6 @@ import {ApiEnvironment, api, extractFlowTypeFromHostname} from './ChaiApi';
 import {publishGtmEvent} from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import './chai-stepper';
-import {ChaiFormState} from './ChaiFormState';
 import './chai-inputs-state-handler';
 
 type FieldState = {
@@ -44,14 +43,6 @@ export class ChaiForm extends LitElement {
   @state() private fieldStates: Map<string, FieldState>;
 
   @state() private submitted = false;
-
-  @property({type: Object})
-  formState: ChaiFormState = {
-    showName: true,
-    showPhone: true,
-    showEmail: true,
-    showAddress: true,
-  };
 
   constructor() {
     super();
@@ -373,12 +364,10 @@ export class ChaiForm extends LitElement {
       <slot name="before"></slot>
       <form id="chai-quote-form">
         <slot>
-          ${this.formState.showName ? html`<chai-name></chai-name>` : ''}
-          ${this.formState.showPhone ? html`<chai-phone></chai-phone>` : ''}
-          ${this.formState.showEmail ? html`<chai-email></chai-email>` : ''}
-          ${this.formState.showAddress
-            ? html`<chai-address></chai-address>`
-            : ''}
+          <chai-name></chai-name>
+          <chai-phone></chai-phone>
+          <chai-email></chai-email>
+          <chai-address></chai-address>
         </slot>
         <a
           href="https://www.comehome.ai"

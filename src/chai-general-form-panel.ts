@@ -96,7 +96,7 @@ export class ChaiGeneralFormPanel extends LitElement {
   @property({type: String}) cornerRadius: string = '';
   @property({type: String}) spacing: string = '';
   @property({type: Object}) targetElement: HTMLElement | null = null;
-  @property({type: Function}) getTextColor: (colorCode: string) => string =
+  @property({attribute: false}) getTextColor: (colorCode: string) => string =
     () => 'black';
 
   override updated(changedProperties: Map<string, any>) {
@@ -131,6 +131,10 @@ export class ChaiGeneralFormPanel extends LitElement {
   private initializeDefaultValues() {
     if (this.targetElement) {
       const styles = getComputedStyle(this.targetElement);
+
+      this.border =
+        styles.getPropertyValue('--chai-form-border').trim() ||
+        '1px solid #ccc';
       this.flexDirection =
         this.flexDirection ||
         styles.getPropertyValue('--chai-form-flex-direction').trim() ||
@@ -189,16 +193,17 @@ export class ChaiGeneralFormPanel extends LitElement {
         </div>
         <div class="form-control-group">
           <div class="form-control">
-            <label>Flex Direction:</label>
-            <select
-              value=${this.flexDirection}
-              @change=${this.handleFlexDirectionChange}
-            >
-              <option value="column">Column</option>
-              <option value="row">Row</option>
-            </select>
+            <label>Form class name:</label>
+            <input
+              type="text"
+              @input=${(e: Event) =>
+                this.handleClassNameChange(
+                  (e.target as HTMLInputElement).value
+                    .toLocaleLowerCase()
+                    .trim()
+                )}
+            />
           </div>
-
           <div class="form-control">
             <label>Brand Color:</label>
             <input
@@ -228,6 +233,26 @@ export class ChaiGeneralFormPanel extends LitElement {
               @input=${this.handleBackgroundChange}
               style="--input-text-color: ${this.getTextColor(this.background)}"
             />
+          </div>
+          <div class="form-control">
+            <label>Alert color:</label>
+            <input
+              type="color"
+              value=${this.colorAlert}
+              @input=${this.handleAlertColorChange}
+              style="--input-text-color: ${this.getTextColor(this.colorAlert)}"
+            />
+          </div>
+
+          <div class="form-control">
+            <label>Flex Direction:</label>
+            <select
+              .value=${this.flexDirection}
+              @change=${this.handleFlexDirectionChange}
+            >
+              <option value="column">Column</option>
+              <option value="row">Row</option>
+            </select>
           </div>
           <div class="form-control">
             <label>Max Width ${this.maxWidth}</label>
@@ -286,6 +311,46 @@ export class ChaiGeneralFormPanel extends LitElement {
               @input=${this.handleSpacingChange}
             />
           </div>
+
+          <div class="form-control">
+            <label>border width ${this.border.split(' ')[0]}</label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              step="1"
+              value=${this.border.split(' ')[0].slice(0, -2)}
+              @input=${this.handleBorderWidthChange}
+            />
+          </div>
+
+          <div class="form-control">
+            <label>border color:</label>
+            <input
+              type="color"
+              value=${this.border.split(' ')[2]}
+              @input=${this.handleBorderColorChange}
+            />
+          </div>
+
+          <div class="form-control">
+            <label>Border Style:</label>
+            <select
+              .value=${this.border.split(' ')[1]}
+              @change=${this.handleBorderStyleChange}
+            >
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+              <option value="double">Double</option>
+              <option value="groove">Groove</option>
+              <option value="ridge">Ridge</option>
+              <option value="inset">Inset</option>
+              <option value="outset">Outset</option>
+              <option value="none">None</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
         </div>
       </div>
     `;
@@ -293,18 +358,27 @@ export class ChaiGeneralFormPanel extends LitElement {
 
   private toggleExpanded() {
     this.expanded = !this.expanded;
-    this.updateStyles();
   }
 
   private handleFlexDirectionChange(e: Event) {
     this.flexDirection = (e.target as HTMLSelectElement).value;
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-flex-direction',
+        this.flexDirection
+      );
+    }
   }
 
   private handleMaxWidthChange(e: Event) {
     const maxWidth = (e.target as HTMLInputElement).value;
     this.maxWidth = maxWidth + 'px';
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-max-width',
+        this.maxWidth
+      );
+    }
   }
 
   private handleColorBrandChange(e: Event) {
@@ -314,7 +388,12 @@ export class ChaiGeneralFormPanel extends LitElement {
       '--input-text-color',
       this.getTextColor(this.colorBrand)
     );
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-color-brand',
+        this.colorBrand
+      );
+    }
   }
 
   private handleColorTextChange(e: Event) {
@@ -324,7 +403,27 @@ export class ChaiGeneralFormPanel extends LitElement {
       '--input-text-color',
       this.getTextColor(this.colorText)
     );
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-color-text',
+        this.colorText
+      );
+    }
+  }
+
+  private handleAlertColorChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.colorAlert = input.value;
+    input.style.setProperty(
+      '--input-text-color',
+      this.getTextColor(this.colorAlert)
+    );
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-color-alert',
+        this.colorAlert
+      );
+    }
   }
 
   private handleBackgroundChange(e: Event) {
@@ -334,70 +433,92 @@ export class ChaiGeneralFormPanel extends LitElement {
       '--input-text-color',
       this.getTextColor(this.background)
     );
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-background',
+        this.background
+      );
+    }
   }
 
   private handleFontSizeChange(e: Event) {
     const fontSize = (e.target as HTMLInputElement).value;
     this.fontSize = fontSize + 'px';
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-font-size',
+        this.fontSize
+      );
+    }
   }
 
   private handleFontWeightChange(e: Event) {
     const fontWeight = (e.target as HTMLInputElement).value;
     this.fontWeight = parseInt(fontWeight);
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-font-weight',
+        this.fontWeight.toString()
+      );
+    }
   }
 
   private handleCornerRadiusChange(e: Event) {
     const cornerRadius = (e.target as HTMLInputElement).value;
     this.cornerRadius = cornerRadius + 'px';
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-form-corner-radius',
+        this.cornerRadius
+      );
+    }
   }
 
   private handleSpacingChange(e: Event) {
     const spacing = (e.target as HTMLInputElement).value;
     this.spacing = spacing + 'px';
-    this.updateStyles();
+    if (this.targetElement) {
+      this.targetElement.style.setProperty('--chai-form-spacing', this.spacing);
+    }
+  }
+  private handleBorderWidthChange(e: Event) {
+    const width = (e.target as HTMLInputElement).value;
+
+    const value = this.border;
+    const splitedValue = value.split(' ');
+    this.border = `${width}px ${splitedValue[1]} ${splitedValue[2]}`;
+    if (this.targetElement) {
+      this.targetElement.style.setProperty('--chai-form-border', this.border);
+    }
   }
 
-  private updateStyles() {
+  private handleBorderColorChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const color = input.value;
+    const value = this.border.split(' ');
+    this.border = `${value[0]} ${value[1]} ${color}`;
+
+    input.style.setProperty(
+      '--input-text-color',
+      this.getTextColor(this.border.split(' ')[2])
+    );
     if (this.targetElement) {
-      this.targetElement.style.setProperty(
-        '--chai-form-flex-direction',
-        this.flexDirection
-      );
-      this.targetElement.style.setProperty(
-        '--chai-form-max-width',
-        this.maxWidth
-      );
-      this.targetElement.style.setProperty(
-        '--chai-form-color-brand',
-        this.colorBrand
-      );
+      this.targetElement.style.setProperty('--chai-form-border', this.border);
+    }
+  }
 
-      this.targetElement.style.setProperty(
-        '--chai-form-color-text',
-        this.colorText || this.colorBrand
-      );
-      this.targetElement.style.setProperty(
-        '--chai-form-background',
-        this.background
-      );
-      this.targetElement.style.setProperty(
-        '--chai-form-font-size',
-        this.fontSize
-      );
-      this.targetElement.style.setProperty(
-        '--chai-form-font-weight',
-        this.fontWeight.toString()
-      );
+  private handleBorderStyleChange(e: Event) {
+    const style = (e.target as HTMLSelectElement).value;
+    const value = this.border.split(' ');
+    this.border = `${value[0]} ${style} ${value[2]}`;
+    if (this.targetElement) {
+      this.targetElement.style.setProperty('--chai-form-border', this.border);
+    }
+  }
 
-      this.targetElement.style.setProperty(
-        '--chai-form-corner-radius',
-        this.cornerRadius
-      );
-      this.targetElement.style.setProperty('--chai-form-spacing', this.spacing);
+  private handleClassNameChange(value: string) {
+    if (this.targetElement) {
+      this.targetElement.className = value;
     }
   }
 }

@@ -1,6 +1,12 @@
 import {LitElement, html, css} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import {ChaiFormState} from './ChaiFormState';
+import './chai-inputs-state-handler';
+import './chai-form';
+import './chai-general-form-panel';
+import './chai-inputs-style-panel';
+import './chai-buttons-style-panel';
+import './chai-CopyCode';
 
 @customElement('chai-form-container')
 export class ChaiFormContainer extends LitElement {
@@ -39,6 +45,8 @@ export class ChaiFormContainer extends LitElement {
         top: 0;
         right: 0;
         z-index: 1000;
+        max-height: 100dvh;
+        overflow: auto;
       }
     }
   `;
@@ -50,15 +58,23 @@ export class ChaiFormContainer extends LitElement {
     showAddress: true,
   };
 
+  @property() override className: string = '';
+
   override render() {
     return html`
       <div class="container">
         <chai-form
           environment="https://192.168.2.169:7034/form"
           id="form1"
-          class="mover-default"
-          .formState=${this.formState}
-        ></chai-form>
+          class=${this.className}
+        >
+          ${this.formState.showName ? html`<chai-name></chai-name>` : ''}
+          ${this.formState.showEmail ? html`<chai-email></chai-email>` : ''}
+          ${this.formState.showPhone ? html`<chai-phone></chai-phone>` : ''}
+          ${this.formState.showAddress
+            ? html`<chai-address></chai-address>`
+            : ''}
+        </chai-form>
 
         <div class="panel-container">
           <chai-inputs-state-handler
@@ -73,6 +89,17 @@ export class ChaiFormContainer extends LitElement {
             targetId="form1"
             .getTextColor=${this.getTextColor}
           ></chai-inputs-style-panel>
+          <chai-buttons-style-panel
+            targetId="form1"
+            .getTextColor=${this.getTextColor}
+          ></chai-buttons-style-panel>
+          <chai-copy-code
+            ?showAddress=${this.formState.showAddress}
+            ?showEmail=${this.formState.showEmail}
+            ?showName=${this.formState.showName}
+            ?showPhone=${this.formState.showPhone}
+            targetId="form1"
+          ></chai-copy-code>
         </div>
       </div>
     `;

@@ -88,29 +88,43 @@ export class ChaiInputsStylePanel extends LitElement {
   @property({type: String}) labelColor: string = '';
   @property({type: String}) inputColor: string = '';
   @property({type: String}) inputCornerRadius: string = '';
+  @property({type: String}) inputBorder: string =
+    '0.8px solid rgb(233, 228, 224)';
+  @property({type: String}) inputShadow: string =
+    'rgba(21, 21, 21, 0.08) 0px 1px 2px 0px';
   @property({type: Object}) targetElement: HTMLElement | null = null;
-  @property({type: Function}) getTextColor: (colorCode: string) => string =
+
+  @property({attribute: false}) getTextColor: (colorCode: string) => string =
     () => 'black';
 
   override connectedCallback() {
     super.connectedCallback();
     this.initializeDefaultValues();
+    this.addEventListener('reset-values', this.resetValues);
+  }
+
+  override disconnectedCallback() {
+    this.removeEventListener('reset-values', this.resetValues);
+    super.disconnectedCallback();
   }
 
   private initializeDefaultValues() {
     if (this.targetElement) {
       const styles = getComputedStyle(this.targetElement);
       this.headerColor =
-        styles.getPropertyValue('--chai-header-color').trim() ||
-        'var(--chai-form-color-text)';
+        styles.getPropertyValue('--chai-header-color').trim() || '#000';
       this.labelColor =
-        styles.getPropertyValue('--chai-label-color').trim() ||
-        'var(--chai-form-color-text)';
+        styles.getPropertyValue('--chai-label-color').trim() || '#000';
       this.inputColor =
         styles.getPropertyValue('--chai-input-color').trim() || '#000';
       this.inputCornerRadius =
-        styles.getPropertyValue('--chai-input-corner-radius').trim() ||
-        'calc(var(--chai-form-corner-radius) / 4)';
+        styles.getPropertyValue('--chai-input-corner-radius').trim() || '5px';
+      this.inputBorder =
+        styles.getPropertyValue('--chai-input-border').trim() ||
+        '1px solid #ccc';
+      this.inputShadow =
+        styles.getPropertyValue('--chai-input-shadow').trim() ||
+        'rgba(21, 21, 21, 0.08) 0px 1px 2px 0px';
     }
   }
 
@@ -192,6 +206,43 @@ export class ChaiInputsStylePanel extends LitElement {
               @input=${this.handleInputCornerRadiusChange}
             />
           </div>
+          <div class="form-control">
+            <label>Input Border Width: ${this.inputBorder.split(' ')[0]}</label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              step="1"
+              value=${this.inputBorder.split(' ')[0].slice(0, -2)}
+              @input=${this.handleInputBorderWidthChange}
+            />
+          </div>
+          <div class="form-control">
+            <label>Input Border Color:</label>
+            <input
+              type="color"
+              value=${this.inputBorder.split(' ')[2]}
+              @input=${this.handleInputBorderColorChange}
+            />
+          </div>
+          <div class="form-control">
+            <label>Input Border Style:</label>
+            <select
+              .value=${this.inputBorder.split(' ')[1]}
+              @change=${this.handleInputBorderStyleChange}
+            >
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+              <option value="double">Double</option>
+              <option value="groove">Groove</option>
+              <option value="ridge">Ridge</option>
+              <option value="inset">Inset</option>
+              <option value="outset">Outset</option>
+              <option value="none">None</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
         </div>
       </div>
     `;
@@ -201,66 +252,96 @@ export class ChaiInputsStylePanel extends LitElement {
     this.expanded = !this.expanded;
   }
 
+  private resetValues() {
+    this.initializeDefaultValues();
+  }
+
   private handleHeaderColorChange(e: Event) {
     const input = e.target as HTMLInputElement;
     this.headerColor = input.value;
-    input.style.setProperty(
-      '--input-text-color',
-      this.getTextColor(this.headerColor)
-    );
-    this.updateStyles();
-  }
-
-  private handleLabelColorChange(e: Event) {
-    const input = e.target as HTMLInputElement;
-    this.labelColor = input.value;
-    input.style.setProperty(
-      '--input-text-color',
-      this.getTextColor(this.labelColor)
-    );
-    this.updateStyles();
-  }
-
-  private handleInputColorChange(e: Event) {
-    const input = e.target as HTMLInputElement;
-    this.inputColor = input.value;
-    input.style.setProperty(
-      '--input-text-color',
-      this.getTextColor(this.inputColor)
-    );
-    this.updateStyles();
-  }
-
-  private handleInputCornerRadiusChange(e: Event) {
-    const value = (e.target as HTMLInputElement).value;
-    this.inputCornerRadius = `${value}px`;
-    this.updateStyles();
-  }
-
-  private getNumericValue(value: string): number {
-    const cleanValue = eval(value.replace(/px|calc|\(|\)|\"|\s/g, ''));
-    return parseInt(cleanValue) || 0;
-  }
-
-  private updateStyles() {
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-header-color',
         this.headerColor
       );
+    }
+  }
+
+  private handleLabelColorChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.labelColor = input.value;
+    if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-label-color',
         this.labelColor
       );
+    }
+  }
+
+  private handleInputColorChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.inputColor = input.value;
+    if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-input-color',
         this.inputColor
       );
+    }
+  }
+
+  private handleInputCornerRadiusChange(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    this.inputCornerRadius = `${value}px`;
+    if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-input-corner-radius',
         this.inputCornerRadius
       );
     }
+  }
+
+  private handleInputBorderWidthChange(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    const parts = this.inputBorder.split(' ');
+    parts[0] = `${value}px`;
+    this.inputBorder = parts.join(' ');
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-input-border',
+        this.inputBorder
+      );
+    }
+  }
+
+  private handleInputBorderColorChange(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    const parts = this.inputBorder.split(' ');
+    parts[2] = value;
+    this.inputBorder = `${parts[0]} ${parts[1]} ${parts[2]}`;
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-input-border',
+        this.inputBorder
+      );
+    }
+  }
+
+  private handleInputBorderStyleChange(e: Event) {
+    const value = (e.target as HTMLSelectElement).value;
+    const parts = this.inputBorder.split(' ');
+    parts[1] = value;
+    this.inputBorder = parts.join(' ');
+    if (this.targetElement) {
+      this.targetElement.style.setProperty(
+        '--chai-input-border',
+        this.inputBorder
+      );
+    }
+  }
+
+  private getNumericValue(value: string): number {
+    const cleanValue = eval(value.replace(/px|calc|\(|\)|\"|\s/g, ''));
+    return parseInt(cleanValue) || 0;
   }
 }
 
