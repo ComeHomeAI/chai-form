@@ -299,19 +299,18 @@ export class ChaiComponentsRenderConfigurator extends LitElement {
               />
             </label>
 
-            <!-- <label for="date">
-                  Date
+            <label for="date">
+              Date
 
-                  <input
-                    type="checkbox"
-                    id="date"
-                    name="date"
-                    checked
-                    @change="${(event: CustomEvent) => {
-              this.toggleChaiFormSlots(event, 'chai-date');
-            }}"
-                  />
-                </label> -->
+              <input
+                type="checkbox"
+                id="date"
+                name="date"
+                @change="${(event: CustomEvent) => {
+                  this.toggleChaiFormSlots(event, 'chai-date');
+                }}"
+              />
+            </label>
           </div>
         </div>
       </details>
