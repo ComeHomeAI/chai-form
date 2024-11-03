@@ -7,8 +7,14 @@ export class ChaiFormSnippet extends LitElement {
   @property({type: String}) targetForm: string = '';
   @property({type: Boolean}) isCodeSnippedVisible: Boolean = false;
   @property({type: String}) cssStyles: string = '';
+  @property({type: String}) chaiFormStyles: any = '';
+  @property({type: String}) chaiFormLabelStyles: any = '';
+  @property({type: String}) chaiFormInputStyles: any = '';
+  @property({type: String}) chaiFormButtonStyles: any = '';
+  @property({type: String}) chaiFormHeaderStyles: any = '';
+  @property({type: String}) chaiFormRenderStyles: any = '';
   @property({type: String}) snippet: string = '';
-  @property({type: String}) defaultClass: string = '';
+  @property({type: String}) defaultClass: string = this.targetForm;
 
   @property({type: Object}) checkedComponentsDetails: any = {
     name: true,
@@ -68,29 +74,108 @@ export class ChaiFormSnippet extends LitElement {
     this.isCodeSnippedVisible = true;
     const target = document.getElementById(this.targetForm) as ChaiForm;
     if (!target) return;
-    let configuratorStyles: any = {};
     if (event) {
-      configuratorStyles = event.detail.styles;
-      this.checkedComponentsDetails = event.detail.checkedComponents;
+      if (event && event.detail && event.detail.from) {
+        if (event.detail.from == 'render') {
+          this.checkedComponentsDetails = event.detail.checkedComponents;
 
-      let result = '';
-      for (const key in configuratorStyles) {
-        if (configuratorStyles.hasOwnProperty(key)) {
-          result += `${key}: ${configuratorStyles[key]}; \n `;
+          this.chaiFormRenderStyles = event.detail.chaiRenderStyles;
+
+          let result = '';
+          for (const key in this.chaiFormRenderStyles) {
+            if (this.chaiFormRenderStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormRenderStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormRenderStyles = result;
+        } else if (event.detail.from == 'chai-form') {
+          this.defaultClass = event.detail.defaultClass;
+          this.chaiFormStyles = event.detail.chaiFormStyles;
+
+          let result = '';
+          for (const key in this.chaiFormStyles) {
+            if (this.chaiFormStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormStyles = result;
+        } else if (event.detail.from == 'chai-label') {
+          this.chaiFormLabelStyles = event.detail.chaiLabelStyles;
+
+          let result = '';
+          for (const key in this.chaiFormLabelStyles) {
+            if (this.chaiFormLabelStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormLabelStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormLabelStyles = result;
+        } else if (event.detail.from == 'chai-input') {
+          this.chaiFormInputStyles = event.detail.chaiInputstyles;
+
+          let result = '';
+          for (const key in this.chaiFormInputStyles) {
+            if (this.chaiFormInputStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormInputStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormInputStyles = result;
+        } else if (event.detail.from == 'chai-button') {
+          this.chaiFormButtonStyles = event.detail.chiaButtontyles;
+
+          let result = '';
+          for (const key in this.chaiFormButtonStyles) {
+            if (this.chaiFormButtonStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormButtonStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormButtonStyles = result;
+        } else if (event.detail.from == 'chai-header') {
+          this.chaiFormHeaderStyles = event.detail.chaiHeaderstyles;
+
+          let result = '';
+          for (const key in this.chaiFormHeaderStyles) {
+            if (this.chaiFormHeaderStyles.hasOwnProperty(key)) {
+              result += `${key}: ${this.chaiFormHeaderStyles[key]}; \n `;
+            }
+          }
+
+          this.chaiFormHeaderStyles = result;
+        } else if (event.detail.from == 'chai-reseter') {
+          this.cssStyles = '';
+          this.chaiFormRenderStyles = '';
+          this.chaiFormStyles = '';
+          this.chaiFormHeaderStyles = '';
+          this.chaiFormLabelStyles = '';
+          this.chaiFormInputStyles = '';
+          this.chaiFormButtonStyles = '';
         }
       }
-      this.defaultClass = event.detail.defaultClass;
-
-      this.cssStyles = result;
     }
+
+    this.cssStyles =
+      this.chaiFormRenderStyles +
+      this.chaiFormStyles +
+      this.chaiFormHeaderStyles +
+      this.chaiFormLabelStyles +
+      this.chaiFormInputStyles +
+      this.chaiFormButtonStyles;
+
+    target.removeAttribute('class');
+    // target.removeAttribute('id');
+    target.setAttribute('class', this.defaultClass);
 
     let snippet = `
     <style>
      chia-form.${this.defaultClass} {
-      ${this.cssStyles}
+       ${this.cssStyles.trim()}
      }
     </style>
-      ${target.outerHTML.replace('</chia-form>', '')}
+      ${target.outerHTML.replace('</chai-form>', '')}
           ${
             this.checkedComponentsDetails && this.checkedComponentsDetails.name
               ? `<chai-name id="chai-name"></chai-name>`
@@ -117,11 +202,15 @@ export class ChaiFormSnippet extends LitElement {
               ? `<chai-date id="chai-date"></chai-date>`
               : ''
           }
-      </chia-form>
+      </chai-form>
 `;
     snippet = snippet.replace(/ style="[^"]*"/g, '');
+    snippet = snippet.replace(/\s*id="[^"]*"/g, '');
+
+    // snippet = snippet.replace(/\s+/g, ' ').trim();
+    snippet.trim();
     this.snippet = snippet;
-    this.htmlSnippet = snippet; // Set the snippet
+    this.htmlSnippet = this.snippet; // Set the snippet
   }
 
   async copyToClipboard(snippet: string) {
@@ -144,7 +233,6 @@ export class ChaiFormSnippet extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-
     this.getSnippet(null);
     window.addEventListener('style-updated', this.getSnippet.bind(this));
   }
