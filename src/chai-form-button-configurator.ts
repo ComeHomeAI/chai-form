@@ -6,6 +6,8 @@ import {ChaiForm} from './chai-form';
 export class ChaiFormButtonConfigurator extends LitElement {
   @property({type: String}) targetForm: string = '';
   @property({type: Object}) cssTyles: any = {};
+  @property({type: String}) selectedVisibilityValue: string = '';
+  @property({type: String}) defaultClassStyle: string = this.targetForm;
 
   static override styles = css`
     .configurator-container {
@@ -46,9 +48,6 @@ export class ChaiFormButtonConfigurator extends LitElement {
     super();
     this.targetForm = '';
   }
-
-  @property({type: String}) selectedVisibilityValue: string = '';
-  @property({type: String}) defaultClassStyle: string = this.targetForm;
 
   override firstUpdated(): void {
     this.initlizeComponentWithDefaults();
@@ -94,7 +93,7 @@ export class ChaiFormButtonConfigurator extends LitElement {
     this.intilizeRangesElementsSapnWidhRangeValue();
   }
 
-  applyChaiStyle(event: Event, cssVaraible: string, px: string) {
+  applyChaiStyle(event: Event, cssVariable: string, px: string) {
     const target = document.getElementById(this.targetForm) as ChaiForm;
     if (!target) return;
 
@@ -110,7 +109,7 @@ export class ChaiFormButtonConfigurator extends LitElement {
         ) as HTMLInputElement;
 
         if (sliderValueElement) {
-          if (cssVaraible == '--chai-button-filter-hover') {
+          if (cssVariable == '--chai-button-filter-hover') {
             const shadowRoot = this.shadowRoot;
             if (shadowRoot) {
               const target = shadowRoot.getElementById(
@@ -118,13 +117,13 @@ export class ChaiFormButtonConfigurator extends LitElement {
               ) as HTMLElement;
 
               target.style.setProperty(
-                cssVaraible,
+                cssVariable,
                 'brightness(' + input.value + ')'
               );
               this.cssTyles['--chai-button-filter-hover'] =
                 'brightness(' + input.value + ')';
             }
-          } else if (cssVaraible == '--chai-button-filter-active') {
+          } else if (cssVariable == '--chai-button-filter-active') {
             const shadowRoot = this.shadowRoot;
             if (shadowRoot) {
               const target = shadowRoot.getElementById(
@@ -133,7 +132,7 @@ export class ChaiFormButtonConfigurator extends LitElement {
 
               if (target) {
                 target.style.setProperty(
-                  cssVaraible,
+                  cssVariable,
                   'brightness(' + input.value + ')'
                 );
                 this.cssTyles['--chai-button-filter-active'] =
@@ -141,11 +140,14 @@ export class ChaiFormButtonConfigurator extends LitElement {
               }
             }
           } else {
-            target.style.setProperty(cssVaraible, input.value + px);
-            this.cssTyles[cssVaraible] = input.value + px;
+            target.style.setProperty(cssVariable, input.value + px);
+            this.cssTyles[cssVariable] = input.value + px;
           }
         }
       }
+    } else {
+      target.style.setProperty(cssVariable, input.value + px);
+      this.cssTyles[cssVariable] = input.value + px;
     }
 
     // fire event which indicate style has been changed so i need to notify snippet component with new style changes.

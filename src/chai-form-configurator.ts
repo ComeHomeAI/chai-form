@@ -7,6 +7,14 @@ export class ChaiFormConfigurator extends LitElement {
   @property({type: String}) targetForm: string = '';
   @property({type: Object}) cssTyles: any = {};
 
+  @property({type: String}) selectedVisibilityValue: string = '';
+  @property({type: Boolean}) isNameComponentChecked: Boolean = true;
+  @property({type: Boolean}) isAddressComponentChecked: Boolean = true;
+  @property({type: Boolean}) isPhoneComponentChecked: Boolean = true;
+  @property({type: Boolean}) isEmailomponentChecked: Boolean = true;
+  @property({type: Boolean}) isDateComponentChecked: Boolean = false;
+  @property({type: String}) defaultClassStyle: string = this.targetForm;
+
   static override styles = css`
     .configurator-container {
       background-color: #fffaf6;
@@ -46,14 +54,6 @@ export class ChaiFormConfigurator extends LitElement {
     super();
     this.targetForm = '';
   }
-
-  @property({type: String}) selectedVisibilityValue: string = '';
-  @property({type: Boolean}) isNameComponentChecked: Boolean = true;
-  @property({type: Boolean}) isAddressComponentChecked: Boolean = true;
-  @property({type: Boolean}) isPhoneComponentChecked: Boolean = true;
-  @property({type: Boolean}) isEmailomponentChecked: Boolean = true;
-  @property({type: Boolean}) isDateComponentChecked: Boolean = false;
-  @property({type: String}) defaultClassStyle: string = this.targetForm;
 
   override firstUpdated(): void {
     this.initlizeComponentWithDefaults();
@@ -171,12 +171,12 @@ export class ChaiFormConfigurator extends LitElement {
     this.initlizeFormDefaultStyleClass(shadowRoot);
   }
 
-  applyChaiStyle(event: Event, cssVaraible: string, px: string) {
+  applyChaiStyle(event: Event, cssVariable: string, px: string) {
     const target = document.getElementById(this.targetForm) as ChaiForm;
     if (!target) return;
 
     const input = event.target as HTMLInputElement;
-    target.style.setProperty(cssVaraible, input.value + px);
+    target.style.setProperty(cssVariable, input.value + px);
 
     // if input is range reflect it's value to element span.
     if (input.type == 'range') {
@@ -192,13 +192,13 @@ export class ChaiFormConfigurator extends LitElement {
         }
       }
     }
-    if (cssVaraible != 'FormStyleClass') {
+    if (cssVariable != 'FormStyleClass') {
       // exclude this input [FormStyleClass] from addign to css style , becuase i will assign it to defaultClassStyle varaibles
       // defaultClassStyle variables which idenitify form style class
       if (
-        cssVaraible == '--chai-form-border-style' ||
-        cssVaraible == '--chai-form-border-width' ||
-        cssVaraible == '--chai-form-border-color'
+        cssVariable == '--chai-form-border-style' ||
+        cssVariable == '--chai-form-border-width' ||
+        cssVariable == '--chai-form-border-color'
       ) {
         const shadowRoot = this.shadowRoot;
         if (shadowRoot) {
@@ -223,7 +223,7 @@ export class ChaiFormConfigurator extends LitElement {
             styleValue + ' ' + colorValue + ' ' + widthValue + 'px';
         }
       } else {
-        this.cssTyles[cssVaraible] = input.value + px;
+        this.cssTyles[cssVariable] = input.value + px;
       }
     } else {
       this.defaultClassStyle = input.value;

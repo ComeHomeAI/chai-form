@@ -6,6 +6,8 @@ import {ChaiForm} from './chai-form';
 export class ChaiFormHeaderConfigurator extends LitElement {
   @property({type: String}) targetForm: string = '';
   @property({type: Object}) cssTyles: any = {};
+  @property({type: String}) selectedVisibilityValue: string = '';
+  @property({type: String}) defaultClassStyle: string = this.targetForm;
 
   static override styles = css`
     .configurator-container {
@@ -46,9 +48,6 @@ export class ChaiFormHeaderConfigurator extends LitElement {
     super();
     this.targetForm = '';
   }
-
-  @property({type: String}) selectedVisibilityValue: string = '';
-  @property({type: String}) defaultClassStyle: string = this.targetForm;
 
   override firstUpdated(): void {
     this.initlizeComponentWithDefaults();
@@ -95,12 +94,12 @@ export class ChaiFormHeaderConfigurator extends LitElement {
     this.intilizeRangesElementsSapnWidhRangeValue();
   }
 
-  applyChaiStyle(event: Event, cssVaraible: string, px: string) {
+  applyChaiStyle(event: Event, cssVariable: string, px: string) {
     const target = document.getElementById(this.targetForm) as ChaiForm;
     if (!target) return;
 
     const input = event.target as HTMLInputElement;
-    target.style.setProperty(cssVaraible, input.value + px);
+    target.style.setProperty(cssVariable, input.value + px);
 
     // if input is range reflect it's value to element span.
     if (input.type == 'range') {
@@ -117,10 +116,10 @@ export class ChaiFormHeaderConfigurator extends LitElement {
       }
     }
 
-    if (cssVaraible != 'FormStyleClass') {
+    if (cssVariable != 'FormStyleClass') {
       // exclude this input [FormStyleClass] from addign to css style , becuase i will assign it to defaultClassStyle varaibles
       // defaultClassStyle variables which idenitify form style class
-      this.cssTyles[cssVaraible] = input.value + px;
+      this.cssTyles[cssVariable] = input.value + px;
     }
     // fire event which indicate style has been changed so i need to notify snippet component with new style changes.
     this.notifySnippetComponent();
