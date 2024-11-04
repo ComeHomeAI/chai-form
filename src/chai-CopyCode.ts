@@ -137,6 +137,14 @@ ${
         this.targetElement.className
           ? ` class="${this.targetElement.className}"`
           : ''
+      }${
+        this.targetElement.getAttribute('headertext')
+          ? ` headertext="${this.targetElement.getAttribute('headertext')}"`
+          : ''
+      }${
+        this.targetElement.getAttribute('buttontext')
+          ? ` buttontext="${this.targetElement.getAttribute('buttontext')}"`
+          : ''
       }>
     ${this.showName ? `<chai-name></chai-name>` : ''}
     ${this.showEmail ? `<chai-email></chai-email>` : ''}
@@ -154,7 +162,7 @@ ${
 
       this.observer.observe(this.targetElement, {
         attributes: true,
-        attributeFilter: ['style', 'class'],
+        attributeFilter: ['style', 'class', 'headertext', 'buttontext'],
       });
     }
   }

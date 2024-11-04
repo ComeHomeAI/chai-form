@@ -1,5 +1,5 @@
 import {LitElement, html, css} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import {customElement, state} from 'lit/decorators.js';
 import {ChaiFormState} from './ChaiFormState';
 import './chai-inputs-state-handler';
 import './chai-form';
@@ -58,16 +58,10 @@ export class ChaiFormContainer extends LitElement {
     showAddress: true,
   };
 
-  @property() override className: string = '';
-
   override render() {
     return html`
       <div class="container">
-        <chai-form
-          environment="https://192.168.2.169:7034/form"
-          id="form1"
-          class=${this.className}
-        >
+        <chai-form id="form1">
           ${this.formState.showName ? html`<chai-name></chai-name>` : ''}
           ${this.formState.showEmail ? html`<chai-email></chai-email>` : ''}
           ${this.formState.showPhone ? html`<chai-phone></chai-phone>` : ''}

@@ -193,6 +193,26 @@ export class ChaiGeneralFormPanel extends LitElement {
         </div>
         <div class="form-control-group">
           <div class="form-control">
+            <label>Form header text:</label>
+            <input
+              type="text"
+              @input=${(e: Event) =>
+                this.handleHeaderTextChange(
+                  (e.target as HTMLInputElement).value.trim()
+                )}
+            />
+          </div>
+          <div class="form-control">
+            <label>Form button text:</label>
+            <input
+              type="text"
+              @input=${(e: Event) =>
+                this.handleButtonTextChange(
+                  (e.target as HTMLInputElement).value.trim()
+                )}
+            />
+          </div>
+          <div class="form-control">
             <label>Form class name:</label>
             <input
               type="text"
@@ -519,6 +539,24 @@ export class ChaiGeneralFormPanel extends LitElement {
   private handleClassNameChange(value: string) {
     if (this.targetElement) {
       this.targetElement.className = value;
+    }
+  }
+  private handleHeaderTextChange(value: string) {
+    if (this.targetElement) {
+      if (value === '') {
+        this.targetElement.removeAttribute('headertext');
+      } else {
+        this.targetElement.setAttribute('headertext', value);
+      }
+    }
+  }
+  private handleButtonTextChange(value: string) {
+    if (this.targetElement) {
+      if (value === '') {
+        this.targetElement.removeAttribute('buttontext');
+      } else {
+        this.targetElement.setAttribute('buttontext', value);
+      }
     }
   }
 }
