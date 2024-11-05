@@ -5,6 +5,8 @@ export interface FormInitResponse {
   gaMeasurementId: string;
 }
 
+export const utmParamNames = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
 export enum ApiEnvironment {
   Development = 'https://192.168.2.169:7034/form',
   Staging = 'https://form.dev.comehome.ai',
@@ -21,26 +23,34 @@ export function extractFlowTypeFromHostname(hostname: string) {
     return domainOrUndefined + '.' + tldOrLocalHost;
   }
 }
-// Extract UTM parameters from the current URL
+
+function processUtmParamFromUrlOrLocalStorage(urlParams: URLSearchParams, localStorageUtmParams: URLSearchParams, param: string, setValue: (value: string) => void) {
+  let utmParamValue: string | null = null;
+  if (urlParams.has(param)) {
+    utmParamValue = urlParams.get(param);
+  } else if (localStorageUtmParams.has(param)) {
+    utmParamValue = localStorageUtmParams.get(param);
+  }
+  if (utmParamValue) {
+    setValue(utmParamValue);
+  }
+}
+
+// Extract UTM parameters from the current URL or local storage
 function getUtmQueryParams() {
   const urlParams = new URLSearchParams(window.location.search);
+  const localStorageUtm:string|null = localStorage.getItem('chai_utm_params');
+  let localStorageUtmParams: URLSearchParams;
+  if (localStorageUtm) {
+    localStorageUtmParams = new URLSearchParams(localStorageUtm);
+  } else {
+    localStorageUtmParams = new URLSearchParams();
+  }
 
   const utmParams = new URLSearchParams();
-  if (urlParams.has('utm_source')) {
-    utmParams.append('utm_source', urlParams.get('utm_source')!);
-  }
-  if (urlParams.has('utm_medium')) {
-    utmParams.append('utm_medium', urlParams.get('utm_medium')!);
-  }
-  if (urlParams.has('utm_campaign')) {
-    utmParams.append('utm_campaign', urlParams.get('utm_campaign')!);
-  }
-  if (urlParams.has('utm_term')) {
-    utmParams.append('utm_term', urlParams.get('utm_term')!);
-  }
-  if (urlParams.has('utm_content')) {
-    utmParams.append('utm_content', urlParams.get('utm_content')!);
-  }
+  utmParamNames.forEach((utmParamName, _) => {
+    processUtmParamFromUrlOrLocalStorage(urlParams, localStorageUtmParams, utmParamName, (value) => utmParams.append(utmParamName, value));
+  });
   return utmParams;
 }
 
@@ -134,8 +144,12 @@ export const api = (environment: ApiEnvironment) => {
     buildSubmitUrl: (visitorId: string, flowType: string, flowInstanceId: string, fieldValues: string[][]) => {
       const submitUrl = `${environment}/formBff/submit/${flowType}/${flowInstanceId}`;
       const utmParams = Array.from(getUtmQueryParams().entries());
-      const queryParams = new URLSearchParams(fieldValues.concat(utmParams));
-      queryParams.append('visitorId', visitorId);
+      // Move the visitorId before the utmParams as the params might be too long for the URL in extreme cases, and we never want to lose our visitorId
+      const queryParams = new URLSearchParams(
+        fieldValues
+          .concat([['visitorId', visitorId]])
+          .concat(utmParams)
+      );
       const submitUrlWithParams = `${submitUrl}?${queryParams}`;
       return submitUrlWithParams;
     },

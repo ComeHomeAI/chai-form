@@ -13,7 +13,7 @@ import "./chai-email";
 import "./chai-address";
 import "./chai-date";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
-import { ApiEnvironment, api, extractFlowTypeFromHostname } from './ChaiApi';
+import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
 import posthog from 'posthog-js';
 import "./chai-stepper";
@@ -300,6 +300,7 @@ export class ChaiForm extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.readUtmParametersIntoLocalStorage();
     this.verifyCurrentFlowInstanceIdThroughFormLoad();
   }
 
@@ -564,6 +565,21 @@ export class ChaiForm extends LitElement {
     return defaultSlot!
       .assignedElements({flatten: true})
       .filter((element) => element.tagName.startsWith('CHAI-'));
+  }
+
+  private readUtmParametersIntoLocalStorage() {
+    const utmSearchParams = new URLSearchParams();
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    for (const [key, value] of urlSearchParams.entries()) {
+      if (utmParamNames.includes(key)) {
+        utmSearchParams.append(key, value);
+      }
+    }
+    if (!utmSearchParams.entries().next().done) {
+      // Only overwrite the existing chai_utm_params if at least one new UTM parameter was found
+      // If a new utm parameter was found, overwrite the entire chai_utm_params. Don't merge
+      localStorage.setItem('chai_utm_params', utmSearchParams.toString());
+    }
   }
 }
 
