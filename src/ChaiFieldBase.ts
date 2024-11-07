@@ -77,8 +77,13 @@ export abstract class ChaiFieldBase<T> extends LitElement {
       }, wait);
   }
 
+  protected sanitizeField(newValue: T): T{
+    return newValue;
+  }
+
   protected updateField(newValue: T) {
     console.info("Field updated", this._fieldId, newValue);
+    newValue = this.sanitizeField(newValue);
 
     this.value = newValue;
 
