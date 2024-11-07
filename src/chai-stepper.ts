@@ -68,50 +68,50 @@ export class ChaiStepper extends LitElement {
       margin-bottom: calc(-1 * var(--chai-form-spacing));
       padding: 0;
       color: var(--chai-form-color-text);
+  }
 
-      li {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        position: relative;
+  ol li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
 
-        &:not(:first-child)::before {
-          content: '';
-          position: absolute;
-          display: block;
-          width: 100%;
-          height: 4px;
-          left: calc(-50%);
-          right: calc(-50%);
-          top: calc((var(--chai-form-spacing) + 24px) / 2 - 2px);
-          background-color: var(--chai-form-color-brand);
-          filter: saturate(0.1) brightness(1.9);
-          z-index: 1;
-        }
-
-        svg {
-          background-color: var(--chai-form-color-brand);
-          filter: saturate(0.5) brightness(1.5);
-          fill: #fff;
-          padding: calc(var(--chai-form-spacing) / 2);
-          border-radius: 50%; // Make the background circular
-          height: 24px;
-          width: 24px;
-          margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
-          z-index: 2;
-        }
-
-        &:first-child svg {
-          filter: none;
-          padding: var(--chai-form-spacing);
-          position: relative;
-          top: calc(-1 * var(--chai-form-spacing) / 2);
-          margin-bottom: calc(-1.25 * var(--chai-form-spacing));
-        }
-      }
+    &:not(:first-child)::before {
+      content: '';
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 4px;
+      left: calc(-50%);
+      right: calc(-50%);
+      top: calc((var(--chai-form-spacing) + 24px) / 2 - 2px);
+      background-color: var(--chai-form-color-brand);
+      filter: saturate(0.1) brightness(1.9);
+      z-index: 1;
     }
+
+    &:first-child svg {
+      filter: none;
+      padding: var(--chai-form-spacing);
+      position: relative;
+      top: calc(-1 * var(--chai-form-spacing) / 2);
+      margin-bottom: calc(-1.25 * var(--chai-form-spacing));
+    }
+  }
+
+  ol li svg {
+    background-color: var(--chai-form-color-brand);
+    filter: saturate(0.5) brightness(1.5);
+    fill: #fff;
+    padding: calc(var(--chai-form-spacing) / 2);
+    border-radius: 50%; // Make the background circular
+    height: 24px;
+    width: 24px;
+    margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
+    z-index: 2;
+  }
   `;
 
   override render() {
