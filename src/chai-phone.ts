@@ -16,6 +16,11 @@ export class ChaiPhone extends ChaiTextFieldBase {
     super("phone", "tel", "Phone Number", "###-###-####", "Please enter a valid phone number.", "tel");
   }
 
+  protected override sanitizeField(newValue: string) {
+    // strip everything but +, digits, whitespace, parenthesis and hyphen
+    return newValue.replace(/[^+\d\s()-]/g, '');
+  }
+
   protected override isValueValid() {
     return /^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?(?!555)\d{3}[-.\s]?\d{4}$/.test(this.value);
   }
