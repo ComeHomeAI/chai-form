@@ -278,7 +278,7 @@ export class ChaiForm extends LitElement {
 
     slot[name="tos"] div a {
         color: var(--chai-form-color-text);
-        text-decoration: none; // underline would also work
+        text-decoration: underline; 
     }
   `;
 
