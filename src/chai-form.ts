@@ -239,7 +239,7 @@ export class ChaiForm extends LitElement {
         border-width: 2px;
       }
     }
-    a {
+    .link-button {
       cursor: pointer;
       background: var(--chai-button-background);
       color: var(--chai-button-color);
@@ -268,6 +268,17 @@ export class ChaiForm extends LitElement {
     slot[name="before"], slot[name="after"] {
       display: block;
       color: var(--chai-form-color-text);
+    }
+    slot[name="tos"] {
+        width: 100%;
+        display: flex;
+        justify-content: right;
+        margin-top: 20px;
+    }
+
+    slot[name="tos"] div a {
+        color: var(--chai-form-color-text);
+        text-decoration: none; // underline would also work
     }
   `;
 
@@ -352,12 +363,15 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        <a href="https://www.comehome.ai" @click="${this.submit}" 
+        <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
       </form>
       <slot name="after">
         <chai-stepper></chai-stepper>
+      </slot>
+      <slot name="tos">
+        <div><a href="https://www.comehome.ai"  target="_blank">ComeHome.ai</a> | <a href="https://www.comehome.ai/terms-of-service"  target="_blank">Terms of Service</a></div>
       </slot>
     `;
   }
