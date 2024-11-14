@@ -36,7 +36,8 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai"
+        <a class="link-button"
+         href="https://www.comehome.ai"
           style="background:;"
         >
           Get a Quote!
@@ -46,6 +47,13 @@ suite('chai-form', () => {
         <chai-stepper>
         </chai-stepper>
       </slot>
+      <slot name="tos">
+        <div>
+          <a href="https://www.comehome.ai" target="_blank">ComeHome.ai</a>
+           |
+          <a href="https://www.comehome.ai/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
+       </slot>
     `
     );
   });
@@ -71,7 +79,8 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai"
+        <a class="link-button"
+         href="https://www.comehome.ai"
           style="background:;"
         >
           Get a Quote!
@@ -80,6 +89,13 @@ suite('chai-form', () => {
       <slot name="after">
         <chai-stepper>
         </chai-stepper>
+      </slot>
+      <slot name="tos">
+        <div>
+          <a href="https://www.comehome.ai" target="_blank">ComeHome.ai</a>
+           |
+          <a href="https://www.comehome.ai/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
       </slot>
     `
     );
@@ -109,7 +125,8 @@ suite('chai-form', () => {
           <chai-address>
           </chai-address>
         </slot>
-        <a href="https://www.comehome.ai"
+        <a class="link-button"
+         href="https://www.comehome.ai"
           style="background:;"
         >
           Get a Quote!
@@ -118,6 +135,13 @@ suite('chai-form', () => {
       <slot name="after">
         <chai-stepper>
         </chai-stepper>
+      </slot>
+      <slot name="tos">
+        <div>
+          <a href="https://www.comehome.ai" target="_blank">ComeHome.ai</a>
+           |
+          <a href="https://www.comehome.ai/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
       </slot>
     `
     );
