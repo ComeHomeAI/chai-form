@@ -108,7 +108,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
 
 
   constructor() {
-    super("address", "Address", "Please enter a valid address.");
+    super("address", "Pickup Address", "Please enter a valid address.");
   }
 
 
