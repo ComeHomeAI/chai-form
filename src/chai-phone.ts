@@ -23,7 +23,17 @@ export class ChaiPhone extends ChaiTextFieldBase {
     const phoneNumberInput = this.renderRoot.querySelector('.phone-number-input');
     phoneNumberInput?.addEventListener('input', (e)=> {
       const target = e.target as HTMLInputElement;
-      target.value = this.formatPhone(target.value);
+      const selectionStart= target.selectionStart;
+      const wasAtEndOfInput = selectionStart === target.value.length;
+      this.value = this.formatPhone(target.value);
+      if (!wasAtEndOfInput) {
+        // If the user was not at the end of the input, we want to keep the cursor in the same position
+        // Otherwise the cursor position might jump unexpectedly when something like a whitespace or a parenthesis is added
+        setTimeout(function() {
+          target.selectionStart = target.selectionEnd = selectionStart;
+        }, 0);
+      }
+      console.log(target.value, selectionStart, target.selectionStart);
     })
   }
 
