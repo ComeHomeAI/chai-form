@@ -124,12 +124,17 @@ export abstract class ChaiTextFieldBase extends ChaiFieldBase<string> {
     return this.value.length > 0;
   }
 
+  getClassValues(){
+    return {
+    };
+  }
+
   protected override renderInput() {
     const invalid = this.isFieldInvalid();
-
+    const classInfo = { invalid: invalid, ...this.getClassValues() };
     return html`
       <input id=${this._fieldId} type="${this._inputType}" placeholder="${ifDefined(this.placeholder)}"
-        class=${classMap({ invalid: invalid })} @blur="${this.blurField()}"
+        class=${classMap(classInfo)} @blur="${this.blurField()}"
         autocomplete=${ifDefined(this._autocomplete)} required
         .value="${this.value}"
         @input="${async (e: Event) => this.updateField((e.target as HTMLInputElement).value)}">

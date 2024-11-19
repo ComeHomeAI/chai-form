@@ -43,6 +43,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "@googlemaps/extended-component-library": "^0.6.11",
+    "libphonenumber-js": "^1.11.14",
     "lit": "^3.2.0",
     "posthog-js": "^1.157.2"
   },
