@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { customElement, property } from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import { ChaiFieldBase } from './ChaiFieldBase';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -12,6 +12,10 @@ import { classMap } from 'lit/directives/class-map.js';
 import '@googlemaps/extended-component-library/api_loader.js';
 import '@googlemaps/extended-component-library/place_picker.js';
 import { PlacePicker } from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
+
+interface GmpxMapsEvent {
+  originalTarget: EventTarget
+}
 
 /**
  * The standard form element for the resident's address.
@@ -140,6 +144,16 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     return /\w+/.test(this.value);
   }
 
+  protected inputReceived(){
+    return (e: Event) => {
+      // The raw data entered by the user into the gmaps-field
+      const eventManualAddress = ((e as unknown as GmpxMapsEvent).originalTarget as HTMLInputElement).value;
+      console.log("Input received", eventManualAddress);
+      // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
+      this.updateField(eventManualAddress);
+    };
+  }
+
   protected override renderInput() {
     const invalid = this.isFieldInvalid();
 
@@ -147,6 +161,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
+        country="US" @input="${this.inputReceived()}"
         @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
