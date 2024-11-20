@@ -161,7 +161,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
-        country="US" @input="${this.inputReceived()}"
+        country="US CA" @input="${this.inputReceived()}"
         @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
