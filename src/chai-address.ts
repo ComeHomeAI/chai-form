@@ -116,10 +116,25 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
   }
 
 
+
   protected override firstUpdated() {
     super.firstUpdated();
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
     const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
+     waitForElement(() => picker.shadowRoot?.querySelector('input')).then((input) => {
+      if (this.value.startsWith("places/")) {
+        // not setting value to the place id, but to the formatted address
+        // TODO Doesn't currently work, because the import for makePlaceFromPlaceResult fails to resolve correctly.
+        /*const placeResult = { place_id: this.value} as PlaceResult;
+        makePlaceFromPlaceResult(placeResult).then((placeProxy) => {
+          placeProxy.fetchFields({fields: ['formatted_address']}).then(({place}) => {
+            (input as HTMLInputElement).value = place.formattedAddress ?? "";
+          });
+        });*/
+      } else {
+        (input as HTMLInputElement).value = this.value;
+      }
+    });
     picker.addEventListener('gmpx-placechange', () => {
       this.updateField(picker.value?.id ? `places/${picker.value.id}` : "");
       console.log(picker.value?.id);
@@ -161,7 +176,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
-        country="US CA" @input="${this.inputReceived()}"
+        country="US CA" @input="${this.inputReceived()}" 
         @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
