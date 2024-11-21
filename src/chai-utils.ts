@@ -1,6 +1,6 @@
 
 // Wait for the element to appear in the DOM
-function waitForElement(selector: () => any) {
+export function waitForElement(selector: () => any) {
   return new Promise(resolve => {
     if (selector()) {
       return resolve(selector());
