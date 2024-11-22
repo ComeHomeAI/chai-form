@@ -1,15 +1,17 @@
 
 // Wait for the element to appear in the DOM
-export function waitForElement(selector: () => any) {
-  return new Promise(resolve => {
-    if (selector()) {
-      return resolve(selector());
+export function waitForElement<T>(selector: () => T | null | undefined) {
+  return new Promise<T>(resolve => {
+    const initialValue = selector();
+    if (initialValue) {
+      return resolve(initialValue);
     }
 
     const observer = new MutationObserver(_ => {
-      if (selector()) {
+      const observedValue = selector();
+      if (observedValue) {
         observer.disconnect();
-        resolve(selector());
+        resolve(observedValue);
       }
     });
 

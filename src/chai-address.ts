@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {customElement, property} from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { ChaiFieldBase } from './ChaiFieldBase';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -122,12 +122,18 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     super.firstUpdated();
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
     const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
-    waitForElement(() => picker.shadowRoot?.querySelector('input')).then((input) => {
+    waitForElement(() => picker.shadowRoot?.querySelector<HTMLInputElement>('input')).then((input) => {
+      input.addEventListener('input', (e) => {
+        const eventManualAddress = input.value;
+        localStorage.removeItem("chai-formatted-address");
+        // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
+        this.updateField(eventManualAddress);
+      });
       if (this.value.startsWith("places/")) {
         // not setting value to the place id, but to the formatted address
-        (input as HTMLInputElement).value = localStorage.getItem("chai-formatted-address") ?? "";
+        input.value = localStorage.getItem("chai-formatted-address") ?? "";
       } else {
-        (input as HTMLInputElement).value = this.value;
+        input.value = this.value;
       }
     });
     picker.addEventListener('gmpx-placechange', () => {
@@ -155,17 +161,6 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     return /\w+/.test(this.value);
   }
 
-  protected inputReceived(){
-    return (e: Event) => {
-      // The raw data entered by the user into the gmaps-field
-      const eventManualAddress = ((e as unknown as GmpxMapsEvent).originalTarget as HTMLInputElement).value;
-      console.log("Input received", eventManualAddress);
-      localStorage.removeItem("chai-formatted-address");
-      // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
-      this.updateField(eventManualAddress);
-    };
-  }
-
   protected override renderInput() {
     const invalid = this.isFieldInvalid();
 
@@ -173,7 +168,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
-        country="US CA" @input="${this.inputReceived()}" 
+        .country=${["US", "CA"]}
         @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
