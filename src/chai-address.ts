@@ -14,10 +14,6 @@ import '@googlemaps/extended-component-library/place_picker.js';
 import { PlacePicker } from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
 import { waitForElement } from './chai-utils';
 
-interface GmpxMapsEvent {
-  originalTarget: EventTarget
-}
-
 /**
  * The standard form element for the resident's address.
  */
@@ -123,7 +119,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
     const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
     waitForElement(() => picker.shadowRoot?.querySelector<HTMLInputElement>('input')).then((input) => {
-      input.addEventListener('input', (e) => {
+      input.addEventListener('input', (_) => {
         const eventManualAddress = input.value;
         localStorage.removeItem("chai-formatted-address");
         // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
