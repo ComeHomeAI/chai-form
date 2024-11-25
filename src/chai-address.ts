@@ -105,7 +105,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
    * A placeholder value to show for this field.
    */
   @property()
-  accessor placeholder = "Look up your address";
+  accessor placeholder = "Pickup Address";
 
 
   constructor() {
