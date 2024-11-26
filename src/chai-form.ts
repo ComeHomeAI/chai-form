@@ -567,8 +567,15 @@ export class ChaiForm extends LitElement {
     });
     this.submitted = true;
 
-
     console.info('Initiating submit via navigation', submitUrl, visitorId, this.formInstanceId);
+
+    api(this.environment).loadFinishedPageUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId).then((finishedPageUrl) => {
+      console.info('Finished page URL', finishedPageUrl, visitorId, this.formInstanceId);
+      if (finishedPageUrl != null) {
+        window.location.href = finishedPageUrl;
+      }
+    });
+
 
     window.open(submitUrl, '_blank');
   }
