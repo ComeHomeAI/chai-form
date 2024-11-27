@@ -8,6 +8,7 @@ import './chai-form-configurator';
 import './chai-form-snippet';
 import './chai-components-render-configurator';
 import './chai-form-reseter';
+import './chai-style-snippet';
 
 @customElement('chai-configurator')
 export class ChaiConfigurator extends LitElement {
@@ -65,6 +66,13 @@ export class ChaiConfigurator extends LitElement {
 
       <div class="configurator-container">
         <div class="row">
+          <div class="col-sm-12">
+            <chai-style-snippet
+              id="form-snippet"
+              targetForm="form1"
+            ></chai-style-snippet>
+          </div>
+
           <div class="col-sm-12">
             <chai-form-snippet
               id="form-snippet"

@@ -148,7 +148,6 @@ export class ChaiForm extends LitElement {
        * Inputs and the button have their own border styles.
        */
       --chai-form-border: 1px solid #ccc;
-
       /**
        * This corner radius is applied to the form border, input field borders, and
        * the button by default.
@@ -203,9 +202,6 @@ export class ChaiForm extends LitElement {
       text-shadow: none;
       text-align: left;
       border: var(--chai-form-border);
-      border-width: var(--chai-form-border-width);
-      border-style: var(--chai-form-border-style);
-      border-color: var(--chai-form-border-color);
       border-radius: var(--chai-form-corner-radius);
       padding: var(--chai-form-spacing);
       background: var(--chai-form-background);
@@ -367,10 +363,10 @@ export class ChaiForm extends LitElement {
       <slot name="before"></slot>
       <form id="chai-quote-form">
         <slot>
-          <chai-name id="chai-name"></chai-name>
-          <chai-phone id="chai-phone"></chai-phone>
-          <chai-email id="chai-email"></chai-email>
-          <chai-address id="chai-address"></chai-address>
+          <chai-name></chai-name>
+          <chai-phone></chai-phone>
+          <chai-email></chai-email>
+          <chai-address></chai-address>
         </slot>
         <a
           href="https://www.comehome.ai"

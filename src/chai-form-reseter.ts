@@ -23,12 +23,28 @@ export class ChaiFormReseter extends LitElement {
     target.removeAttribute('style');
     this.cssTyles = {};
     this.notifySnippetComponent();
+    this.resetAllComponent();
   }
 
   notifySnippetComponent() {
     setTimeout(() => {
       window.dispatchEvent(
         new CustomEvent('style-updated', {
+          detail: {
+            defaultClass: this.defaultClassStyle,
+            from: 'chai-reseter',
+          },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }, 0);
+  }
+
+  resetAllComponent() {
+    setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent('style-reset', {
           detail: {
             defaultClass: this.defaultClassStyle,
             from: 'chai-reseter',

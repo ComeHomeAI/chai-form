@@ -2,8 +2,8 @@ import {LitElement, html, css} from 'lit';
 import {property, customElement} from 'lit/decorators.js';
 import {ChaiForm} from './chai-form';
 
-@customElement('chai-form-snippet')
-export class ChaiFormSnippet extends LitElement {
+@customElement('chai-style-snippet')
+export class ChaiStyleSnippet extends LitElement {
   @property({type: String}) targetForm: string = '';
   @property({type: Boolean}) isCodeSnippedVisible: Boolean = false;
   @property({type: String}) cssStyles: string = '';
@@ -30,7 +30,7 @@ export class ChaiFormSnippet extends LitElement {
     }
 
     .snippet-input {
-      min-height: 300px;
+      min-height: 210px;
     }
 
     .snippet-header {
@@ -84,7 +84,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormRenderStyles) {
             if (this.chaiFormRenderStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormRenderStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormRenderStyles[key]}; \n  \t `;
             }
           }
 
@@ -96,7 +96,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormStyles) {
             if (this.chaiFormStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormStyles[key]}; \n   \t `;
             }
           }
 
@@ -107,7 +107,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormLabelStyles) {
             if (this.chaiFormLabelStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormLabelStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormLabelStyles[key]}; \n  \t  `;
             }
           }
 
@@ -118,7 +118,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormInputStyles) {
             if (this.chaiFormInputStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormInputStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormInputStyles[key]}; \n  \t `;
             }
           }
 
@@ -129,7 +129,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormButtonStyles) {
             if (this.chaiFormButtonStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormButtonStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormButtonStyles[key]};    \n  \t  `;
             }
           }
 
@@ -140,7 +140,7 @@ export class ChaiFormSnippet extends LitElement {
           let result = '';
           for (const key in this.chaiFormHeaderStyles) {
             if (this.chaiFormHeaderStyles.hasOwnProperty(key)) {
-              result += `${key}: ${this.chaiFormHeaderStyles[key]}; \n `;
+              result += `${key}: ${this.chaiFormHeaderStyles[key]};       \n  \t `;
             }
           }
 
@@ -169,36 +169,15 @@ export class ChaiFormSnippet extends LitElement {
     // target.removeAttribute('id');
     target.setAttribute('class', this.defaultClass);
 
-    let snippet = `
-   
-      ${target.outerHTML.replace('</chai-form>', '')}
-          ${
-            this.checkedComponentsDetails && this.checkedComponentsDetails.name
-              ? `<chai-name id="chai-name"></chai-name>`
-              : ''
-          }
-          ${
-            this.checkedComponentsDetails && this.checkedComponentsDetails.phone
-              ? `<chai-phone id="chai-phone"></chai-phone>`
-              : ''
-          }
-          ${
-            this.checkedComponentsDetails && this.checkedComponentsDetails.email
-              ? `<chai-email id="chai-email"></chai-email>`
-              : ''
-          }
-          ${
-            this.checkedComponentsDetails &&
-            this.checkedComponentsDetails.address
-              ? `<chai-address id="chai-address"></chai-address>`
-              : ''
-          }
-          ${
-            this.checkedComponentsDetails && this.checkedComponentsDetails.date
-              ? `<chai-date id="chai-date"></chai-date>`
-              : ''
-          }
-      </chai-form>
+    let snippet =
+      this.cssStyles.trim() == ''
+        ? ''
+        : `
+    <style>
+       chia-form.${this.defaultClass} {
+         ${this.cssStyles}
+       }
+    </style>
 `;
     snippet = snippet.replace(/ style="[^"]*"/g, '');
     snippet = snippet.replace(/\s*id="[^"]*"/g, '');
@@ -288,7 +267,7 @@ export class ChaiFormSnippet extends LitElement {
 
         <input
           type="button"
-          value="please copy and paste this code into your website"
+          value="please copy style and paste it code into your header"
           class="form-control btn-primary btn-copy"
           @click="${() => this.copyToClipboard(this.snippet)}"
         />

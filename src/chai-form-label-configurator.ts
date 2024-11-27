@@ -152,6 +152,12 @@ export class ChaiFormLabelConfigurator extends LitElement {
     }, 0);
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+
+    window.addEventListener('style-reset', this.resetFormStyle.bind(this));
+  }
+
   override render() {
     return html`
       <link
