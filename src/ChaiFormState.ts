@@ -3,4 +3,5 @@ export interface ChaiFormState {
   showPhone: boolean;
   showEmail: boolean;
   showAddress: boolean;
+  showDate: boolean;
 }

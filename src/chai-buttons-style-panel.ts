@@ -1,5 +1,5 @@
-import {LitElement, html, css} from 'lit';
-import {property, customElement} from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 @customElement('chai-buttons-style-panel')
 export class ChaiButtonsStylePanel extends LitElement {
@@ -82,20 +82,21 @@ export class ChaiButtonsStylePanel extends LitElement {
     }
   `;
 
-  @property({type: String}) targetId: string = '';
-  @property({type: Boolean}) expanded: boolean = false;
-  @property({type: String}) buttonBackground: string = '';
-  @property({type: String}) buttonBackgroundActive: string = '';
-  @property({type: String}) buttonBackgroundHover: string = '';
-  @property({type: String}) buttonColor: string = '';
-  @property({type: String}) buttonCornerRadius: string = '';
-  @property({type: String}) buttonFilterActive: string = '';
-  @property({type: String}) buttonFilterHover: string = '';
-  @property({type: String}) buttonFontSize: string = '';
-  @property({type: String}) buttonTextTransform: string = '';
-  @property({type: Object}) targetElement: HTMLElement | null = null;
+  @property({ type: String }) targetId: string = '';
+  @property({ type: Boolean }) expanded: boolean = false;
+  @property({ type: String }) buttonBackground: string = '';
+  @property({ type: String }) buttonBackgroundActive: string = '';
+  @property({ type: String }) buttonBackgroundHover: string = '';
+  @property({ type: String }) buttonColor: string = '';
+  @property({ type: String }) buttonCornerRadius: string = '';
+  @property({ type: String }) buttonFilterActive: string = '';
+  @property({ type: String }) buttonFilterHover: string = '';
+  @property({ type: String }) buttonFontSize: string = '';
+  @property({ type: String }) buttonTextTransform: string = '';
+  @property({ type: Object }) targetElement: HTMLElement | null = null;
+  @property({ type: String }) resetValues: string = '';
 
-  @property({attribute: false}) getTextColor: (colorCode: string) => string =
+  @property({ attribute: false }) getTextColor: (colorCode: string) => string =
     () => 'black';
 
   override connectedCallback() {
@@ -135,6 +136,10 @@ export class ChaiButtonsStylePanel extends LitElement {
     if (changedProperties.has('targetId') && this.targetId) {
       this.requestTargetElement();
     }
+
+    if (changedProperties.has('resetValues') && this.resetValues) {
+      this.initializeDefaultValues();
+    }
   }
 
   private requestTargetElement() {
@@ -173,10 +178,12 @@ export class ChaiButtonsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.buttonBackground}
+              .value=${this.buttonBackground}
               @input=${this.handleButtonBackgroundChange}
               style="--input-text-color: ${this.getTextColor(
-                this.buttonBackground
-              )}"
+      this.buttonBackground
+
+    )}"
             />
           </div>
           <div class="form-control">
@@ -184,10 +191,11 @@ export class ChaiButtonsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.buttonBackgroundActive}
+              .value=${this.buttonBackgroundActive}
               @input=${this.handleButtonBackgroundActiveChange}
               style="--input-text-color: ${this.getTextColor(
-                this.buttonBackgroundActive
-              )}"
+      this.buttonBackgroundActive
+    )}"
             />
           </div>
           <div class="form-control">
@@ -195,10 +203,11 @@ export class ChaiButtonsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.buttonBackgroundHover}
+              .value=${this.buttonBackgroundHover}
               @input=${this.handleButtonBackgroundHoverChange}
               style="--input-text-color: ${this.getTextColor(
-                this.buttonBackgroundHover
-              )}"
+      this.buttonBackgroundHover
+    )}"
             />
           </div>
           <div class="form-control">
@@ -206,6 +215,7 @@ export class ChaiButtonsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.buttonColor}
+              .value=${this.buttonColor}
               @input=${this.handleButtonColorChange}
               style="--input-text-color: ${this.getTextColor(this.buttonColor)}"
             />
@@ -216,9 +226,11 @@ export class ChaiButtonsStylePanel extends LitElement {
               type="range"
               min="0"
               max="20"
-              value=${this.buttonCornerRadius}
+              step="1"
+              .value=${this.buttonCornerRadius}
               @input=${this.handleButtonCornerRadiusChange}
             />
+            
           </div>
           <div class="form-control">
             <label>Filter Active: ${this.buttonFilterActive}</label>
@@ -227,7 +239,7 @@ export class ChaiButtonsStylePanel extends LitElement {
               min="0"
               max="1"
               step="0.1"
-              value=${this.buttonFilterActive}
+              .value=${this.buttonFilterActive}
               @input=${this.handleButtonFilterActiveChange}
             />
           </div>
@@ -238,7 +250,7 @@ export class ChaiButtonsStylePanel extends LitElement {
               min="0"
               max="2"
               step="0.1"
-              value=${this.buttonFilterHover}
+              .value=${this.buttonFilterHover}
               @input=${this.handleButtonFilterHoverChange}
             />
           </div>
@@ -248,7 +260,7 @@ export class ChaiButtonsStylePanel extends LitElement {
               type="range"
               min="10"
               max="30"
-              value=${this.buttonFontSize}
+              .value=${this.buttonFontSize}
               @input=${this.handleButtonFontSizeChange}
             />
           </div>
@@ -276,6 +288,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonBackgroundChange(e: Event) {
     const input = e.target as HTMLInputElement;
     this.buttonBackground = input.value;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-background',
@@ -287,6 +300,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonBackgroundActiveChange(e: Event) {
     const input = e.target as HTMLInputElement;
     this.buttonBackgroundActive = input.value;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-background-active',
@@ -298,6 +312,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonBackgroundHoverChange(e: Event) {
     const input = e.target as HTMLInputElement;
     this.buttonBackgroundHover = input.value;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-background-hover',
@@ -309,6 +324,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonColorChange(e: Event) {
     const input = e.target as HTMLInputElement;
     this.buttonColor = input.value;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-color',
@@ -331,6 +347,8 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonFilterActiveChange(e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.buttonFilterActive = `brightness(${value})`;
+
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-filter-active',
@@ -342,6 +360,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonFilterHoverChange(e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.buttonFilterHover = `brightness(${value})`;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-filter-hover',
@@ -353,6 +372,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonFontSizeChange(e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.buttonFontSize = `${value}px`;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-font-size',
@@ -364,6 +384,7 @@ export class ChaiButtonsStylePanel extends LitElement {
   private handleButtonTextTransformChange(e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.buttonTextTransform = `${value}`;
+
     if (this.targetElement) {
       this.targetElement.style.setProperty(
         '--chai-button-text-transform',

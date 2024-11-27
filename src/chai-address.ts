@@ -12,6 +12,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import '@googlemaps/extended-component-library/api_loader.js';
 import '@googlemaps/extended-component-library/place_picker.js';
 import { PlacePicker } from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
+import { waitForElement } from './chai-utils';
 
 /**
  * The standard form element for the resident's address.
@@ -104,19 +105,35 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
    * A placeholder value to show for this field.
    */
   @property()
-  accessor placeholder = "Look up your address";
+  accessor placeholder = "Pickup Address";
 
 
   constructor() {
-    super("address", "Address", "Please enter a valid address.");
+    super("address", "Pickup Address", "Please enter a valid address.");
   }
+
 
 
   protected override firstUpdated() {
     super.firstUpdated();
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
     const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
+    waitForElement(() => picker.shadowRoot?.querySelector<HTMLInputElement>('input')).then((input) => {
+      input.addEventListener('input', (_) => {
+        const eventManualAddress = input.value;
+        localStorage.removeItem("chai-formatted-address");
+        // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
+        this.updateField(eventManualAddress);
+      });
+      if (this.value.startsWith("places/")) {
+        // not setting value to the place id, but to the formatted address
+        input.value = localStorage.getItem("chai-formatted-address") ?? "";
+      } else {
+        input.value = this.value;
+      }
+    });
     picker.addEventListener('gmpx-placechange', () => {
+      localStorage.setItem("chai-formatted-address", picker.value?.formattedAddress ?? "");
       this.updateField(picker.value?.id ? `places/${picker.value.id}` : "");
       console.log(picker.value?.id);
       console.log(picker.value?.formattedAddress);
@@ -147,6 +164,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
+        .country=${["US", "CA"]}
         @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }

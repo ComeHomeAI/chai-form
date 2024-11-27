@@ -1,6 +1,6 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
-import {ChaiFormState} from './ChaiFormState';
+import { LitElement, html, css } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { ChaiFormState } from './ChaiFormState';
 import './chai-inputs-state-handler';
 import './chai-form';
 import './chai-general-form-panel';
@@ -56,7 +56,11 @@ export class ChaiFormContainer extends LitElement {
     showPhone: true,
     showEmail: true,
     showAddress: true,
+    showDate: true,
   };
+
+  @property({ type: String }) resetValues = "";
+
 
   override render() {
     return html`
@@ -66,8 +70,9 @@ export class ChaiFormContainer extends LitElement {
           ${this.formState.showEmail ? html`<chai-email></chai-email>` : ''}
           ${this.formState.showPhone ? html`<chai-phone></chai-phone>` : ''}
           ${this.formState.showAddress
-            ? html`<chai-address></chai-address>`
-            : ''}
+        ? html`<chai-address></chai-address>`
+        : ''}
+          ${this.formState.showDate ? html`<chai-date></chai-date>` : ''}
         </chai-form>
 
         <div class="panel-container">
@@ -78,20 +83,25 @@ export class ChaiFormContainer extends LitElement {
           <chai-general-form-panel
             targetId="form1"
             .getTextColor=${this.getTextColor}
+             .resetValues=${this.resetValues}
+
           ></chai-general-form-panel>
           <chai-inputs-style-panel
             targetId="form1"
             .getTextColor=${this.getTextColor}
+             .resetValues=${this.resetValues}
           ></chai-inputs-style-panel>
           <chai-buttons-style-panel
             targetId="form1"
             .getTextColor=${this.getTextColor}
+            .resetValues=${this.resetValues}
           ></chai-buttons-style-panel>
           <chai-copy-code
             ?showAddress=${this.formState.showAddress}
             ?showEmail=${this.formState.showEmail}
             ?showName=${this.formState.showName}
             ?showPhone=${this.formState.showPhone}
+            ?showDate=${this.formState.showDate}
             targetId="form1"
           ></chai-copy-code>
         </div>
@@ -107,12 +117,17 @@ export class ChaiFormContainer extends LitElement {
     this.updateFormState(e.detail);
   }
 
+  private handleResetValuesChange() {
+    this.resetValues = new Date().toISOString();
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener(
       'request-target-element',
       this.handleRequestTargetElement as EventListener
     );
+    this.addEventListener('reset-values', this.handleResetValuesChange);
   }
 
   override disconnectedCallback() {
@@ -121,10 +136,11 @@ export class ChaiFormContainer extends LitElement {
       'request-target-element',
       this.handleRequestTargetElement as EventListener
     );
+    this.removeEventListener('reset-values', this.handleResetValuesChange);
   }
 
   private handleRequestTargetElement(e: CustomEvent) {
-    const {targetId, callback} = e.detail;
+    const { targetId, callback } = e.detail;
     const targetElement = this.shadowRoot?.getElementById(targetId);
     callback(targetElement);
   }

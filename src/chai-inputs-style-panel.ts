@@ -1,5 +1,5 @@
-import {LitElement, html, css} from 'lit';
-import {property, customElement} from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 @customElement('chai-inputs-style-panel')
 export class ChaiInputsStylePanel extends LitElement {
@@ -82,31 +82,23 @@ export class ChaiInputsStylePanel extends LitElement {
     }
   `;
 
-  @property({type: String}) targetId: string = '';
-  @property({type: Boolean}) expanded: boolean = false;
-  @property({type: String}) headerColor: string = '';
-  @property({type: String}) labelColor: string = '';
-  @property({type: String}) inputColor: string = '';
-  @property({type: String}) inputCornerRadius: string = '';
-  @property({type: String}) inputBorder: string =
+  @property({ type: String }) targetId: string = '';
+  @property({ type: Boolean }) expanded: boolean = false;
+  @property({ type: String }) headerColor: string = '';
+  @property({ type: String }) labelColor: string = '';
+  @property({ type: String }) inputColor: string = '';
+  @property({ type: String }) inputCornerRadius: string = '';
+  @property({ type: String }) inputBorder: string =
     '0.8px solid rgb(233, 228, 224)';
-  @property({type: String}) inputShadow: string =
+  @property({ type: String }) inputShadow: string =
     'rgba(21, 21, 21, 0.08) 0px 1px 2px 0px';
-  @property({type: Object}) targetElement: HTMLElement | null = null;
+  @property({ type: Object }) targetElement: HTMLElement | null = null;
+  @property({ type: String }) resetValues: string = '';
 
-  @property({attribute: false}) getTextColor: (colorCode: string) => string =
+  @property({ attribute: false }) getTextColor: (colorCode: string) => string =
     () => 'black';
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.initializeDefaultValues();
-    this.addEventListener('reset-values', this.resetValues);
-  }
 
-  override disconnectedCallback() {
-    this.removeEventListener('reset-values', this.resetValues);
-    super.disconnectedCallback();
-  }
 
   private initializeDefaultValues() {
     if (this.targetElement) {
@@ -132,6 +124,10 @@ export class ChaiInputsStylePanel extends LitElement {
     super.updated(changedProperties);
     if (changedProperties.has('targetId') && this.targetId) {
       this.requestTargetElement();
+    }
+
+    if (changedProperties.has('resetValues') && this.resetValues) {
+      this.initializeDefaultValues();
     }
   }
 
@@ -171,6 +167,7 @@ export class ChaiInputsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.headerColor}
+              .value=${this.headerColor}
               @input=${this.handleHeaderColorChange}
               style="--input-text-color: ${this.getTextColor(this.headerColor)}"
             />
@@ -180,6 +177,7 @@ export class ChaiInputsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.labelColor}
+              .value=${this.labelColor}
               @input=${this.handleLabelColorChange}
               style="--input-text-color: ${this.getTextColor(this.labelColor)}"
             />
@@ -189,6 +187,7 @@ export class ChaiInputsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.inputColor}
+              .value=${this.inputColor}
               @input=${this.handleInputColorChange}
               style="--input-text-color: ${this.getTextColor(this.inputColor)}"
             />
@@ -202,7 +201,7 @@ export class ChaiInputsStylePanel extends LitElement {
               type="range"
               min="0"
               max="20"
-              value=${this.getNumericValue(this.inputCornerRadius)}
+              .value=${this.getNumericValue(this.inputCornerRadius).toString()}
               @input=${this.handleInputCornerRadiusChange}
             />
           </div>
@@ -213,7 +212,7 @@ export class ChaiInputsStylePanel extends LitElement {
               min="0"
               max="10"
               step="1"
-              value=${this.inputBorder.split(' ')[0].slice(0, -2)}
+              .value=${this.inputBorder.split(' ')[0].slice(0, -2)}
               @input=${this.handleInputBorderWidthChange}
             />
           </div>
@@ -222,6 +221,7 @@ export class ChaiInputsStylePanel extends LitElement {
             <input
               type="color"
               value=${this.inputBorder.split(' ')[2]}
+              .value=${this.inputBorder.split(' ')[2]}
               @input=${this.handleInputBorderColorChange}
             />
           </div>
@@ -252,9 +252,6 @@ export class ChaiInputsStylePanel extends LitElement {
     this.expanded = !this.expanded;
   }
 
-  private resetValues() {
-    this.initializeDefaultValues();
-  }
 
   private handleHeaderColorChange(e: Event) {
     const input = e.target as HTMLInputElement;

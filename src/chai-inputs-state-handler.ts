@@ -1,18 +1,19 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {ChaiFormState} from './ChaiFormState';
+import { LitElement, html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { ChaiFormState } from './ChaiFormState';
 
 @customElement('chai-inputs-state-handler')
 export class ChaiInputsStateHandler extends LitElement {
-  @property({type: Object})
+  @property({ type: Object })
   formState: ChaiFormState = {
     showName: true,
     showPhone: true,
     showEmail: true,
     showAddress: true,
+    showDate: true,
   };
 
-  @property({type: Boolean}) expanded: boolean = false;
+  @property({ type: Boolean }) expanded: boolean = false;
 
   static override styles = css`
     .form-control-container {
@@ -85,58 +86,77 @@ export class ChaiInputsStateHandler extends LitElement {
           </button>
         </div>
         <div class="form-control-group">
+
           <div class="form-control">
             <input
               id="showName"
               type="checkbox"
               .checked=${this.formState.showName}
               @change=${(e: Event) =>
-                this.updateState(
-                  'showName',
-                  (e.target as HTMLInputElement).checked
-                )}
+        this.updateState(
+          'showName',
+          (e.target as HTMLInputElement).checked
+        )}
             />
             <label for="showName">Show Name</label>
           </div>
+
           <div class="form-control">
             <input
               id="showPhone"
               type="checkbox"
               .checked=${this.formState.showPhone}
               @change=${(e: Event) =>
-                this.updateState(
-                  'showPhone',
-                  (e.target as HTMLInputElement).checked
-                )}
+        this.updateState(
+          'showPhone',
+          (e.target as HTMLInputElement).checked
+        )}
             />
             <label for="showPhone">Show Phone</label>
           </div>
+
           <div class="form-control">
             <input
               id="showEmail"
               type="checkbox"
               .checked=${this.formState.showEmail}
               @change=${(e: Event) =>
-                this.updateState(
-                  'showEmail',
-                  (e.target as HTMLInputElement).checked
-                )}
+        this.updateState(
+          'showEmail',
+          (e.target as HTMLInputElement).checked
+        )}
             />
             <label for="showEmail">Show Email</label>
           </div>
+
           <div class="form-control">
             <input
               id="showAddress"
               type="checkbox"
               .checked=${this.formState.showAddress}
               @change=${(e: Event) =>
-                this.updateState(
-                  'showAddress',
-                  (e.target as HTMLInputElement).checked
-                )}
+        this.updateState(
+          'showAddress',
+          (e.target as HTMLInputElement).checked
+        )}
             />
             <label for="showAddress">Show Address</label>
           </div>
+
+          <div class="form-control">
+            <input
+              id="showDate"
+              type="checkbox"
+              .checked=${this.formState.showDate}
+              @change=${(e: Event) =>
+        this.updateState(
+          'showDate',
+          (e.target as HTMLInputElement).checked
+        )}
+            />
+            <label for="showDate">Show Date</label>
+            </div>
+          
         </div>
       </div>
     `;
@@ -147,7 +167,7 @@ export class ChaiInputsStateHandler extends LitElement {
   }
 
   private updateState(key: keyof ChaiFormState, value: boolean) {
-    this.formState = {...this.formState, [key]: value};
+    this.formState = { ...this.formState, [key]: value };
     this.dispatchEvent(
       new CustomEvent('form-state-changed', {
         detail: this.formState,

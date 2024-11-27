@@ -16,6 +16,12 @@ export class ChaiName extends ChaiTextFieldBase {
     super("name", "text", "Name", "First & Last Name", "Please enter your name.", "name");
   }
 
+
+  protected override sanitizeField(newValue: string) {
+    // strip some special characters that break urls
+    return newValue.replace(/[\\/&#;]/g, '');
+  }
+
   protected override isValueValid() {
     return this.value.length >= 2;
   }

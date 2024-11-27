@@ -70,11 +70,13 @@ export class ChaiCopyCode extends LitElement {
   @property({type: String}) targetId: string = '';
   @property({type: Object}) targetElement: HTMLElement | null = null;
   @property({type: String}) cssValues: string = '';
+  @property({type: String}) htmlValues: string = '';
 
   @property({type: Boolean}) showName = false;
   @property({type: Boolean}) showPhone = false;
   @property({type: Boolean}) showEmail = false;
   @property({type: Boolean}) showAddress = false;
+  @property({type: Boolean}) showDate = false;
 
   private observer: MutationObserver | null = null;
 
@@ -88,7 +90,8 @@ export class ChaiCopyCode extends LitElement {
       changedProperties.has('showName') ||
       changedProperties.has('showPhone') ||
       changedProperties.has('showEmail') ||
-      changedProperties.has('showAddress')
+      changedProperties.has('showAddress') ||
+      changedProperties.has('showDate')
     ) {
       this.initializeDefaultValues();
     }
@@ -124,15 +127,17 @@ export class ChaiCopyCode extends LitElement {
 ${
   styles
     ? `
-<style>
-  chai-form${
-    this.targetElement.className ? `.${this.targetElement.className}` : ''
-  }{
-    ${styles.replaceAll(';', '; \n')}
-  }
-</style>`
+  <style>
+    chai-form${
+      this.targetElement.className ? `.${this.targetElement.className}` : ''
+    }{
+      ${styles.replaceAll(';', '; \n')}
+    }
+  </style>
+`
     : ''
-}
+}`;
+      this.htmlValues = `
 <chai-form${
         this.targetElement.className
           ? ` class="${this.targetElement.className}"`
@@ -150,6 +155,7 @@ ${
     ${this.showEmail ? `<chai-email></chai-email>` : ''}
     ${this.showPhone ? `<chai-phone></chai-phone>` : ''}
     ${this.showAddress ? `<chai-address></chai-address>` : ''}
+    ${this.showDate ? `<chai-date></chai-date>` : ''}
 </chai-form>`.trim();
     }
   }
@@ -178,12 +184,17 @@ ${
     return html`
       <div class="form-control-container">
         <div class="form-control-header">
-          <button @click=${this.copyToClipboard}>Copy CSS Variables</button>
+          <button @click=${this.copyCSSToClipboard}>Copy Style</button>
+          <button @click=${this.copyHTMLToClipboard}>Copy HTML</button>
           <button @click=${this.resetValues}>Reset Values</button>
         </div>
         <div class="form-control-group">
           <div class="form-control">
             <textarea readonly>${this.cssValues}</textarea>
+          </div>
+
+          <div class="form-control">
+            <textarea readonly>${this.htmlValues}</textarea>
           </div>
         </div>
       </div>
@@ -196,17 +207,29 @@ ${
     );
     if (this.targetElement) {
       this.targetElement.removeAttribute('style');
+      this.targetElement.removeAttribute('class');
       this.initializeDefaultValues();
     }
   }
 
-  private copyToClipboard() {
+  private copyCSSToClipboard() {
     navigator.clipboard.writeText(this.cssValues).then(
       () => {
         alert('CSS variables copied to clipboard');
       },
       (err) => {
         console.error('Failed to copy CSS variables: ', err);
+      }
+    );
+  }
+
+  private copyHTMLToClipboard() {
+    navigator.clipboard.writeText(this.htmlValues).then(
+      () => {
+        alert('HTML code copied to clipboard');
+      },
+      (err) => {
+        console.error('Failed to copy HTML code: ', err);
       }
     );
   }

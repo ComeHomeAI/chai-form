@@ -16,6 +16,12 @@ export class ChaiEmail extends ChaiTextFieldBase {
     super("email", "email", "Email", "Email", "Please enter a valid email address.", "email");
   }
 
+  protected override sanitizeField(newValue: string) {
+    // strip some special characters that break urls
+    return newValue.replace(/[\\/&#;]/g, '');
+  }
+
+
   protected override isValueValid() {
     return /^[^\s@]+@(?!.*(\w+\.)?example\.com)[^\s@]+\.[^\s@]+$/.test(this.value);
   }
