@@ -127,6 +127,10 @@ export class ChaiForm extends LitElement {
        */
       --chai-form-font-size: 16px;
       /**
+       * This font size is applied to the footer of the form with the terms of services.
+       */
+      --chai-footer-form-font-size: 12px;
+      /**
        * This font weight is applied to all of the form elements.
        */
       --chai-form-font-weight: 400;
@@ -274,6 +278,7 @@ export class ChaiForm extends LitElement {
         display: flex;
         justify-content: right;
         margin-top: 20px;
+        font-size: var(--chai-footer-form-font-size);
     }
 
     slot[name="tos"] div a {
