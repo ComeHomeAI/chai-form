@@ -141,6 +141,17 @@ export const api = (environment: ApiEnvironment) => {
       });
     },
 
+    loadFinishedPageUrl: async (visitorId: string, flowType: string, flowInstanceId: string): Promise<string|null> => {
+      const headers: Headers = new Headers();
+      headers.set('Content-Type', 'application/json');
+      headers.set('X-CHAI-VisitorID', visitorId);
+      const response = await fetch(`${environment}/formBff/submittedUrl/${flowType}/${flowInstanceId}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      return await response.json() as unknown as string|null;
+    },
+
     buildSubmitUrl: (visitorId: string, flowType: string, flowInstanceId: string, fieldValues: string[][]) => {
       const submitUrl = `${environment}/formBff/submit/${flowType}/${flowInstanceId}`;
       const utmParams = Array.from(getUtmQueryParams().entries());
