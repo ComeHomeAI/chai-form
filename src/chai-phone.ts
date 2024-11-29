@@ -13,7 +13,7 @@ import {ChaiTextFieldBase} from './ChaiTextFieldBase';
 @customElement('chai-phone')
 export class ChaiPhone extends ChaiTextFieldBase {
   constructor() {
-    super("phone", "tel", "Phone Number", "###-###-####", "Please enter a valid phone number.", "tel");
+    super("phone", "tel", "Phone Number", "(###) ###-####", "Please enter a valid phone number.", "tel");
   }
 
   protected override firstUpdated() {
@@ -33,7 +33,6 @@ export class ChaiPhone extends ChaiTextFieldBase {
           target.selectionStart = target.selectionEnd = selectionStart;
         }, 0);
       }
-      console.log(target.value, selectionStart, target.selectionStart);
     });
   }
 
@@ -46,25 +45,29 @@ export class ChaiPhone extends ChaiTextFieldBase {
     }
     const length = onlyDigits.length;
     let resultingNumber;
-    if (length < 4) {
+    if (length < 3) {
       resultingNumber = onlyDigits;
+    } else if (length == 3) {
+      resultingNumber = `(${onlyDigits})`;
     } else if (length < 7) {
-      resultingNumber = `${onlyDigits.slice(0, 3)}-${onlyDigits.slice(3)}`;
+      resultingNumber = `(${onlyDigits.slice(0, 3)}) ${onlyDigits.slice(3)}`;
     } else {
-      resultingNumber = `${onlyDigits.slice(0, 3)}-${onlyDigits.slice(
+      resultingNumber = `(${onlyDigits.slice(0, 3)}) ${onlyDigits.slice(
         3,
         6
       )}-${onlyDigits.slice(6)}`;
     }
     if (phoneNumberIn.startsWith('+1')) {
-      return `+1 ${resultingNumber}`;
+      // remove all parenthesis and hyphens from the string
+      const sanitizedNumber = resultingNumber.replace(/[()]/g, '').replace(/-/,' ');
+      return `+1 ${sanitizedNumber}`;
     }
     return resultingNumber;
   }
 
   protected override sanitizeField(newValue: string) {
-    // strip everything but +, digits, whitespace, parenthesis and hyphen
-    return newValue.replace(/[^+\d\s()-]/g, '');
+    // format the input for backend and storage
+    return this.formatPhone(newValue);
   }
 
   protected override isValueValid() {
