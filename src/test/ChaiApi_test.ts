@@ -17,6 +17,10 @@ suite('ChaiApi', () => {
     const hostname = '192.168.2.169';
     assert.strictEqual(extractFlowTypeFromHostname(hostname), '2.169');
   });
+  test('extract flowType from hostname with chai.local domain name', () => {
+    const hostname = 'chai.local';
+    assert.strictEqual(extractFlowTypeFromHostname(hostname), 'chai.local');
+  });
   test('correctly extract flowType from hostname with localhost', () => {
     const hostname = 'localhost';
     assert.strictEqual(extractFlowTypeFromHostname(hostname), 'localhost');

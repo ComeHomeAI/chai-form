@@ -8,7 +8,7 @@ export interface FormInitResponse {
 export const utmParamNames = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 
 export enum ApiEnvironment {
-  Development = 'https://192.168.2.169:7034/form',
+  Development = 'https://chai.local:7034/form',
   Staging = 'https://form.dev.comehome.ai',
   Production = 'https://form.app.comehome.ai'
 }
