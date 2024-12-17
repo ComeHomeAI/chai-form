@@ -1,44 +1,41 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>&lt;chai-form> Demo</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/lit/polyfill-support.js"></script>
+    <script type="module" src="../chai-form-container.js"></script>
+    <style>
+      body {
+        font-family: 'Times New Roman';
+        color: #fff;
+        font-size: 20px;
+        background-image: url(https://assets-global.website-files.com/65d3284d71bda6788ecc1860/65e5b4990bc94a2385b0b455_heropicture.webp);
+        background-size: cover;
+        background-repeat: repeat;
+        background-position: center;
+        text-align: center;
+      }
 
-<head>
-  <meta charset="utf-8" />
-  <title>&lt;chai-form> Demo</title>
-  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../node_modules/lit/polyfill-support.js"></script>
-  <script type="module" src="../chai-form.js"></script>
-  <style>
-    body {
-      font-family: 'Times New Roman';
-      color: #fff;
-      font-size: 20px;
-      background-image: url(https://assets-global.website-files.com/65d3284d71bda6788ecc1860/65e5b4990bc94a2385b0b455_heropicture.webp);
-      background-size: cover;
-      background-repeat: repeat;
-      background-position: center;
-      text-align: center;
-    }
+      h1 {
+        text-shadow: #000 2px 2px 2px;
+      }
 
-    h1 {
-      text-shadow: #000 2px 2px 2px;
-    }
+      div#demos {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: start;
+        gap: 20px;
+        text-shadow: #000 2px 2px 2px;
+      }
 
-    div#demos {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: start;
-      gap: 20px;
-      text-shadow: #000 2px 2px 2px;
-    }
-
-    /* chai-form.mover-default {
+      /* chai-form.mover-default {
       --chai-form-max-width: 400px;
       --chai-form-color-brand: #01919b;
       --chai-form-color-alert: #fa2829;
-      --chai-form-color-text: var(--chai-form-color-brand);
       --chai-form-background: #fffaf6;
       --chai-form-font-family: inherit;
       --chai-form-font-size: 16px;
@@ -64,101 +61,167 @@
       --chai-button-corner-radius: var(--chai-form-corner-radius);
     } */
 
-    chai-form.mover-preferred {
-      --chai-label-visibility: collapse;
-      --chai-label-height: 18;
-      --chai-form-flex-direction: row;
-      --chai-form-max-width: auto;
-      --chai-form-background: #18242be6;
-      --chai-form-font-family: 'Dosis';
+      chai-form.mover-preferred {
+        --chai-label-visibility: collapse;
+        --chai-label-height: 18;
+        --chai-form-flex-direction: column;
+        --chai-form-max-width: auto;
+        --chai-form-background: #18242be6;
+        --chai-form-font-family: 'Dosis';
+        --chai-form-font-weight: 700;
+        --chai-header-color: #fff;
+        --chai-input-corner-radius: 6px;
+        --chai-button-color: rgb(248, 230, 186);
+        --chai-button-background: #790205;
+        --chai-button-text-transform: none;
+      }
+
+      chai-form.mover-2cb {
+        --chai-form-max-width: 350px;
+        --chai-form-color-brand: rgb(74, 38, 132);
+        --chai-form-background: rgba(247, 243, 67, 0.85);
+        --chai-form-font-family: 'Oswald';
+        --chai-form-border: none;
+        --chai-form-corner-radius: 0px;
+        --chai-form-spacing: 12px;
+        --chai-button-font-size: 20px;
+        --chai-button-background: linear-gradient(
+          180deg,
+          #2abd27 0%,
+          #11a40e 100%
+        );
+        --chai-button-background-hover: linear-gradient(
+          0deg,
+          #2abd27 0%,
+          #11a40e 100%
+        );
+        --chai-button-corner-radius: 10px;
+        --chai-button-filter-hover: none;
+      }
+
+      chai-form.mover-wirks {
+        --chai-form-max-width: 400px;
+        --chai-form-color-brand: #ef3e33;
+        --chai-form-color-text: #fff;
+        --chai-form-background: rgba(3, 70, 148, 0.68);
+        --chai-form-font-family: 'Roboto';
+        --chai-form-font-weight: 500;
+        --chai-form-border: 4px solid #fff;
+        --chai-form-corner-radius: 10px;
+        --chai-header-font-size: 28px;
+        --chai-input-corner-radius: 2px;
+        --chai-button-font-size: 18px;
+        --chai-button-background-hover: #034694;
+        --chai-button-background-active: #034694;
+        --chai-button-filter-hover: none;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <style>
+    chai-form.trest {
+      --chai-button-background: #334b4d;
+      --chai-button-background-active: #55a0a5;
+      --chai-button-background-hover: #01919b;
+      --chai-button-color: #a76262;
+      --chai-button-corner-radius: 8px;
+      --chai-button-filter-active: brightness(0.6);
+      --chai-button-filter-hover: brightness(1.2);
+      --chai-button-font-size: 24px;
+      --chai-button-text-transform: uppercase;
+      --chai-form-background: #fffaf6;
+      --chai-form-border: 5px double #4f1212;
+      --chai-form-color-alert: #fa2829;
+      --chai-form-color-brand: #2e4547;
+      --chai-form-color-text: #01919b;
+      --chai-form-corner-radius: 31px;
+      --chai-form-flex-direction: column;
+      --chai-form-font-family: Arial, sans-serif;
+      --chai-form-font-size: 39px;
       --chai-form-font-weight: 700;
-      --chai-header-color: #fff;
-      --chai-input-corner-radius: 6px;
-      --chai-button-color: rgb(248, 230, 186);
-      --chai-button-background: #790205;
-      --chai-button-text-transform: none;
-    }
-
-    chai-form.mover-2cb {
-      --chai-form-max-width: 350px;
-      --chai-form-color-brand: rgb(74, 38, 132);
-      --chai-form-background: rgba(247, 243, 67, 0.85);
-      --chai-form-font-family: 'Oswald';
-      --chai-form-border: none;
-      --chai-form-corner-radius: 0px;
-      --chai-form-spacing: 12px;
-      --chai-button-font-size: 20px;
-      --chai-button-background: linear-gradient(180deg, #2abd27 0%, #11a40e 100%);
-      --chai-button-background-hover: linear-gradient(0deg, #2abd27 0%, #11a40e 100%);
-      --chai-button-corner-radius: 10px;
-      --chai-button-filter-hover: none;
-    }
-
-    chai-form.mover-wirks {
-      --chai-form-max-width: 400px;
-      --chai-form-color-brand: #EF3E33;
-      --chai-form-color-text: #fff;
-      --chai-form-background: rgba(3, 70, 148, 0.68);
-      --chai-form-font-family: 'Roboto';
-      --chai-form-font-weight: 500;
-      --chai-form-border: 4px solid #fff;
-      --chai-form-corner-radius: 10px;
-      --chai-header-font-size: 28px;
-      --chai-input-corner-radius: 2px;
-      --chai-button-font-size: 18px;
-      --chai-button-background-hover: #034694;
-      --chai-button-background-active: #034694;
-      --chai-button-filter-hover: none;
+      --chai-form-max-width: 800px;
+      --chai-form-spacing: 16px;
+      --chai-header-color: #01919b;
+      --chai-header-font-size: calc(39px * 1.5);
+      --chai-input-border: 0.8px solid rgb(233, 228, 224);
+      --chai-input-color: #000;
+      --chai-input-corner-radius: calc(31px / 4);
+      --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
+      --chai-label-color: #01919b;
+      --chai-label-height: auto;
+      --chai-label-visibility: visible;
     }
   </style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
-</head>
 
-<body>
-  <h1>Form Demo</h1>
-  <div id="demos">
+  <body>
+    <h1>Form Demo</h1>
+    <div id="demos">
+      <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
+      <!-- <chai-form
+        environment="https://192.168.2.169:7034/form"
+        id="form1"
+        class="mover-default"
+      ></chai-form> -->
 
-    <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-default"></chai-form>
+      <!-- <chai-form
+        environment="https://192.168.2.169:7034/form"
+        class="mover-preferred"
+        flowtype="comehome.xyz"
+        headertext="Get a Free Moving Estimate"
+        buttontext="Continue"
+      >
+        <chai-address placeholder="Pickup"></chai-address>
+        <chai-name placeholder="Full Name"></chai-name>
+        <chai-phone placeholder="Cell Phone #"></chai-phone>
+        <chai-date label="Moving Date"></chai-date>
+        <span slot="after"></span>
+      </chai-form> -->
+      <!-- 
+      <chai-form
+        environment="https://192.168.2.169:7034/form"
+        class="mover-2cb"
+        buttontext="Get Quote"
+        headertext="Start your move off right!"
+        flowtype="comehome.xyz"
+      >
+        <p slot="before">All fields are required.</p>
+        <chai-name></chai-name>
+        <chai-phone></chai-phone>
+        <chai-email></chai-email>
+        <chai-address></chai-address>
+        <chai-stepper slot="after"></chai-stepper>
+        <p slot="after">
+          Optional: <b>Get $25 off</b> and a faster, more accurate quote if you
+          complete our photo survey.
+        </p>
+      </chai-form>
 
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-preferred" flowtype="comehome.xyz"
-      headertext="Get a Free Moving Estimate" buttontext="Continue">
-      <chai-address placeholder="Pickup"></chai-address>
-      <chai-name placeholder="Full Name"></chai-name>
-      <chai-phone placeholder="Cell Phone #"></chai-phone>
-      <!-- <chai-email placeholder="Email"></chai-email> -->
-      <chai-date label="Moving Date"></chai-date>
-      <span slot="after"></span>
-    </chai-form>
-
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-2cb" buttontext="Get Quote"
-      headertext="Start your move off right!" flowtype="comehome.xyz">
-      <p slot="before">All fields are required.</p>
-      <chai-name></chai-name>
-      <chai-phone></chai-phone>
-      <chai-email></chai-email>
-      <chai-address></chai-address>
-      <chai-stepper slot="after"></chai-stepper>
-      <p slot="after">
-        Optional: <b>Get $25 off</b> and a faster, more accurate quote
-        if you complete our photo survey.
-      </p>
-    </chai-form>
-
-    <chai-form environment="https://192.168.2.169:7034/form" class="mover-wirks" buttontext="Start Quote"
-      flowtype="comehome.xyz">
-      <chai-name label="Your Name" placeholder="Full Name"></chai-name>
-      <chai-phone label="Cell Phone #" placeholder="Enter your mobile #"></chai-phone>
-      <chai-email label="Email Address" placeholder="Email"></chai-email>
-      <chai-date label="Requested Move Date"></chai-date>
-    </chai-form>
-
-  </div>
-</body>
-
+      <chai-form
+        environment="https://192.168.2.169:7034/form"
+        class="mover-wirks"
+        buttontext="Start Quote"
+        flowtype="comehome.xyz"
+      >
+        <chai-name label="Your Name" placeholder="Full Name"></chai-name>
+        <chai-phone
+          label="Cell Phone #"
+          placeholder="Enter your mobile #"
+        ></chai-phone>
+        <chai-email label="Email Address" placeholder="Email"></chai-email>
+        <chai-date label="Requested Move Date"></chai-date>
+      </chai-form> -->
+      <!-- <dynamic-control-panel targetId="form1"></dynamic-control-panel> -->
+      <chai-form-container />
+    </div>
+  </body>
 </html>
