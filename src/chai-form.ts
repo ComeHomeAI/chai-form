@@ -463,6 +463,14 @@ export class ChaiForm extends LitElement {
       valid,
     });
 
+    if (field == 'phone') {
+      posthog.setPersonProperties({phone: value});
+    } else if (field == 'email') {
+      posthog.setPersonProperties({email: value});
+    } else if (field == 'name') {
+      posthog.setPersonProperties({name: value});
+    }
+
     this.fieldStates.set(field, {value, valid});
 
     if (valid) {
