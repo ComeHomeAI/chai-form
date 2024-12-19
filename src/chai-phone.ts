@@ -6,6 +6,7 @@
 
 import {customElement} from 'lit/decorators.js';
 import {ChaiTextFieldBase} from './ChaiTextFieldBase';
+import posthog from 'posthog-js';
 
 /**
  * The standard form element for the resident's mobile phone number.
@@ -74,6 +75,11 @@ export class ChaiPhone extends ChaiTextFieldBase {
     return /^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?(?!555)\d{3}[-.\s]?\d{4}$/.test(
       this.value
     );
+  }
+
+  protected override onChangedFieldValid() {
+    super.onChangedFieldValid();
+    posthog.setPersonProperties({phone: this.value});
   }
 
   override getClassValues(): {} {

@@ -81,6 +81,10 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     return newValue;
   }
 
+  protected onChangedFieldValid(){
+
+  }
+
   protected updateField(newValue: T) {
     console.info("Field updated", this._fieldId, newValue);
     newValue = this.sanitizeField(newValue);
@@ -109,6 +113,10 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     } catch (e) {
       console.warn("Error validating field", this._fieldId, e);
       valid = false;
+    }
+
+    if (valid && !fieldInitialLoad) {
+      this.onChangedFieldValid();
     }
 
     let eventTarget: string;

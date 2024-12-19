@@ -6,6 +6,7 @@
 
 import { customElement } from 'lit/decorators.js';
 import { ChaiTextFieldBase } from './ChaiTextFieldBase';
+import posthog from 'posthog-js';
 
 /**
  * The standard form element for the resident's full name.
@@ -24,6 +25,11 @@ export class ChaiName extends ChaiTextFieldBase {
 
   protected override isValueValid() {
     return this.value.length >= 2;
+  }
+
+  protected override onChangedFieldValid() {
+    super.onChangedFieldValid();
+    posthog.setPersonProperties({name: this.value});
   }
 }
 

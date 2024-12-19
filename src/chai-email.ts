@@ -6,6 +6,7 @@
 
 import { customElement } from 'lit/decorators.js';
 import { ChaiTextFieldBase } from './ChaiTextFieldBase';
+import posthog from 'posthog-js';
 
 /**
  * The standard form element for the resident's email address.
@@ -24,6 +25,11 @@ export class ChaiEmail extends ChaiTextFieldBase {
 
   protected override isValueValid() {
     return /^[^\s@]+@(?!.*(\w+\.)?example\.com)[^\s@]+\.[^\s@]+$/.test(this.value);
+  }
+
+  protected override onChangedFieldValid() {
+    super.onChangedFieldValid();
+    posthog.setPersonProperties({email: this.value});
   }
 }
 
