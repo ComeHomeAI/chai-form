@@ -21,7 +21,7 @@ export class ChaiTcpaAgreement extends ChaiFieldBase<boolean> {
   }
 
   @property()
-  accessor text = 'I consent to receive calls and texts at this number about my move, including marketing by autodialer and prerecorded and artificial voice and email, but not as a condition of any purchase. I also agree to the Terms of Use, and to the Privacy Policy regarding the information relating to you.';
+  accessor text = 'I consent to receive calls and texts at this number about my move, including marketing by autodialer and prerecorded and artificial voice and email, but not as a condition of any purchase. I also agree to the Terms of Use, and to the Privacy Policy regarding the information relating to me.';
 
   @property()
   accessor moreText = 'Msg/data rates may apply. This consent applies even if I am on a corporate, state or national Do Not Call list.\n';
