@@ -12,6 +12,7 @@ import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
 import "./chai-date";
+import "./chai-tcpa-agreement"
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
 import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
@@ -367,6 +368,7 @@ export class ChaiForm extends LitElement {
           <chai-phone></chai-phone>
           <chai-email></chai-email>
           <chai-address></chai-address>
+          <chai-tcpa-agreement></chai-tcpa-agreement>
         </slot>
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
