@@ -35,6 +35,8 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-tcpa-agreement>
+          </chai-tcpa-agreement>
         </slot>
         <a class="link-button"
          href="https://www.comehome.ai"
@@ -78,6 +80,8 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-tcpa-agreement>
+          </chai-tcpa-agreement>
         </slot>
         <a class="link-button"
          href="https://www.comehome.ai"
@@ -124,6 +128,8 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-tcpa-agreement>
+          </chai-tcpa-agreement>
         </slot>
         <a class="link-button"
          href="https://www.comehome.ai"
