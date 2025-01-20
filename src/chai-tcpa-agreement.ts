@@ -10,7 +10,13 @@ export class ChaiTcpaAgreement extends LitElement {
       }
 
       p {
+          color: var(--chai-form-color-text);
           font-size: calc(var(--chai-form-font-size) * 0.8);
+      }
+      p a {
+          color: var(--chai-form-color-text);
+          text-decoration: underline;
+          cursor: pointer;
       }
   `;
   @property()
