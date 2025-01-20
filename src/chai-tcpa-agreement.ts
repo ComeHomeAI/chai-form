@@ -12,6 +12,8 @@ export class ChaiTcpaAgreement extends LitElement {
       p {
           color: var(--chai-form-color-text);
           font-size: calc(var(--chai-form-font-size) * 0.8);
+          margin-block-start: 0;
+          margin-block-end: 0;
       }
       p a {
           color: var(--chai-form-color-text);

@@ -253,7 +253,7 @@ export class ChaiForm extends LitElement {
       text-align: center;
       text-decoration: none;
       border-radius: var(--chai-button-corner-radius);
-      margin-top: calc(var(--chai-form-spacing) * 1.5);
+      margin-top: calc(var(--chai-form-spacing));
       margin-bottom: var(--chai-form-spacing);
       padding: calc(var(--chai-form-spacing) / 1.5);
 
@@ -278,7 +278,7 @@ export class ChaiForm extends LitElement {
         width: 100%;
         display: flex;
         justify-content: right;
-        margin-top: 20px;
+        margin-top: 16px;
         font-size: var(--chai-footer-form-font-size);
     }
 
