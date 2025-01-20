@@ -368,8 +368,8 @@ export class ChaiForm extends LitElement {
           <chai-phone></chai-phone>
           <chai-email></chai-email>
           <chai-address></chai-address>
-          <chai-tcpa-agreement></chai-tcpa-agreement>
         </slot>
+        <chai-tcpa-agreement></chai-tcpa-agreement>
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
