@@ -20,6 +20,9 @@ suite('chai-form', () => {
     assert.shadowDom.equal(
       el,
       `
+      <gmpx-api-loader 
+      key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"
+      version="beta"></gmpx-api-loader>
       <h2>
         Get your moving quote now!
       </h2>
@@ -35,6 +38,10 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-destination>
+          </chai-destination>
+          <chai-move-size>
+          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>
@@ -65,6 +72,9 @@ suite('chai-form', () => {
     assert.shadowDom.equal(
       el,
       `
+      <gmpx-api-loader 
+      key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM" 
+      version="beta"></gmpx-api-loader>
       <h2>
         Get your moving quote now!
       </h2>
@@ -80,6 +90,10 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-destination>
+          </chai-destination>
+          <chai-move-size>
+          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>
@@ -113,6 +127,9 @@ suite('chai-form', () => {
     assert.shadowDom.equal(
       el,
       `
+      <gmpx-api-loader 
+      key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM" 
+      version="beta"></gmpx-api-loader>
       <h2>
         Get your moving quote now!
       </h2>
@@ -128,6 +145,10 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
+          <chai-destination>
+          </chai-destination>
+          <chai-move-size>
+          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>
