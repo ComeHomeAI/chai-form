@@ -38,10 +38,6 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
-          <chai-destination>
-          </chai-destination>
-          <chai-move-size>
-          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>
@@ -90,10 +86,6 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
-          <chai-destination>
-          </chai-destination>
-          <chai-move-size>
-          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>
@@ -145,10 +137,6 @@ suite('chai-form', () => {
           </chai-email>
           <chai-address>
           </chai-address>
-          <chai-destination>
-          </chai-destination>
-          <chai-move-size>
-          </chai-move-size>
         </slot>
         <chai-tcpa-agreement>
         </chai-tcpa-agreement>

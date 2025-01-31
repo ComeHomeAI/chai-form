@@ -371,8 +371,6 @@ export class ChaiForm extends LitElement {
           <chai-phone></chai-phone>
           <chai-email></chai-email>
           <chai-address></chai-address>
-          <chai-destination></chai-destination>
-          <chai-move-size></chai-move-size>
         </slot>
         <chai-tcpa-agreement></chai-tcpa-agreement>
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 

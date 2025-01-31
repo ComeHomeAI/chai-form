@@ -1,26 +1,25 @@
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import {ChaiFieldBase} from './ChaiFieldBase';
 import {css, html, TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
-import { property } from 'lit/decorators.js';
 
 enum MoveSize
 {
-  Studio,
-  OneBedroom,
-  TwoBedrooms,
-  ThreeBedrooms,
-  FourBedrooms,
-  FiveBedrooms,
-  SixBedrooms,
-  MoreThanSix,
-  Other,
-  MissingValue
+  Studio = 0,
+  OneBedroom = 1,
+  TwoBedrooms = 2,
+  ThreeBedrooms = 3,
+  FourBedrooms = 4,
+  FiveBedrooms = 5,
+  SixBedrooms = 6,
+  MoreThanSix = 7,
+  Other = 8,
+  MissingValue = 9
 }
 
 @customElement("chai-move-size")
-export class ChaiMoveSize extends ChaiFieldBase<MoveSize> {
+export class ChaiMoveSize extends ChaiFieldBase<string> {
   static override styles = [
     css`
     :host {
@@ -112,37 +111,43 @@ export class ChaiMoveSize extends ChaiFieldBase<MoveSize> {
     return this.isValueSet();
   }
 
+  private updateFieldEnum(value: MoveSize) {
+    let moveSizeElement:string = MoveSize[value];
+    console.log("MoveSize: " + moveSizeElement);
+    this.updateField(moveSizeElement);
+  }
+
   protected override renderInput(): TemplateResult {
-    const selected = this.value;
     const classInfo= {invalid: this.isFieldInvalid()};
     return html`
-      <select id=${this._fieldId} class=${classMap(classInfo)} @input=${ async (e:Event)=>this.updateField(MoveSize[(e.target as HTMLSelectElement).value as keyof typeof MoveSize])}>
-        <option label="${ifDefined(this.placeHolder)}" value=${MoveSize.MissingValue}></option>
-        <option label="Studio" value=${MoveSize.Studio} ?selected=${MoveSize.Studio == selected}></option>
-        <option label="1 Bedroom" value=${MoveSize.OneBedroom} ?selected=${MoveSize.OneBedroom == selected}></option>
-        <option label="2 Bedrooms" value=${MoveSize.TwoBedrooms} ?selected=${MoveSize.TwoBedrooms == selected}></option>
-        <option label="3 Bedrooms" value=${MoveSize.ThreeBedrooms} ?selected=${MoveSize.ThreeBedrooms == selected}></option>
-        <option label="4 Bedrooms" value=${MoveSize.FourBedrooms} ?selected=${MoveSize.FourBedrooms == selected}></option>
-        <option label="5 Bedrooms" value=${MoveSize.FiveBedrooms} ?selected=${MoveSize.FiveBedrooms == selected}></option>
-        <option label="6 Bedrooms" value=${MoveSize.SixBedrooms} ?selected=${MoveSize.SixBedrooms == selected}></option>
-        <option label="More than 6" value=${MoveSize.MoreThanSix} ?selected=${MoveSize.MoreThanSix == selected}></option>
-        <option label="Other" value=${MoveSize.Other} ?selected=${MoveSize.Other == selected}></option>
+      <select id=${this._fieldId} class=${classMap(classInfo)} @input=${ async (e:Event)=> this.updateFieldEnum(MoveSize[(e.target as HTMLSelectElement).value as keyof typeof MoveSize])}>
+        <option label="${ifDefined(this.placeHolder)}" hidden value=${MoveSize.MissingValue}></option>
+        <option label="Studio" value=${MoveSize.Studio} ?selected=${'0' == this.value}></option>
+        <option label="1 Bedroom" value=${MoveSize.OneBedroom} ?selected=${'1' == this.value}></option>
+        <option label="2 Bedrooms" value=${MoveSize.TwoBedrooms} ?selected=${'2' == this.value}></option>
+        <option label="3 Bedrooms" value=${MoveSize.ThreeBedrooms} ?selected=${'3' == this.value}></option>
+        <option label="4 Bedrooms" value=${MoveSize.FourBedrooms} ?selected=${'4' == this.value}></option>
+        <option label="5 Bedrooms" value=${MoveSize.FiveBedrooms} ?selected=${'5' == this.value}></option>
+        <option label="6 Bedrooms" value=${MoveSize.SixBedrooms} ?selected=${'6' == this.value}></option>
+        <option label="More than 6" value=${MoveSize.MoreThanSix} ?selected=${'7' == this.value}></option>
+        <option label="Other" value=${MoveSize.Other} ?selected=${'8' == this.value}></option>
       </select>`;
   }
 
-  protected deserializeValue(storedValue: string | null): MoveSize {
-    return MoveSize[storedValue as keyof typeof MoveSize];
+  protected override deserializeValue(storedValue: string | null): string {
+    return storedValue ?? "";
+  }
+
+  protected override serializeValue(value: string): string {
+    return value;
   }
 
   protected isValueSet(): boolean {
     // this.value can actually be undefined if nothing has been selected yet
     // noinspection JSIncompatibleTypesComparison
-    return this.value != undefined && this.value != MoveSize.MissingValue;
+    return this.value != undefined && this.value != "9";
   }
 
-  protected serializeValue(value: MoveSize): string {
-    return value.toString();
-  }
 }
 
 declare global {
