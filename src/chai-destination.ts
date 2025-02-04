@@ -17,8 +17,8 @@ import { waitForElement } from './chai-utils';
 /**
  * The standard form element for the resident's address.
  */
-@customElement('chai-address')
-export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is the Google Place ID
+@customElement('chai-destination')
+export class ChaiDestination extends ChaiFieldBase<string> { // The stored value is the Google Place ID
   static override styles = css`
     :host {
       /**
@@ -105,11 +105,11 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
    * A placeholder value to show for this field.
    */
   @property()
-  accessor placeholder = "Pickup Address";
+  accessor placeholder = "Destination Address";
 
 
   constructor() {
-    super("address", "Pickup Address", "Please enter a valid address.");
+    super("destination", "Destination Address", "Please enter a valid address.");
   }
 
 
@@ -121,19 +121,19 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     waitForElement(() => picker.shadowRoot?.querySelector<HTMLInputElement>('input')).then((input) => {
       input.addEventListener('input', (_) => {
         const eventManualAddress = input.value;
-        localStorage.removeItem("chai-origin-formatted-address");
+        localStorage.removeItem("chai-destination-formatted-address");
         // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
         this.updateField(eventManualAddress);
       });
       if (this.value.startsWith("places/")) {
         // not setting value to the place id, but to the formatted address
-        input.value = localStorage.getItem("chai-origin-formatted-address") ?? "";
+        input.value = localStorage.getItem("chai-destination-formatted-address") ?? "";
       } else {
         input.value = this.value;
       }
     });
     picker.addEventListener('gmpx-placechange', () => {
-      localStorage.setItem("chai-origin-formatted-address", picker.value?.formattedAddress ?? "");
+      localStorage.setItem("chai-destination-formatted-address", picker.value?.formattedAddress ?? "");
       this.updateField(picker.value?.id ? `places/${picker.value.id}` : "");
       console.log(picker.value?.id);
       console.log(picker.value?.formattedAddress);
@@ -171,6 +171,6 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
 
 declare global {
   interface HTMLElementTagNameMap {
-    'chai-address': ChaiAddress;
+    'chai-destination': ChaiDestination;
   }
 }

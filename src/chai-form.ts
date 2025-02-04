@@ -11,8 +11,10 @@ import "./chai-name";
 import "./chai-phone";
 import "./chai-email";
 import "./chai-address";
+import "./chai-destination";
 import "./chai-date";
-import "./chai-tcpa-agreement"
+import "./chai-tcpa-agreement";
+import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
 import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
 import { publishGtmEvent } from './ChaiAnalytics';
@@ -360,6 +362,7 @@ export class ChaiForm extends LitElement {
 
   override render() {
     return html`
+      <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <h2>${this.headerText}</h2>
       <slot name="before"></slot>
       <form id="chai-quote-form">

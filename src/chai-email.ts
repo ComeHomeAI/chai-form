@@ -14,7 +14,8 @@ import posthog from 'posthog-js';
 @customElement('chai-email')
 export class ChaiEmail extends ChaiTextFieldBase {
   constructor() {
-    super("email", "email", "Email", "Email", "Please enter a valid email address.", "email");
+    super("email", "email", "Email", "Email", "Please enter a valid email address.",
+      "email");
   }
 
   protected override sanitizeField(newValue: string) {
