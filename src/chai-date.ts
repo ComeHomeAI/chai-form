@@ -122,12 +122,23 @@ export class ChaiDate extends ChaiTextFieldBase {
 
   protected override firstUpdated() {
     super.firstUpdated();
-    // Set the minimum date to today's date (or tomorrow's date, depending on timezone offset).
-    this.input.min = new Date().toISOString().substring(0, 10);
+    // Set the minimum date to yesterday according to browsers current date
+    let date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    this.input.min = `${year}-${month}-${day}`;
   }
 
   protected override isValueValid() {
-    return /\d\d\d\d-\d\d-\d\d/.test(this.value) && new Date(this.value) > new Date();
+    let formatMatches = /\d\d\d\d-\d\d-\d\d/.test(this.value);
+    if (formatMatches) {
+      const enteredDate = new Date(this.value);
+      const minDate = new Date();
+      minDate.setDate(minDate.getDate() - 1);
+      return enteredDate > minDate;
+    }
+    return false;
   }
 
   override renderInput() {
