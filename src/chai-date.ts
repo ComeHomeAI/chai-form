@@ -133,7 +133,7 @@ export class ChaiDate extends ChaiTextFieldBase {
   protected override isValueValid() {
     let formatMatches = /\d\d\d\d-\d\d-\d\d/.test(this.value);
     if (formatMatches) {
-      const enteredDate = new Date(this.value);
+      const enteredDate = new Date(`${this.value}T00:00`);
       const minDate = new Date();
       minDate.setDate(minDate.getDate() - 1);
       return enteredDate > minDate;
