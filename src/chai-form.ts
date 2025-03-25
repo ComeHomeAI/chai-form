@@ -40,8 +40,6 @@ export class ChaiForm extends LitElement {
 
   @state() private formInstanceId = `FORM-${crypto.randomUUID()}`;
 
-  @state() private overwrittenFlowType: string | null = null;
-
   @state() private gaMeasurementId: string | null = null;
 
   @state() private fieldStates: Map<string, FieldState>;
@@ -65,9 +63,6 @@ export class ChaiForm extends LitElement {
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
     this.fieldStates = new Map<string, FieldState>();
-    if (window.location.hostname.includes(CORREIRABROS)) {
-      this.overwrittenFlowType = CORREIRABROS;
-    }
     if (localStorage.getItem("chai-hotfix-version") === null || localStorage.getItem("chai-hotfix-version") === '1') {
       localStorage.removeItem('chai-flowInstanceId');
       localStorage.setItem('chai-hotfix-version', '2');
@@ -83,6 +78,7 @@ export class ChaiForm extends LitElement {
     );
   }
 
+  // noinspection CssUnresolvedCustomProperty
   static override styles = css`
     :host {
       /**
@@ -373,7 +369,7 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        ${((this.overwrittenFlowType ?? this.flowType) === CORREIRABROS ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
+        ${((this.flowType) === CORREIRABROS ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
@@ -382,7 +378,7 @@ export class ChaiForm extends LitElement {
         <chai-stepper></chai-stepper>
       </slot>
       <slot name="tos">
-        <div>${((this.overwrittenFlowType??this.flowType) === CORREIRABROS ? '' : html`<a href="https://www.comehome.ai"  target="_blank">ComeHome.ai</a> |`)} <a href="https://www.comehome.ai/terms-of-service"  target="_blank">Terms of Service</a></div>
+        <div>${((this.flowType) === CORREIRABROS ? '' : html`<a href="https://www.comehome.ai"  target="_blank">ComeHome.ai</a> |`)} <a href="https://www.comehome.ai/terms-of-service"  target="_blank">Terms of Service</a></div>
       </slot>
     `;
   }
@@ -406,7 +402,7 @@ export class ChaiForm extends LitElement {
     ) {
       const visitorId = localStorage.getItem('chai-visitorId')!;
       ChaiForm._initPromise = api(this.environment)
-        .init(visitorId, this.overwrittenFlowType ?? this.flowType)
+        .init(visitorId, this.flowType)
         .then((formInit) => {
           console.info(
             'Flow initialized',
@@ -542,7 +538,7 @@ export class ChaiForm extends LitElement {
     if (failedValidationTagNames.length > 0) {
       console.log('Fields missing or invalid', visitorId, this.formInstanceId);
       posthog.capture(formSubmitClickedEventName, {
-        flow_type: this.overwrittenFlowType ?? this.flowType,
+        flow_type: this.flowType,
         survey_id: localStorage.getItem('chai-flowInstanceId'),
         valid: false,
         valid_fields: validatedTagNames,
@@ -564,11 +560,11 @@ export class ChaiForm extends LitElement {
       console.error('Flow instance ID not found in local storage', visitorId, this.formInstanceId);
       posthog.capture('form:submit_button_error', { chai_exception: 'Flow instance ID not found in local storage', flow_type: this.flowType });
     }
-    const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.overwrittenFlowType ?? this.flowType, flowInstanceId, fieldValues);
+    const submitUrl = api(this.environment).buildSubmitUrl(visitorId, this.flowType, flowInstanceId, fieldValues);
 
-    publishGtmEvent('chai_form_submit', { flowType: this.overwrittenFlowType ?? this.flowType });
+    publishGtmEvent('chai_form_submit', { flowType: this.flowType });
     posthog.capture(formSubmitClickedEventName, {
-      flow_type: this.overwrittenFlowType ?? this.flowType,
+      flow_type: this.flowType,
       survey_id: localStorage.getItem('chai-flowInstanceId'),
       valid: true,
       valid_fields: validatedTagNames,
