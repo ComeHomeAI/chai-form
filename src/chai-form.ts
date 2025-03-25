@@ -27,6 +27,7 @@ type FieldState = {
 }
 
 const GITHUB_SHA = '{{GITHUB_SHA}}';
+const CORREIRABROS = 'correirabros.com';
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -64,8 +65,8 @@ export class ChaiForm extends LitElement {
     this.gaMeasurementId = localStorage.getItem('chai-gaMeasurementId');
 
     this.fieldStates = new Map<string, FieldState>();
-    if (window.location.hostname.includes('correirabros.com')) {
-      this.overwrittenFlowType = 'correirabros.com';
+    if (window.location.hostname.includes(CORREIRABROS)) {
+      this.overwrittenFlowType = CORREIRABROS;
     }
     if (localStorage.getItem("chai-hotfix-version") === null || localStorage.getItem("chai-hotfix-version") === '1') {
       localStorage.removeItem('chai-flowInstanceId');
@@ -372,7 +373,7 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        <chai-tcpa-agreement></chai-tcpa-agreement>
+        ${((this.overwrittenFlowType ?? this.flowType) === CORREIRABROS ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
@@ -381,7 +382,7 @@ export class ChaiForm extends LitElement {
         <chai-stepper></chai-stepper>
       </slot>
       <slot name="tos">
-        <div><a href="https://www.comehome.ai"  target="_blank">ComeHome.ai</a> | <a href="https://www.comehome.ai/terms-of-service"  target="_blank">Terms of Service</a></div>
+        <div>${((this.overwrittenFlowType??this.flowType) === CORREIRABROS ? '' : html`<a href="https://www.comehome.ai"  target="_blank">ComeHome.ai</a> |`)} <a href="https://www.comehome.ai/terms-of-service"  target="_blank">Terms of Service</a></div>
       </slot>
     `;
   }
