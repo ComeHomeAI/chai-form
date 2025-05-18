@@ -28,6 +28,8 @@ type FieldState = {
 
 const GITHUB_SHA = '{{GITHUB_SHA}}';
 const CORREIRABROS = 'correirabros.com';
+const MIRACLEMOVERSUTAH = 'miraclemoversutah.com';
+const skipTcpaVendors = [CORREIRABROS, MIRACLEMOVERSUTAH]
 
 /**
  * The quoting form element that initiates the flow for the user.
@@ -369,7 +371,7 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        ${((this.flowType) === CORREIRABROS ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
+        ${(skipTcpaVendors.includes(this.flowType) ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
