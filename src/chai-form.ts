@@ -29,7 +29,8 @@ type FieldState = {
 const GITHUB_SHA = '{{GITHUB_SHA}}';
 const CORREIRABROS = 'correirabros.com';
 const MIRACLEMOVERSUTAH = 'miraclemoversutah.com';
-const skipTcpaVendors = [CORREIRABROS, MIRACLEMOVERSUTAH]
+const KINGAFFORDABLEMOVERS = 'kingaffordablemovers.com';
+const skipTcpaVendors = [CORREIRABROS, MIRACLEMOVERSUTAH, KINGAFFORDABLEMOVERS];
 
 /**
  * The quoting form element that initiates the flow for the user.
