@@ -44,7 +44,7 @@
   "dependencies": {
     "@googlemaps/extended-component-library": "^0.6.11",
     "lit": "^3.2.0",
-    "posthog-js": "1.181.0"
+    "posthog-js": "1.256.1"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.2",
@@ -72,13 +72,13 @@
     "rollup-plugin-summary": "^1.4.3",
     "typescript": "~5.3.3",
 
-    "rrweb-snapshot": "^2.0.0-alpha.16",
-    "@rrweb/record": "^2.0.0-alpha.18",
-    "@rrweb/types": "^2.0.0-alpha.16"
+    "rrweb-snapshot": "^2.0.0-alpha.17",
+    "@rrweb/types": "^2.0.0-alpha.17"
   },
   "//": [
-    "rrweb-snapshot, @rrweb/record, @rrweb/types are added in these specific versions to workaround the compile time issue with posthog in versions >=1.164.0",
-    "See also: https://github.com/PostHog/posthog-js/issues/1532#issuecomment-2498671245"
+    "rrweb-snapshot, @rrweb/types are added in these specific versions to workaround the compile time issue with posthog in versions >=1.164.0",
+    "See also: https://github.com/PostHog/posthog-js/issues/1532#issuecomment-2498671245",
+    "The issue seems to be mostly solved when updating to 1.256.1 and updating the rrweb-snapshot and @rrweb/types to 2.0.0-alpha.17"
   ],
   "customElements": "custom-elements.json"
 }
