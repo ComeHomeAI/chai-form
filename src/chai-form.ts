@@ -305,7 +305,7 @@ export class ChaiForm extends LitElement {
    * development purposes).
    */
   @property()
-  accessor environment = this.useV2? ApiEnvironment.ProductionV2 : ApiEnvironment.Production
+  accessor environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
 
   /**
    * The ComeHome.ai flow type is the ID that has been configured for the location/context of
