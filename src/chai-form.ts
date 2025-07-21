@@ -17,8 +17,7 @@ import "./chai-tcpa-agreement";
 import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
 import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
-import { publishGtmEvent } from './ChaiAnalytics';
-import posthog from 'posthog-js';
+import { publishGtmEvent, chaiPosthog as posthog } from './ChaiAnalytics';
 import "./chai-stepper";
 
 type FieldState = {
@@ -81,13 +80,6 @@ export class ChaiForm extends LitElement {
       this.handleFieldInit as (e: Event) => void
     );
 
-    try {
-      this.useV2 = posthog.isFeatureEnabled('use-v2') === true;
-      console.log(`Feature flag 'use-v2' for user '${visitorId}' and flow type '${this.flowType}' is ${this.useV2 ? 'enabled' : 'disabled'}`);
-    } catch (error: any) {
-      console.error(`Error fetching feature flag 'use-v2': ${error.message}`);
-      this.useV2 = false; 
-    }
 
   }
 
@@ -330,6 +322,15 @@ export class ChaiForm extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.readUtmParametersIntoLocalStorage();
+    // TODO This one doesn't seem to work?
+    posthog.group('flow_type', this.flowType);
+    try {
+      this.useV2 = posthog.isFeatureEnabled('use-v2') === true;
+      console.log(`Feature flag 'use-v2' for user '${localStorage.getItem('chai-visitorId')}' and flow type '${this.flowType}' is ${this.useV2 ? 'enabled' : 'disabled'}`);
+    } catch (error: any) {
+      console.error(`Error fetching feature flag 'use-v2': ${error.message}`);
+      this.useV2 = false;
+    }
     this.verifyCurrentFlowInstanceIdThroughFormLoad();
   }
 

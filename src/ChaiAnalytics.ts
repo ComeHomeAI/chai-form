@@ -5,7 +5,7 @@ declare global {
   const dataLayer: any;
 }
 
-posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM', {
+export const chaiPosthog = posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM', {
   api_host: "https://us.posthog.com",
   session_recording: {
     maskAllInputs: false
