@@ -16,9 +16,8 @@ import "./chai-date";
 import "./chai-tcpa-agreement";
 import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
-import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
-import { publishGtmEvent } from './ChaiAnalytics';
-import posthog from 'posthog-js';
+import {ApiEnvironment, api, ffapi, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
+import { publishGtmEvent, chaiPosthog as posthog } from './ChaiAnalytics';
 import "./chai-stepper";
 
 type FieldState = {
@@ -47,6 +46,8 @@ export class ChaiForm extends LitElement {
   @state() private fieldStates: Map<string, FieldState>;
 
   @state() private submitted = false;
+
+  private useV2 = false;
 
   constructor() {
     super();
@@ -315,10 +316,30 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
+  /**
+   * The feature flag environment to use for the API (defaults to production; only change this for
+   * development purposes).
+   */
+  @property()
+  accessor ffenvironment = ApiEnvironment.ProductionV2;
 
-  override connectedCallback() {
+
+  override async connectedCallback() {
     super.connectedCallback();
     this.readUtmParametersIntoLocalStorage();
+
+    try {
+      this.useV2 = await ffapi(this.ffenvironment).isV2Enabled(this.flowType);
+      console.log(`Feature flag 'use-v2' is ${this.useV2} for flow type ${this.flowType}`);
+
+      if (this.ffenvironment === ApiEnvironment.ProductionV2) {
+        this.environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
+      }// else we leave the override as we are most probably in development mode
+      console.log(`Using environment: ${this.environment}`);
+    } catch (error) {
+      console.error(`Error fetching feature flag 'use-v2': ${error}`);
+      this.useV2 = false;
+    }
     this.verifyCurrentFlowInstanceIdThroughFormLoad();
   }
 
@@ -499,6 +520,7 @@ export class ChaiForm extends LitElement {
 
   submit(e: Event) {
     e.preventDefault();
+
     let visitorId = localStorage.getItem('chai-visitorId');
     if (visitorId == null) {
       console.error('Visitor ID not found in local storage. Generating new one', this.formInstanceId);
