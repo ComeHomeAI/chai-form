@@ -16,7 +16,7 @@ import "./chai-date";
 import "./chai-tcpa-agreement";
 import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
-import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
+import {ApiEnvironment, api, ffapi, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
 import { publishGtmEvent, chaiPosthog as posthog } from './ChaiAnalytics';
 import "./chai-stepper";
 
@@ -79,8 +79,6 @@ export class ChaiForm extends LitElement {
       'chai-fieldinit',
       this.handleFieldInit as (e: Event) => void
     );
-
-
   }
 
   // noinspection CssUnresolvedCustomProperty
@@ -297,7 +295,7 @@ export class ChaiForm extends LitElement {
    * development purposes).
    */
   @property()
-  accessor environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
+  accessor environment = ApiEnvironment.Production;
 
   /**
    * The ComeHome.ai flow type is the ID that has been configured for the location/context of
@@ -318,17 +316,28 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
+  /**
+   * The feature flag environment to use for the API (defaults to production; only change this for
+   * development purposes).
+   */
+  @property()
+  accessor ffenvironment = ApiEnvironment.ProductionV2;
 
-  override connectedCallback() {
+
+  override async connectedCallback() {
     super.connectedCallback();
     this.readUtmParametersIntoLocalStorage();
-    // TODO This one doesn't seem to work?
-    posthog.group('flow_type', this.flowType);
+
     try {
-      this.useV2 = posthog.isFeatureEnabled('use-v2') === true;
-      console.log(`Feature flag 'use-v2' for user '${localStorage.getItem('chai-visitorId')}' and flow type '${this.flowType}' is ${this.useV2 ? 'enabled' : 'disabled'}`);
-    } catch (error: any) {
-      console.error(`Error fetching feature flag 'use-v2': ${error.message}`);
+      this.useV2 = await ffapi(this.ffenvironment).isV2Enabled(this.flowType);
+      console.log(`Feature flag 'use-v2' is ${this.useV2} for flow type ${this.flowType}`);
+
+      if (this.ffenvironment === ApiEnvironment.ProductionV2) {
+        this.environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
+      }// else we leave the override as we are most probably in development mode
+      console.log(`Using environment: ${this.environment}`);
+    } catch (error) {
+      console.error(`Error fetching feature flag 'use-v2': ${error}`);
       this.useV2 = false;
     }
     this.verifyCurrentFlowInstanceIdThroughFormLoad();
@@ -511,6 +520,7 @@ export class ChaiForm extends LitElement {
 
   submit(e: Event) {
     e.preventDefault();
+
     let visitorId = localStorage.getItem('chai-visitorId');
     if (visitorId == null) {
       console.error('Visitor ID not found in local storage. Generating new one', this.formInstanceId);

@@ -12,6 +12,8 @@ export const chaiPosthog = posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3
   }
 })!;
 
+console.log('PostHog initialized');
+
 /**
  * Publish an event to the Google Tag Manager dataLayer, if present.
  * @param event The event name to publish
