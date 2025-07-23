@@ -316,23 +316,15 @@ export class ChaiForm extends LitElement {
   @property()
   accessor headerText = "Get your moving quote now!";
 
-  /**
-   * The feature flag environment to use for the API (defaults to production; only change this for
-   * development purposes).
-   */
-  @property()
-  accessor ffenvironment = ApiEnvironment.ProductionV2;
-
-
   override async connectedCallback() {
     super.connectedCallback();
     this.readUtmParametersIntoLocalStorage();
 
     try {
-      this.useV2 = await ffapi(this.ffenvironment).isV2Enabled(this.flowType);
-      console.log(`Feature flag 'use-v2' is ${this.useV2} for flow type ${this.flowType}`);
+      this.useV2 = await ffapi().isV2Enabled(this.flowType);
+      console.log(`v2=${this.useV2} for flow type ${this.flowType}`);
 
-      if (this.ffenvironment === ApiEnvironment.ProductionV2) {
+      if (this.environment === ApiEnvironment.Production) {
         this.environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
       }// else we leave the override as we are most probably in development mode
       console.log(`Using environment: ${this.environment}`);

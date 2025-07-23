@@ -83,12 +83,16 @@ function getSessionData(measurementId: string, callback: (data: SessionData) => 
   });
 }
 
-export const ffapi = (ffenvironment: ApiEnvironment) => {
+export const ffapi = () => {
   return {
     isV2Enabled: async (flowType: string | null) => {
       const response = await fetch(
-        `${ffenvironment}/ff/${flowType}`, {
-        method: 'GET',
+        `https://us.posthog.com/flags/?v=3`, {
+        body: JSON.stringify({
+          api_key: 'phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM',
+          distinct_id: flowType,
+        }),
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -96,7 +100,8 @@ export const ffapi = (ffenvironment: ApiEnvironment) => {
       if (!response.ok) {
         console.log('Checking feature flag  failed');
       }
-      return await response.json() as unknown as boolean;
+      const result = await response.json();
+      return result.flags['use-v2'].enabled;
     },
   }
 }
