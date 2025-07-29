@@ -57,14 +57,13 @@ function getUtmQueryParams() {
 
 type SessionData = {
   ga_session_id: string | undefined,
-  ga_session_number: string | undefined,
   ga_cid: string | undefined
 };
 
 export function getSessionData(measurementId: string, callback: (data: SessionData) => void) {
-  const sessionNumberPattern = new RegExp(String.raw`_ga_${measurementId}=GS\d\.\d\.s?(.+?)\$o(.+?)(?:;|$)`);
-  const sessionNumberMatch = document.cookie.match(sessionNumberPattern);
-  const parts = sessionNumberMatch?.[1].split('.');
+  const sessionIdPattern = new RegExp(String.raw`_ga_${measurementId}=GS\d\.\d\.s?(.+?)\$o(.+?)(?:;|$)`);
+  const sessionIdMatch = document.cookie.match(sessionIdPattern);
+  const parts = sessionIdMatch?.[1].split('.');
 
   if (!parts) {
     // Cookie not yet available; wait a bit and try again.
@@ -78,7 +77,6 @@ export function getSessionData(measurementId: string, callback: (data: SessionDa
 
   callback({
     ga_session_id: parts.shift(),
-    ga_session_number: parts.shift(),
     ga_cid: cidContent,
   });
 }
@@ -149,9 +147,8 @@ export const api = (environment: ApiEnvironment) => {
       headers.set('X-CHAI-VisitorID', visitorId);
       if (gaMeasurementId) {
         getSessionData(gaMeasurementId, (sessionHeaders: any) => {
-          if (sessionHeaders.ga_session_number && sessionHeaders.ga_session_id && sessionHeaders.ga_cid) {
+          if (sessionHeaders.ga_session_id && sessionHeaders.ga_cid) {
             headers.set('X-CHAI-gaSessionId', sessionHeaders.ga_session_id);
-            headers.set('X-CHAI-gaSessionNumber', sessionHeaders.ga_session_number);
             headers.set('X-CHAI-gaClientId', sessionHeaders.ga_cid);
           }
         });
