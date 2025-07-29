@@ -1,5 +1,5 @@
 import {assert} from '@open-wc/testing';
-import {extractFlowTypeFromHostname} from '../ChaiApi';
+import {extractFlowTypeFromHostname, getSessionData} from '../ChaiApi';
 
 suite('ChaiApi', () => {
 
@@ -28,6 +28,22 @@ suite('ChaiApi', () => {
   test('correctly extract flowType from hostname with subdomain localhost', () => {
     const hostname = 'test.localhost';
     assert.strictEqual(extractFlowTypeFromHostname(hostname), 'test.localhost');
+  });
+
+  test('googleAnalytics-extract-ids',()=> {
+    const cookie1 = '_ga=GA1.1.1334514849.1753745755';
+    const cookie2 = '_ga_ABC123=GS2.1.s1753555297$o1$g0$t1753555297$j60$l0$h0';
+    document.cookie = cookie1;
+    document.cookie = cookie2;
+    let session_id;
+    let cid;
+    getSessionData('ABC123',res => {
+      session_id = res.ga_session_id;
+      cid = res.ga_cid;
+    });
+    assert.equal(session_id, '1753555297');
+    assert.equal(cid, '1334514849.1753745755');
+
   });
 
 });

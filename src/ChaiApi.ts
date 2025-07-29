@@ -61,8 +61,8 @@ type SessionData = {
   ga_cid: string | undefined
 };
 
-function getSessionData(measurementId: string, callback: (data: SessionData) => void) {
-  const sessionNumberPattern = new RegExp(String.raw`_ga_${measurementId}=GS\d\.\d\.(.+?)(?:;|$)`);
+export function getSessionData(measurementId: string, callback: (data: SessionData) => void) {
+  const sessionNumberPattern = new RegExp(String.raw`_ga_${measurementId}=GS\d\.\d\.s?(.+?)\$o(.+?)(?:;|$)`);
   const sessionNumberMatch = document.cookie.match(sessionNumberPattern);
   const parts = sessionNumberMatch?.[1].split('.');
 
