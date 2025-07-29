@@ -10,7 +10,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "publish": "npm run build && rollup -c rollup.cdn.config.js && rollup -c rollup.buster.cdn.config.js",
-    "clean": "rimraf chai-form.{d.ts,d.ts.map,js,js.map} test/chai-form.{d.ts,d.ts.map,js,js.map} test/chai-form_test.{d.ts,d.ts.map,js,js.map}",
+    "clean": "rimraf chai-form.{d.ts,d.ts.map,js,js.map} test/chai-phone_test.{d.ts,d.ts.map,js,js.map} test/ChaiApi_test.{d.ts,d.ts.map,js,js.map} test/chai-form_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer",
