@@ -110,6 +110,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
 
   constructor() {
     super("address", "Pickup Address", "Please enter a valid address.");
+    this.debounceWaitTime = 1000;
   }
 
 
@@ -163,8 +164,7 @@ export class ChaiAddress extends ChaiFieldBase<string> { // The stored value is 
     return html`
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
-        .country=${["US", "CA"]}
-        @blur="${this.blurField()}"></gmpx-place-picker>
+        .country=${["US", "CA"]}></gmpx-place-picker>
     `;
   }
 }

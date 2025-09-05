@@ -30,6 +30,9 @@ export abstract class ChaiFieldBase<T> extends LitElement {
   @property({ type: Boolean })
   accessor forceValidation = false;
 
+  @property()
+  accessor debounceWaitTime: number = 500;
+
   @state() protected value: T;
 
   @state() protected isChanged = false;
@@ -96,7 +99,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
     // After rendering, bubble up an event to notify the parent form of the update.
     // Debounce this to avoid minor changes racing each other on the backend
-    this.debounce(() => this.notifyParentForm(false), 500);
+    this.debounce(() => this.notifyParentForm(false), this.debounceWaitTime);
   }
 
   protected blurField() {
