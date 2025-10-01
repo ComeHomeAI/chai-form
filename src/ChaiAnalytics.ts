@@ -6,7 +6,7 @@ declare global {
 }
 
 export const chaiPosthog = posthog.init('phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM', {
-  api_host: "https://us.posthog.com",
+  api_host: "https://flag.api.comehome.ai.contimm.dev",
   session_recording: {
     maskAllInputs: false
   }

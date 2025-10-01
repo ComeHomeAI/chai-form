@@ -85,7 +85,7 @@ export const ffapi = () => {
   return {
     isV2Enabled: async (flowType: string | null) => {
       const response = await fetch(
-        `https://us.posthog.com/flags/?v=3`, {
+        `https://flag.api.comehome.ai.contimm.dev/flags/?v=3`, {
         body: JSON.stringify({
           api_key: 'phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM',
           distinct_id: flowType,
