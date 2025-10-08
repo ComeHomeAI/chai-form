@@ -321,7 +321,7 @@ export class ChaiForm extends LitElement {
     this.readUtmParametersIntoLocalStorage();
 
     try {
-      this.useV2 = await ffapi().isV2Enabled(this.flowType);
+      this.useV2 = await ffapi().isV2Enabled(this.environment, this.flowType);
       console.log(`v2=${this.useV2} for flow type ${this.flowType}`);
 
       if (this.environment === ApiEnvironment.Production) {
