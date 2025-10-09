@@ -83,23 +83,16 @@ export function getSessionData(measurementId: string, callback: (data: SessionDa
 
 export const ffapi = () => {
   return {
-    isV2Enabled: async (flowType: string | null) => {
+    isV2Enabled: async (currentEnvironment: ApiEnvironment, flowType: string | null) => {
       const response = await fetch(
-        `https://flag.api.comehome.ai.contimm.dev/flags/?v=3`, {
-        body: JSON.stringify({
-          api_key: 'phc_eFoyuRNAw13ZVLY70RxbNJReozcxlX3SRY3Z1vRcSuM',
-          distinct_id: flowType,
-        }),
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        `${currentEnvironment}/formBff/use-v2/${flowType}`, {
+        method: 'GET',
       });
       if (!response.ok) {
         console.log('Checking feature flag  failed');
       }
       const result = await response.json();
-      return result.flags['use-v2'].enabled;
+      return result as boolean;
     },
   }
 }
