@@ -526,8 +526,17 @@ export class ChaiForm extends LitElement {
     const fieldElements = this.getFieldsInCurrentSlot();
     const tagNamesToValidate: string[] = [];
     fieldElements.forEach(element => {
-      (element as ChaiFieldBase<unknown>).forceValidation = true;
-      tagNamesToValidate.push((element as ChaiFieldBase<unknown>).tagName);
+      let fieldElement = element as ChaiFieldBase<unknown>;
+      fieldElement.forceValidation = true;
+      if (fieldElement.timeout != undefined) {
+        // There is a timeout that is pending for execution. This event should execute immediately so the submit has all the recent information.
+        // This is mainly important, because the this.fieldStates is updated within the handleFieldChange. We don't actually need the information to be sent to the backend.
+        const changeEvent = fieldElement.createEvent();
+        this.handleFieldChange(changeEvent);
+        clearTimeout(fieldElement.timeout);
+      }
+
+      tagNamesToValidate.push(fieldElement.tagName);
     });
 
     const formSubmitClickedEventName = 'form:submit_button_clicked';

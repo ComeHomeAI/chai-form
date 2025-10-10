@@ -5,7 +5,7 @@
  */
 
 import { LitElement, html, TemplateResult } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 
 export interface ChaiFieldChangedDetails<T> {
   field: string;
@@ -30,11 +30,14 @@ export abstract class ChaiFieldBase<T> extends LitElement {
   @property({ type: Boolean })
   accessor forceValidation = false;
 
+  @property()
+  accessor debounceWaitTime: number = 500;
+
   @state() protected value: T;
 
   @state() protected isChanged = false;
 
-  @state() protected timeout: number | undefined;
+  @state() timeout: number | undefined;
 
 
   constructor(protected _fieldId: string,
@@ -85,7 +88,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
   }
 
-  protected updateField(newValue: T) {
+  protected updateField(newValue: T, debounceWaitTime?: number) {
     console.info("Field updated", this._fieldId, newValue);
     newValue = this.sanitizeField(newValue);
 
@@ -96,7 +99,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
     // After rendering, bubble up an event to notify the parent form of the update.
     // Debounce this to avoid minor changes racing each other on the backend
-    this.debounce(() => this.notifyParentForm(false), 500);
+    this.debounce(() => this.notifyParentForm(false), debounceWaitTime ?? this.debounceWaitTime);
   }
 
   protected blurField() {
@@ -106,7 +109,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     };
   }
 
-  protected notifyParentForm(fieldInitialLoad: boolean) {
+  createEvent(fieldInitialLoad?: boolean) {
     let valid;
     try {
       valid = this.isValueValid();
@@ -125,7 +128,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     } else {
       eventTarget = 'chai-fieldchanged';
     }
-    const event = new CustomEvent<ChaiFieldChangedDetails<T>>(eventTarget, {
+    return new CustomEvent<ChaiFieldChangedDetails<T>>(eventTarget, {
       detail: {
         field: this._fieldId,
         value: this.value,
@@ -136,7 +139,12 @@ export abstract class ChaiFieldBase<T> extends LitElement {
       composed: true
     });
 
+  }
+
+  protected notifyParentForm(fieldInitialLoad: boolean) {
+    const event = this.createEvent(fieldInitialLoad);
     this.dispatchEvent(event);
+    this.timeout = undefined;
   }
 
 
