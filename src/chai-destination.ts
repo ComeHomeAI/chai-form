@@ -110,7 +110,7 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
 
   constructor() {
     super("destination", "Destination Address", "Please enter a valid address.");
-    this.debounceWaitTime = 1000;
+    this.debounceWaitTime = 2000;
   }
 
 
@@ -135,7 +135,7 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
     });
     picker.addEventListener('gmpx-placechange', () => {
       localStorage.setItem("chai-destination-formatted-address", picker.value?.formattedAddress ?? "");
-      this.updateField(picker.value?.id ? `places/${picker.value.id}` : "");
+      this.updateField(picker.value?.id ? `places/${picker.value.id}` : "", 200);
       console.log(picker.value?.id);
       console.log(picker.value?.formattedAddress);
     });
@@ -164,7 +164,8 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
     return html`
       <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
         type="address" placeholder="${ifDefined(this.placeholder)}"
-        .country=${["US", "CA"]}></gmpx-place-picker>
+        .country=${["US", "CA"]}
+        @blur="${this.blurField()}"></gmpx-place-picker>
     `;
   }
 }
