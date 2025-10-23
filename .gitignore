@@ -21,3 +21,4 @@ chai-form.bundled.js
 *.iml
 
 
+.DS_Store

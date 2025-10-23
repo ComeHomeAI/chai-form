@@ -54,6 +54,7 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rrweb/types": "^2.0.0-alpha.17",
     "@types/google.maps": "^3.55.12",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -70,10 +71,8 @@
     "rollup": "^2.79.1",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-summary": "^1.4.3",
-    "typescript": "~5.3.3",
-
     "rrweb-snapshot": "^2.0.0-alpha.17",
-    "@rrweb/types": "^2.0.0-alpha.17"
+    "typescript": "~5.3.3"
   },
   "//": [
     "rrweb-snapshot, @rrweb/types are added in these specific versions to workaround the compile time issue with posthog in versions >=1.164.0",
