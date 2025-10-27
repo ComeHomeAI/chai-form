@@ -7,7 +7,8 @@
   "module": "chai-form.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "dev": "vite",
+    "build": "vite build",
     "build:watch": "tsc --watch",
     "publish": "npm run build && rollup -c rollup.cdn.config.js && rollup -c rollup.buster.cdn.config.js",
     "clean": "rimraf chai-form.{d.ts,d.ts.map,js,js.map} test/chai-phone_test.{d.ts,d.ts.map,js,js.map} test/ChaiApi_test.{d.ts,d.ts.map,js,js.map} test/chai-form_test.{d.ts,d.ts.map,js,js.map}",
@@ -56,6 +57,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rrweb/types": "^2.0.0-alpha.17",
     "@types/google.maps": "^3.55.12",
+    "@types/node": "^24.9.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@web/dev-server": "^0.1.38",
@@ -72,7 +74,8 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-summary": "^1.4.3",
     "rrweb-snapshot": "^2.0.0-alpha.17",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "vite": "^7.1.12"
   },
   "//": [
     "rrweb-snapshot, @rrweb/types are added in these specific versions to workaround the compile time issue with posthog in versions >=1.164.0",

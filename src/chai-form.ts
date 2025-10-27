@@ -185,8 +185,9 @@ export class ChaiForm extends LitElement {
       --chai-label-height: auto;
 
       --chai-input-color: #000;
+      --chai-input-border-color: rgb(233, 228, 224);
       --chai-input-corner-radius: calc(var(--chai-form-corner-radius) / 4);
-      --chai-input-border: 0.8px solid rgb(233, 228, 224);
+      --chai-input-border: 0.8px solid var(--chai-input-border-color);
 
       --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
 
