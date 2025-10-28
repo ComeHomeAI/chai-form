@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { LitElement, html, TemplateResult } from 'lit';
+import {LitElement, html, TemplateResult} from 'lit';
 import {property, state} from 'lit/decorators.js';
 
 export interface ChaiFieldChangedDetails<T> {
@@ -17,7 +17,6 @@ export interface ChaiFieldChangedDetails<T> {
  * Reusable form element base class.
  */
 export abstract class ChaiFieldBase<T> extends LitElement {
-
   /**
    * The label for this field.
    */
@@ -27,7 +26,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
   @property()
   accessor invalidMessage = this._invalidMessage;
 
-  @property({ type: Boolean })
+  @property({type: Boolean})
   accessor forceValidation = false;
 
   @property()
@@ -39,18 +38,21 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
   @state() timeout: number | undefined;
 
-
-  constructor(protected _fieldId: string,
-    protected _defaultLabel: string, protected _invalidMessage?: string) {
+  constructor(
+    protected _fieldId: string,
+    protected _defaultLabel: string,
+    protected _invalidMessage?: string
+  ) {
     super();
 
     const storedValue = localStorage.getItem(`chai-${this._fieldId}`);
     this.value = this.deserializeValue(storedValue);
-    console.info("Field initialized", this._fieldId, this.value);
+
+    console.info('Field initialized', this._fieldId, this.value);
   }
 
   protected override firstUpdated(): void {
-    console.log("Field first updated");
+    console.log('Field first updated');
     // When first changed, bubble up an event to notify the parent form of the field's existence
     // Ignore the initial state. Once the user interacts with the field we will send the data to the server
     this.notifyParentForm(true);
@@ -60,36 +62,40 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     const invalid = this.isFieldInvalid();
 
     return html`
-      <label for=${this._fieldId}>${this.label} <span title="Required">*</span></label>
+      <label for=${this._fieldId}
+        >${this.label} <span title="Required">*</span></label
+      >
       ${this.renderInput()}
-      ${invalid && this.invalidMessage ? html`<span class="error">${this.invalidMessage}</span>` : ''}
+      ${invalid && this.invalidMessage
+        ? html`<span class="error">${this.invalidMessage}</span>`
+        : ''}
     `;
   }
 
-
   protected isFieldInvalid() {
-    return (this.isChanged || this.forceValidation || this.isValueSet()) && !this.isValueValid();
+    return (
+      (this.isChanged || this.forceValidation || this.isValueSet()) &&
+      !this.isValueValid()
+    );
   }
 
   private debounce(callback: Function, wait: number) {
-      if (this.timeout !== undefined) {
-        clearTimeout(this.timeout);
-      }
-      this.timeout = setTimeout(() => {
-        callback();
-      }, wait);
+    if (this.timeout !== undefined) {
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+      callback();
+    }, wait);
   }
 
-  protected sanitizeField(newValue: T): T{
+  protected sanitizeField(newValue: T): T {
     return newValue;
   }
 
-  protected onChangedFieldValid(){
+  protected onChangedFieldValid() {}
 
-  }
-
-  protected updateField(newValue: T, debounceWaitTime?: number) {
-    console.info("Field updated", this._fieldId, newValue);
+  public updateField(newValue: T, debounceWaitTime?: number) {
+    console.info('Field updated', this._fieldId, newValue);
     newValue = this.sanitizeField(newValue);
 
     this.value = newValue;
@@ -99,14 +105,21 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
     // After rendering, bubble up an event to notify the parent form of the update.
     // Debounce this to avoid minor changes racing each other on the backend
-    this.debounce(() => this.notifyParentForm(false), debounceWaitTime ?? this.debounceWaitTime);
+    this.debounce(
+      () => this.notifyParentForm(false),
+      debounceWaitTime ?? this.debounceWaitTime
+    );
   }
 
   protected blurField() {
     return () => {
-      console.info("Field blurred", this._fieldId, this.value);
+      console.info('Field blurred', this._fieldId, this.value);
       this.isChanged = true;
     };
+  }
+
+  public getFieldId() {
+    return this._fieldId;
   }
 
   createEvent(fieldInitialLoad?: boolean) {
@@ -114,7 +127,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     try {
       valid = this.isValueValid();
     } catch (e) {
-      console.warn("Error validating field", this._fieldId, e);
+      console.warn('Error validating field', this._fieldId, e);
       valid = false;
     }
 
@@ -128,17 +141,17 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     } else {
       eventTarget = 'chai-fieldchanged';
     }
+
     return new CustomEvent<ChaiFieldChangedDetails<T>>(eventTarget, {
       detail: {
         field: this._fieldId,
         value: this.value,
-        valid: valid
+        valid: valid,
       },
       bubbles: true,
       cancelable: false,
-      composed: true
+      composed: true,
     });
-
   }
 
   protected notifyParentForm(fieldInitialLoad: boolean) {
@@ -146,7 +159,6 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     this.dispatchEvent(event);
     this.timeout = undefined;
   }
-
 
   protected abstract deserializeValue(storedValue: string | null): T;
 

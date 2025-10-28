@@ -1,15 +1,293 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>&lt;chai-form> Demo</title>
+    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="node_modules/lit/polyfill-support.js"></script>
+    <script type="module" src="src/chai-form.ts"></script>
+    <style>
+      body {
+        font-family: 'Times New Roman';
+        color: #fff;
+        font-size: 20px;
+        background-image: url(https://assets-global.website-files.com/65d3284d71bda6788ecc1860/65e5b4990bc94a2385b0b455_heropicture.webp);
+        background-size: cover;
+        background-repeat: repeat;
+        background-position: center;
+        text-align: center;
+      }
 
-<head>
-  <meta charset="utf-8" />
-  <title>ComeHome.ai Form Web Component</title>
-</head>
+      h1 {
+        text-shadow: #000 2px 2px 2px;
+      }
 
-<body>
-  <h1>ComeHome.ai Form Web Component</h1>
-  Open the <a href="/dev/index.html">Form Component Demo Page</a> to see the form component in action.
-</body>
+      div#demos {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: start;
+        gap: 20px;
+        text-shadow: #000 2px 2px 2px;
+      }
 
+      /* chai-form.mover-default {
+      --chai-form-max-width: 400px;
+      --chai-form-color-brand: #01919b;
+      --chai-form-color-alert: #fa2829;
+      --chai-form-color-text: var(--chai-form-color-brand);
+      --chai-form-background: #fffaf6;
+      --chai-form-font-family: inherit;
+      --chai-form-font-size: 16px;
+      --chai-form-font-weight: 400;
+      --chai-form-border: 1px solid #ccc;
+      --chai-form-corner-radius: 8px;
+      --chai-form-spacing: 16px;
+      --chai-header-font-size: calc(var(--chai-form-font-size) * 1.5);
+      --chai-header-color: var(--chai-form-color-text);
+      --chai-label-color: var(--chai-form-color-text);
+      --chai-input-color: #000; //var(--chai-form-color-text);
+      --chai-input-corner-radius: calc(var(--chai-form-corner-radius) / 4);
+      --chai-input-border: 0.8px solid rgb(233,228,224);
+      --chai-input-shadow: rgba(21, 21, 21, 0.08) 0px 1px 2px 0px;
+      --chai-button-color: #fff;
+      --chai-button-font-size: var(--chai-form-font-size);
+      --chai-button-text-transform: uppercase;
+      --chai-button-background: var(--chai-form-color-brand);
+      --chai-button-background-hover: var(--chai-form-color-brand);
+      --chai-button-background-active: var(--chai-form-color-brand);
+      --chai-button-filter-hover: brightness(1.2);
+      --chai-button-filter-active: brightness(0.8);
+      --chai-button-corner-radius: var(--chai-form-corner-radius);
+    } */
+
+      :root {
+        --chatgpt-spacing-0: 0;
+        --chatgpt-spacing-1: 2px;
+        --chatgpt-spacing-2: 4px;
+        --chatgpt-spacing-4: 8px;
+        --chatgpt-spacing-6: 12px;
+        --chatgpt-spacing-8: 16px;
+        --chatgpt-spacing-12: 24px;
+        --chatgpt-spacing-16: 32px;
+        --chatgpt-spacing-20: 40px;
+        --chatgpt-spacing-24: 48px;
+        --chatgpt-spacing-32: 64px;
+        --chatgpt-spacing-64: 128px;
+
+        --chatgpt-background-primary: #ffffff;
+        --chatgpt-background-secondary: #e8e8e8;
+        --chatgpt-background-tertiary: #f3f3f3;
+
+        --chatgpt-text-primary: #0d0d0d;
+        --chatgpt-text-secondary: #5d5d5d;
+        --chatgpt-text-tertiary: #8f8f8f;
+
+        --chatgpt-font-family: ui-sans-serif, -apple-system, system-ui,
+          'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
+          'Segoe UI Emoji', 'Segoe UI Symbol';
+
+        --chatgpt-font-size-heading-1: 36px;
+        --chatgpt-font-size-heading-2: 24px;
+        --chatgpt-font-size-heading-3: 18px;
+        --chatgpt-font-size-body: 16px;
+        --chatgpt-font-size-body-small: 14px;
+        --chatgpt-font-size-caption: 12px;
+
+        --chatgpt-line-height-heading-1: 40px;
+        --chatgpt-line-height-heading-2: 28px;
+        --chatgpt-line-height-heading-3: 26px;
+        --chatgpt-line-height-body: 26px;
+        --chatgpt-line-height-body-small: 18px;
+        --chatgpt-line-height-caption: 16px;
+
+        --chatgpt-letter-spacing-heading-1: -0.1px;
+        --chatgpt-letter-spacing-heading-2: -0.25px;
+        --chatgpt-letter-spacing-heading-3: -0.45px;
+        --chatgpt-letter-spacing-body: -0.4px;
+        --chatgpt-letter-spacing-body-small: -0.3px;
+        --chatgpt-letter-spacing-caption: -0.1px;
+
+        --chatgpt-font-weight-heading-1: 600px;
+        --chatgpt-font-weight-heading-2: 600px;
+        --chatgpt-font-weight-heading-3: 600px;
+
+        --chatgpt-font-weight-body-regular: 400px;
+        --chatgpt-font-weight-body-small-regular: 400px;
+        --chatgpt-font-weight-caption-regular: 400px;
+
+        --chatgpt-font-weight-body-emphasized: 600px;
+        --chatgpt-font-weight-body-small-emphasized: 600px;
+        --chatgpt-font-weight-caption-emphasized: 600px;
+
+        --chatgpt-input-border-color: rgba(13, 13, 13, 0.1);
+      }
+
+      chai-form.mover-chatgpt {
+        --chai-form-background: var(--chatgpt-background-primary);
+        --chai-form-color-text: var(--chatgpt-text-primary);
+        --chai-form-font-family: var(--chatgpt-font-family);
+
+        --chai-input-corner-radius: var(--chatgpt-spacing-4);
+        --chai-input-border-color: var(--chatgpt-input-border-color);
+        --chai-input-focus-border-color: var(--chatgpt-text-primary);
+        --chai-input-placeholder-color: var(--chatgpt-text-tertiary);
+
+        --chai-label-font-size: var(--chatgpt-font-size-body-small);
+        --chai-label-font-height: var(--chatgpt-line-height-body-small);
+      }
+
+      chai-form.mover-preferred {
+        --chai-label-visibility: collapse;
+        --chai-label-height: 18;
+        --chai-form-flex-direction: row;
+        --chai-form-max-width: auto;
+        --chai-form-background: #18242be6;
+        --chai-form-font-family: 'Dosis';
+        --chai-form-font-weight: 700;
+        --chai-header-color: #fff;
+        --chai-input-corner-radius: 6px;
+        --chai-button-color: rgb(248, 230, 186);
+        --chai-button-background: #790205;
+        --chai-button-text-transform: none;
+      }
+
+      chai-form.mover-2cb {
+        --chai-form-max-width: 350px;
+        --chai-form-color-brand: rgb(74, 38, 132);
+        --chai-form-background: rgba(247, 243, 67, 0.85);
+        --chai-form-font-family: 'Oswald';
+        --chai-form-border: none;
+        --chai-form-corner-radius: 0px;
+        --chai-form-spacing: 12px;
+        --chai-button-font-size: 20px;
+        --chai-button-background: linear-gradient(
+          180deg,
+          #2abd27 0%,
+          #11a40e 100%
+        );
+        --chai-button-background-hover: linear-gradient(
+          0deg,
+          #2abd27 0%,
+          #11a40e 100%
+        );
+        --chai-button-corner-radius: 10px;
+        --chai-button-filter-hover: none;
+      }
+
+      chai-form.mover-wirks {
+        --chai-form-max-width: 400px;
+        --chai-form-color-brand: #ef3e33;
+        --chai-form-color-text: #fff;
+        --chai-form-background: rgba(3, 70, 148, 0.68);
+        --chai-form-font-family: 'Roboto';
+        --chai-form-font-weight: 500;
+        --chai-form-border: 4px solid #fff;
+        --chai-form-corner-radius: 10px;
+        --chai-header-font-size: 28px;
+        --chai-input-corner-radius: 2px;
+        --chai-button-font-size: 18px;
+        --chai-button-background-hover: #034694;
+        --chai-button-background-active: #034694;
+        --chai-button-filter-hover: none;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <h1>Form Demo</h1>
+    <div id="demos">
+      <!-- If you skip the flowtype as an argument to chai-form we will create it from the domain where the form is hosted -->
+      <!-- <chai-form class="mover-ctimm-comehome.ai" buttontext="Get Quote" headertext="Start your move off right!"> -->
+
+      <chai-form
+        environment="https://chai.local:7035/formv1"
+        class="mover-chatgpt"
+        flowType="ctimm-comehome.ai"
+      >
+        <p slot="before">All fields are required.</p>
+        <chai-name></chai-name>
+        <chai-phone></chai-phone>
+        <chai-email></chai-email>
+        <chai-address></chai-address>
+        <chai-destination></chai-destination>
+        <chai-move-size></chai-move-size>
+        <chai-stepper slot="after"></chai-stepper>
+        <p slot="after">
+          Optional: <b>Get $25 off</b> and a faster, more accurate quote if you
+          complete our photo survey.
+        </p>
+      </chai-form>
+
+      <chai-form
+        environment="https://chai.local:7035/formv1"
+        class="mover-default"
+        flowType="ctimm-comehome.ai"
+      ></chai-form>
+
+      <!-- this form will use the production backend as it is not overwritten by the environment attr -->
+      <chai-form class="mover-default" flowType="ctimm-comehome.ai"></chai-form>
+
+      <chai-form
+        environment="https://chai.local:7034/form"
+        class="mover-preferred"
+        flowtype="comehome.xyz"
+        headertext="Get a Free Moving Estimate"
+        buttontext="Continue"
+      >
+        <chai-address placeholder="Pickup"></chai-address>
+        <chai-name placeholder="Full Name"></chai-name>
+        <chai-phone placeholder="Cell Phone #"></chai-phone>
+        <!-- <chai-email placeholder="Email"></chai-email> -->
+        <chai-date label="Moving Date"></chai-date>
+        <span slot="after"></span>
+      </chai-form>
+
+      <chai-form
+        environment="https://chai.local:7034/form"
+        class="mover-2cb"
+        buttontext="Get Quote"
+        headertext="Start your move off right!"
+        flowtype="comehome.xyz"
+      >
+        <p slot="before">All fields are required.</p>
+        <chai-name></chai-name>
+        <chai-phone></chai-phone>
+        <chai-email></chai-email>
+        <chai-address></chai-address>
+        <chai-stepper slot="after"></chai-stepper>
+        <p slot="after">
+          Optional: <b>Get $25 off</b> and a faster, more accurate quote if you
+          complete our photo survey.
+        </p>
+      </chai-form>
+
+      <chai-form
+        environment="https://chai.local:7034/form"
+        class="mover-wirks"
+        buttontext="Start Quote"
+        flowtype="comehome.xyz"
+      >
+        <chai-name label="Your Name" placeholder="Full Name"></chai-name>
+        <chai-phone
+          label="Cell Phone #"
+          placeholder="Enter your mobile #"
+        ></chai-phone>
+        <chai-email label="Email Address" placeholder="Email"></chai-email>
+        <chai-date label="Requested Move Date"></chai-date>
+      </chai-form>
+    </div>
+  </body>
 </html>

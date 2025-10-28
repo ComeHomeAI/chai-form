@@ -4,21 +4,22 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { customElement, property } from 'lit/decorators.js';
-import { ChaiFieldBase } from './ChaiFieldBase';
-import { css, html } from 'lit';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { classMap } from 'lit/directives/class-map.js';
+import {customElement, property} from 'lit/decorators.js';
+import {ChaiFieldBase} from './ChaiFieldBase';
+import {css, html} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {classMap} from 'lit/directives/class-map.js';
 import '@googlemaps/extended-component-library/api_loader.js';
 import '@googlemaps/extended-component-library/place_picker.js';
-import { PlacePicker } from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
-import { waitForElement } from './chai-utils';
+import {PlacePicker} from '@googlemaps/extended-component-library/lib/place_picker/place_picker';
+import {waitForElement} from './chai-utils';
 
 /**
  * The standard form element for the resident's address.
  */
 @customElement('chai-destination')
-export class ChaiDestination extends ChaiFieldBase<string> { // The stored value is the Google Place ID
+export class ChaiDestination extends ChaiFieldBase<string> {
+  // The stored value is the Google Place ID
   static override styles = css`
     :host {
       /**
@@ -65,7 +66,7 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
       font-size: calc(var(--chai-form-font-size) * 1.05);
       padding-left: 1px;
       color: var(--chai-label-color);
-      margin-bottom: calc(-1 * var(--chai-form-spacing) / 1.5);
+      margin-bottom: calc(-1 * var(--chai-form-spacing) / 4);
       visibility: var(--chai-label-visibility);
       height: var(--chai-label-height);
 
@@ -74,6 +75,7 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
         font-weight: bold;
       }
     }
+
     span.error {
       color: var(--chai-form-color-alert);
       font-size: calc(0.9 * var(--chai-form-font-size));
@@ -85,65 +87,93 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
       /* --gmpx-color-on-surface-variant: #757575; */
       --gmpx-color-primary: var(--chai-form-color-brand);
       /* --gmpx-color-on-primary: #fff; */
-      --gmpx-font-family-base: sans-serif;//var(--chai-form-font-family); //TODO: ???
+      --gmpx-font-family-base: sans-serif; //var(--chai-form-font-family); //TODO: ???
       /* --gmpx-font-family-headings: var(--chai-form-font-family); //TODO: ??? */
-      --gmpx-font-size-base: var(--chai-form-font-size);//0.875rem;
+      --gmpx-font-size-base: var(--chai-form-font-size); //0.875rem;
       box-shadow: var(--chai-input-shadow);
       margin-bottom: calc(var(--chai-form-spacing) / 2);
 
+      border-radius: var(--chai-input-corner-radius);
+
       &.invalid {
         /* --gmpx-color-primary: var(--chai-form-color-alert); */
-        border: 2px solid var(--chai-form-color-alert);
-        border-radius: 6px;//(--chai-input-corner-radius);
+        outline-color: var(--chai-form-color-alert);
         //border-width: 2px;
       }
     }
   `;
 
-
   /**
    * A placeholder value to show for this field.
    */
   @property()
-  accessor placeholder = "Destination Address";
-
+  accessor placeholder = 'Destination Address';
 
   constructor() {
-    super("destination", "Destination Address", "Please enter a valid address.");
+    super(
+      'destination',
+      'Destination Address',
+      'Please enter a valid address.'
+    );
     this.debounceWaitTime = 2000;
   }
-
-
 
   protected override firstUpdated() {
     super.firstUpdated();
     //TODO: Assign this handler via @gmpx-placechange in the template (but that requires @query to work correctly!)
-    const picker = this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
-    waitForElement(() => picker.shadowRoot?.querySelector<HTMLInputElement>('input')).then((input) => {
+    const picker =
+      this.renderRoot.querySelector<PlacePicker>('gmpx-place-picker')!;
+
+    const sheet = new CSSStyleSheet();
+
+    sheet.replaceSync(`input:focus {
+        outline-color: var(--chai-input-color);
+        outline-style: auto;
+        outline-offset: 0;
+      }
+  
+      input {
+        border: var(--chai-input-border);
+        border-radius: var(--chai-input-corner-radius);
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }`);
+
+    picker.shadowRoot?.adoptedStyleSheets.push(sheet);
+
+    waitForElement(() =>
+      picker.shadowRoot?.querySelector<HTMLInputElement>('input')
+    ).then((input) => {
       input.addEventListener('input', (_) => {
         const eventManualAddress = input.value;
-        localStorage.removeItem("chai-destination-formatted-address");
+        localStorage.removeItem('chai-destination-formatted-address');
         // Set the manual value from the user input. If the user picks a place from the gmaps autocomplete dropdown the value will be set by the place-picker
         this.updateField(eventManualAddress);
       });
-      if (this.value.startsWith("places/")) {
+      if (this.value.startsWith('places/')) {
         // not setting value to the place id, but to the formatted address
-        input.value = localStorage.getItem("chai-destination-formatted-address") ?? "";
+        input.value =
+          localStorage.getItem('chai-destination-formatted-address') ?? '';
       } else {
         input.value = this.value;
       }
     });
     picker.addEventListener('gmpx-placechange', () => {
-      localStorage.setItem("chai-destination-formatted-address", picker.value?.formattedAddress ?? "");
-      this.updateField(picker.value?.id ? `places/${picker.value.id}` : "", 200);
+      localStorage.setItem(
+        'chai-destination-formatted-address',
+        picker.value?.formattedAddress ?? ''
+      );
+      this.updateField(
+        picker.value?.id ? `places/${picker.value.id}` : '',
+        200
+      );
       console.log(picker.value?.id);
       console.log(picker.value?.formattedAddress);
     });
   }
 
-
   protected override deserializeValue(storedValue: string | null) {
-    return storedValue ?? "";
+    return storedValue ?? '';
   }
 
   protected override serializeValue(value: string) {
@@ -151,7 +181,7 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
   }
 
   protected override isValueSet() {
-    return this.value !== "";
+    return this.value !== '';
   }
 
   protected override isValueValid() {
@@ -162,10 +192,14 @@ export class ChaiDestination extends ChaiFieldBase<string> { // The stored value
     const invalid = this.isFieldInvalid();
 
     return html`
-      <gmpx-place-picker id="${this._fieldId}" class=${classMap({ invalid: invalid })}
-        type="address" placeholder="${ifDefined(this.placeholder)}"
-        .country=${["US", "CA"]}
-        @blur="${this.blurField()}"></gmpx-place-picker>
+      <gmpx-place-picker
+        id="${this._fieldId}"
+        class=${classMap({invalid: invalid})}
+        type="address"
+        placeholder="${ifDefined(this.placeholder)}"
+        .country=${['US', 'CA']}
+        @blur="${this.blurField()}"
+      ></gmpx-place-picker>
     `;
   }
 }
