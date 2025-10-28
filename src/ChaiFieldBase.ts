@@ -94,7 +94,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
 
   protected onChangedFieldValid() {}
 
-  protected updateField(newValue: T, debounceWaitTime?: number) {
+  public updateField(newValue: T, debounceWaitTime?: number) {
     console.info('Field updated', this._fieldId, newValue);
     newValue = this.sanitizeField(newValue);
 
@@ -118,6 +118,10 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     };
   }
 
+  public getFieldId() {
+    return this._fieldId;
+  }
+
   createEvent(fieldInitialLoad?: boolean) {
     let valid;
     try {
@@ -137,6 +141,7 @@ export abstract class ChaiFieldBase<T> extends LitElement {
     } else {
       eventTarget = 'chai-fieldchanged';
     }
+
     return new CustomEvent<ChaiFieldChangedDetails<T>>(eventTarget, {
       detail: {
         field: this._fieldId,

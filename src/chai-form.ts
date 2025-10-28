@@ -25,6 +25,7 @@ import {
 } from './ChaiApi';
 import {publishGtmEvent, chaiPosthog as posthog} from './ChaiAnalytics';
 import './chai-stepper';
+import {SET_GLOBALS_EVENT_TYPE, SetGlobalsEvent} from './openai/types';
 
 type FieldState = {
   value: unknown;
@@ -94,9 +95,43 @@ export class ChaiForm extends LitElement {
       'chai-fieldchanged',
       this.handleFieldChange as (e: Event) => void
     );
+
     this.addEventListener(
       'chai-fieldinit',
       this.handleFieldInit as (e: Event) => void
+    );
+
+    window.addEventListener(
+      SET_GLOBALS_EVENT_TYPE,
+      (event: SetGlobalsEvent) => {
+        const value = event.detail.globals['toolInput'];
+
+        console.log('TOOL INPUT', value);
+
+        const fieldElements = this.getFieldsInCurrentSlot();
+
+        console.log('FIELD ELEMENTS COUNT', fieldElements.length);
+
+        fieldElements.forEach((element) => {
+          if (element instanceof ChaiFieldBase) {
+            const key = element.getFieldId();
+
+            console.log('ELEMENT', element);
+            console.log('ENTRIES', Object.keys(element));
+
+            if (key) {
+              console.log('UPDATING FIELD', key, value?.[key] ?? '');
+
+              element.updateField(value?.[key] ?? '', 50);
+            }
+          } else {
+            console.warn('Element is not a ChaiFieldBase', element);
+          }
+        });
+      },
+      {
+        passive: true,
+      }
     );
   }
 
@@ -602,8 +637,9 @@ export class ChaiForm extends LitElement {
     // so we can enforce display of any validation errors.
     const fieldElements = this.getFieldsInCurrentSlot();
     const tagNamesToValidate: string[] = [];
+
     fieldElements.forEach((element) => {
-      let fieldElement = element as ChaiFieldBase<unknown>;
+      const fieldElement = element as ChaiFieldBase<unknown>;
       fieldElement.forceValidation = true;
       if (fieldElement.timeout != undefined) {
         // There is a timeout that is pending for execution. This event should execute immediately so the submit has all the recent information.
@@ -717,9 +753,17 @@ export class ChaiForm extends LitElement {
   private getFieldsInCurrentSlot() {
     const defaultSlot =
       this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!;
-    return defaultSlot!
+
+    const fields = defaultSlot!
       .assignedElements({flatten: true})
       .filter((element) => element.tagName.startsWith('CHAI-'));
+
+    console.log(
+      'IDS',
+      fields.map((field) => field.getAttribute('id'))
+    );
+
+    return fields;
   }
 
   private readUtmParametersIntoLocalStorage() {
