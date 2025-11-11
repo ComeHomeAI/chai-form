@@ -398,6 +398,11 @@ export class ChaiForm extends LitElement {
     `;
   }
 
+  flowInstanceIdDefined(){
+    return localStorage.getItem('chai-flowInstanceId') != null &&
+    localStorage.getItem('chai-flowInstanceId') != 'undefined' &&
+    localStorage.getItem('chai-flowInstanceId') != undefined
+  }
 
   async initFlowIfNecessary() {
     try {
@@ -406,14 +411,14 @@ export class ChaiForm extends LitElement {
       console.debug('Ignore failed formLoad', e, this.formInstanceId);
     }
     // If FormLoad has finished and we have a flowInstanceId, we assume it has been validated and continue
-    if (localStorage.getItem('chai-flowInstanceId') != null && localStorage.getItem('chai-flowInstanceId') != 'undefined') {
+    if (this.flowInstanceIdDefined()) {
       return;
     }
 
     // Initialize the flow instance if it hasn't been done yet. Keep the flowInstanceId from LocalStorage if it exists.
     if (
       !ChaiForm._initPromise &&
-      localStorage.getItem('chai-flowInstanceId') == null
+      !this.flowInstanceIdDefined()
     ) {
       const visitorId = localStorage.getItem('chai-visitorId')!;
       ChaiForm._initPromise = api(this.environment)
