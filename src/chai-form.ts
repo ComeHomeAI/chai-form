@@ -465,6 +465,7 @@ export class ChaiForm extends LitElement {
             chai_exception: error,
             flow_type: this.flowType,
           });
+        }).finally(() => {
           // Setting the promise to null will cause the form to retry the initialization on the next field change
           ChaiForm._initPromise = null;
         });
