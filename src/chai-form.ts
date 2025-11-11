@@ -406,7 +406,7 @@ export class ChaiForm extends LitElement {
       console.debug('Ignore failed formLoad', e, this.formInstanceId);
     }
     // If FormLoad has finished and we have a flowInstanceId, we assume it has been validated and continue
-    if (localStorage.getItem('chai-flowInstanceId') != null) {
+    if (localStorage.getItem('chai-flowInstanceId') != null && localStorage.getItem('chai-flowInstanceId') != 'undefined') {
       return;
     }
 
