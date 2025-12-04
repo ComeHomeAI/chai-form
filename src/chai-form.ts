@@ -16,7 +16,7 @@ import "./chai-date";
 import "./chai-tcpa-agreement";
 import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
-import {ApiEnvironment, api, ffapi, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
+import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
 import { publishGtmEvent, chaiPosthog as posthog } from './ChaiAnalytics';
 import "./chai-stepper";
 
@@ -46,8 +46,6 @@ export class ChaiForm extends LitElement {
   @state() private fieldStates: Map<string, FieldState>;
 
   @state() private submitted = false;
-
-  private useV2 = false;
 
   constructor() {
     super();
@@ -320,18 +318,6 @@ export class ChaiForm extends LitElement {
     super.connectedCallback();
     this.readUtmParametersIntoLocalStorage();
 
-    try {
-      this.useV2 = await ffapi().isV2Enabled(this.environment, this.flowType);
-      console.log(`v2=${this.useV2} for flow type ${this.flowType}`);
-
-      if (this.environment === ApiEnvironment.Production) {
-        this.environment = this.useV2 ? ApiEnvironment.ProductionV2 : ApiEnvironment.Production;
-      }// else we leave the override as we are most probably in development mode
-      console.log(`Using environment: ${this.environment}`);
-    } catch (error) {
-      console.error(`Error fetching feature flag 'use-v2': ${error}`);
-      this.useV2 = false;
-    }
     this.verifyCurrentFlowInstanceIdThroughFormLoad();
   }
 

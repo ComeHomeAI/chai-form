@@ -9,9 +9,8 @@ export const utmParamNames = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_t
 
 export enum ApiEnvironment {
   Development = 'https://chai.local:7035/formv1',
-  Staging = 'https://form.dev.comehome.ai',
-  Production = 'https://form.app.comehome.ai',
-  ProductionV2 = 'https://formv1.api.comehome.ai'
+  Staging = 'https://formv1.stg.comehome.ai',
+  Production = 'https://formv1.api.comehome.ai',
 }
 
 export function extractFlowTypeFromHostname(hostname: string) {
