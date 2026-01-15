@@ -14,6 +14,7 @@ import "./chai-address";
 import "./chai-destination";
 import "./chai-date";
 import "./chai-tcpa-agreement";
+import "./chai-unicorn-agreement";
 import "./chai-move-size";
 import {ChaiFieldBase, ChaiFieldChangedDetails} from './ChaiFieldBase';
 import {ApiEnvironment, api, extractFlowTypeFromHostname, utmParamNames} from './ChaiApi';
@@ -28,6 +29,7 @@ type FieldState = {
 const GITHUB_SHA = '{{GITHUB_SHA}}';
 const CORREIRABROS = 'correirabros.com';
 const MIRACLEMOVERSUTAH = 'miraclemoversutah.com';
+const UNICORN = 'unicornmoving.com';
 const skipTcpaVendors = [CORREIRABROS, MIRACLEMOVERSUTAH];
 
 /**
@@ -359,6 +361,10 @@ export class ChaiForm extends LitElement {
   }
 
   override render() {
+    let tcpaText;
+    if (this.flowType == UNICORN) tcpaText = html`<chai-unicorn-agreement></chai-unicorn-agreement>`;
+    else if (skipTcpaVendors.includes(this.flowType)) tcpaText = '';
+    else tcpaText = html`<chai-tcpa-agreement></chai-tcpa-agreement>`;
     return html`
       <gmpx-api-loader key="AIzaSyCWaiX7RKHVi-sVcBttqFabLiXiYT1YpyM"></gmpx-api-loader>
       <h2>${this.headerText}</h2>
@@ -370,7 +376,7 @@ export class ChaiForm extends LitElement {
           <chai-email></chai-email>
           <chai-address></chai-address>
         </slot>
-        ${(skipTcpaVendors.includes(this.flowType) ? '' : html` <chai-tcpa-agreement></chai-tcpa-agreement>`)}
+        ${tcpaText}
         <a class="link-button" href="https://www.comehome.ai" @click="${this.submit}" 
            style=${styleMap({ background: this.submitted ? 'grey' : '' })}
         >${this.submitted ? "Submission successful" : this.buttonText}</a>
